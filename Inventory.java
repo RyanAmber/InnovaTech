@@ -27,7 +27,7 @@ public class Inventory {
 	public int locate(int ID) {
 		for (Electronic e:items) {
 			if (e.myID==ID) {
-				return e.getGroup();
+				return e.getGroup().getTeamNum();
 			}
 		}
 		return 0;

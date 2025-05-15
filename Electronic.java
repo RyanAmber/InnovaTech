@@ -3,20 +3,20 @@ package ClientProject;
 public class Electronic {
 	private String type;
 	private boolean IsWorking;
-	private int groupUsing;
+	private group groupUsing;
 	private static int id;
 	public int myID;
-	public Electronic(String type) {
+	public Electronic(String type,group g) {
 		this.type=type;
 		IsWorking=true;
-		groupUsing=0;
+		groupUsing=g;
 		myID=id;
 		id++;
 	}
-	public Electronic(String type, boolean working, int group) {
+	public Electronic(String type, boolean working, group g) {
 		this.type=type;
 		IsWorking=working;
-		groupUsing=group;
+		groupUsing=g;
 		myID=id;
 		id++;
 	}
@@ -26,7 +26,7 @@ public class Electronic {
 	public String getType() {
 		return type;
 	}
-	public int getGroup() {
+	public group getGroup() {
 		return groupUsing;
 	}
 	public boolean getWorking() {
@@ -35,9 +35,9 @@ public class Electronic {
 	public void setWorking(boolean working) {
 		IsWorking=working;
 	}
-	public boolean borrow(int group) {
-		if (IsWorking&&groupUsing==0) {
-			groupUsing=group;
+	public boolean borrow(group g) {
+		if (IsWorking&&groupUsing.getTeamNum()==0) {
+			groupUsing=g;
 			return true;
 		}
 		return false;
