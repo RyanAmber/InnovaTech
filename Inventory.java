@@ -12,6 +12,10 @@ public class Inventory {
 		types=List.copyOf(things);
 	}
 	public void addItem(Electronic item) {
+		if (!items.containsKey(item.getType())){
+			items.put(item.getType(),new ArrayList<Electronic>());
+			types.add(item.getType());
+		}
 		items.get(item.getType()).add(item);
 	}
 	public String toString() {
@@ -21,12 +25,21 @@ public class Inventory {
 		String total="";
 		for (String s:types) {
 			for (Electronic e:items.get(s)){
-				total+=e+"/n";
+				total+=e+"\n";
 			}
 		}
 		return total;
 	}
-	//public Electronic get(String type,)
+	public Electronic get(int ID) {
+		for (String type:types) {
+			for (Electronic e:items.get(type)){
+				if (e.myID==ID) {
+					return e;
+				}
+			}
+		}
+		return new Electronic();
+	}
 	public int locate(int ID) {
 		for (String type:types) {
 			for (Electronic e:items.get(type)){

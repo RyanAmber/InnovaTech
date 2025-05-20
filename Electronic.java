@@ -7,6 +7,11 @@ public class Electronic {
 	private static int id;
 	public int myID;
 	private String summary;
+	public Electronic(){
+		type="Arduino";
+		IsWorking=true;
+		groupUsing=new group(0);
+	}
 	public Electronic(String type,group g) {
 		this.type=type;
 		IsWorking=true;
