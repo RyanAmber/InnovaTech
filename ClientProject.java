@@ -1,20 +1,24 @@
-package ClientProject;
+//package ClientProject;
 
 import java.util.*;
 
 public class ClientProject {
 
 	public static void main(String[] args) {
-		// TODO Auto-generated method stub
 		Inventory mySystem=new Inventory();
+		List<group> teams=new ArrayList<group>();
 		group storage=new group(0);
 		group group1=new group(1);
+		teams.add(group1);
 		group1.addMember("Ryan");
 		group1.addMember("Conrad");
 		group1.addMember("Suhanee");
 		group1.addMember("Radhana");
 		mySystem.addItem(new Electronic("Arduino",true,storage));
 		mySystem.addItem(new Electronic("Arduino",false,storage));
+		mySystem.addItem(new Electronic("Arduino",true,storage));
+		mySystem.addItem(new Electronic("Arduino",true,storage));
+		mySystem.addItem(new Electronic("Arduino",true,storage));
 		mySystem.addItem(new Electronic("Raspberry Pi",true,group1));
 		System.out.println(mySystem);
 		mySystem.get(0).borrow(group1);
@@ -23,6 +27,7 @@ public class ClientProject {
 		System.out.println();
 		System.out.println(mySystem);
 		System.out.println(mySystem.locate(0));
+		System.out.println(mySystem.statistics("Arduino"));
 	}
 
 }

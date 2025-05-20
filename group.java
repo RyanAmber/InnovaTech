@@ -1,4 +1,4 @@
-package ClientProject;
+//package ClientProject;
 import java.util.*;
 public class group {
 	private List<String> students;
@@ -20,5 +20,8 @@ public class group {
 	}
 	public int getTeamNum() {
 		return team;
+	}
+	public void borrow(Electronic e){
+		items.add(e);
 	}
 }

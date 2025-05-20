@@ -1,4 +1,4 @@
-package ClientProject;
+//package ClientProject;
 import java.util.*;
 public class Inventory {
 	private List<Electronic> items;
@@ -31,5 +31,34 @@ public class Inventory {
 			}
 		}
 		return 0;
+	}
+	public List<Integer> statistics(String type){
+		int broken=0;
+		int working=0;
+		int available=0;
+		int borrowed=0;
+		int total=0;
+		List<Integer> stats=new ArrayList<Integer>();
+		for (Electronic e:items){
+			if(e.getType().equals(type)){
+				total++;
+				if (e.getWorking()==false){
+					broken++;
+				}else{
+					working++;
+				}
+				if(e.getGroup().getTeamNum()==0){
+					available++;
+				}else{
+					borrowed++;
+				}
+			}
+		}
+		stats.add(broken);
+		stats.add(working);
+		stats.add(available);
+		stats.add(borrowed);
+		stats.add(total);
+		return stats;
 	}
 }

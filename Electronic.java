@@ -1,4 +1,4 @@
-package ClientProject;
+//package ClientProject;
 
 public class Electronic {
 	private String type;
@@ -19,6 +19,9 @@ public class Electronic {
 		groupUsing=g;
 		myID=id;
 		id++;
+	}
+	public boolean equals(Electronic other){
+		return type.equals(other.getType());
 	}
 	public String toString() {
 		return (IsWorking?"Working":"Broken")+" "+type+" in group:"+groupUsing+" ID:"+myID;
