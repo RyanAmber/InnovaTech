@@ -18,13 +18,15 @@ public class Inventory {
 		if (items.size()==0) {
 			return "";
 		}
-		String total=items.get(0)+"";
-		for (int i=1;i<items.size();i++) {
-			total+="\n"+items.get(i);
+		String total="";
+		for (String s:types) {
+			for (Electronic e:items.get(s)){
+				total+=e+"/n";
+			}
 		}
 		return total;
 	}
-	
+	//public Electronic get(String type,)
 	public int locate(int ID) {
 		for (String type:types) {
 			for (Electronic e:items.get(type)){
@@ -42,19 +44,17 @@ public class Inventory {
 		int borrowed=0;
 		int total=0;
 		List<Integer> stats=new ArrayList<Integer>();
-		for (Electronic e:items){
-			if(e.getType().equals(type)){
-				total++;
-				if (e.getWorking()==false){
-					broken++;
-				}else{
-					working++;
-				}
-				if(e.getGroup().getTeamNum()==0){
-					available++;
-				}else{
-					borrowed++;
-				}
+		for (Electronic e:items.get(type)){
+			total++;
+			if (e.getWorking()==false){
+				broken++;
+			}else{
+				working++;
+			}
+			if(e.getGroup().getTeamNum()==0){
+				available++;
+			}else{
+				borrowed++;
 			}
 		}
 		stats.add(broken);
