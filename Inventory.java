@@ -1,15 +1,18 @@
 //package ClientProject;
-import java.util.*;
+import java.util.*;       //Map<String,List<Electronic>
 public class Inventory {
-	private List<Electronic> items;
+	private Map<String,List<Electronic>> items;
+	private List<String> types;
 	public Inventory() {
-		items=new ArrayList<Electronic>();
+		items=new HashMap<String,List<Electronic>>();
+		types=new ArrayList<String>();
 	}
-	public Inventory(ArrayList<Electronic> list) {
-		items=List.copyOf(list);
+	public Inventory(HashMap<String,List<Electronic>> list,ArrayList<String> things) {
+		items=Map.copyOf(list);
+		types=List.copyOf(things);
 	}
 	public void addItem(Electronic item) {
-		items.add(item);
+		items.get(item.getType()).add(item);
 	}
 	public String toString() {
 		if (items.size()==0) {
@@ -21,13 +24,13 @@ public class Inventory {
 		}
 		return total;
 	}
-	public Electronic get(int index) {
-		return items.get(index);
-	}
+	
 	public int locate(int ID) {
-		for (Electronic e:items) {
-			if (e.myID==ID) {
-				return e.getGroup().getTeamNum();
+		for (String type:types) {
+			for (Electronic e:items.get(type)){
+				if (e.myID==ID) {
+					return e.getGroup().getTeamNum();
+				}
 			}
 		}
 		return 0;

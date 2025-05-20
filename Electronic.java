@@ -6,12 +6,14 @@ public class Electronic {
 	private group groupUsing;
 	private static int id;
 	public int myID;
+	private String summary;
 	public Electronic(String type,group g) {
 		this.type=type;
 		IsWorking=true;
 		groupUsing=g;
 		myID=id;
 		id++;
+		summary="";
 	}
 	public Electronic(String type, boolean working, group g) {
 		this.type=type;
@@ -19,6 +21,7 @@ public class Electronic {
 		groupUsing=g;
 		myID=id;
 		id++;
+		summary="";
 	}
 	public boolean equals(Electronic other){
 		return type.equals(other.getType());
@@ -33,6 +36,9 @@ public class Electronic {
 		return groupUsing;
 	}
 	public boolean getWorking() {
+		if(!IsWorking){
+			System.out.println(summary);
+		}
 		return IsWorking;
 	}
 	public void setWorking(boolean working) {
