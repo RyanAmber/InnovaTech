@@ -2,7 +2,7 @@
 // testing
 import java.util.*;
 
-public class ClientProject {
+public class TestingPage {
 
 	public static void main(String[] args) {
 		Inventory mySystem=new Inventory();
