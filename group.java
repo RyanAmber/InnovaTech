@@ -3,6 +3,7 @@ import java.util.*;
 public class group {
 	private List<String> students;
 	private List<Electronic> items;
+	private List<Electronic> tray;
 	private int team;
 	public group(int team){
 		students=new ArrayList<String>();
@@ -23,5 +24,10 @@ public class group {
 	}
 	public void borrow(Electronic e){
 		items.add(e);
+		e.borrow(this);
+	}
+	public void add(Electronic e){
+		tray.add(e);
+		e.borrow(this);
 	}
 }

@@ -4,7 +4,14 @@ public class Student extends User{
         super(name,password);
         this.myGroup=myGroup;
     }
-    //public boolean request(Electronic e){
-
-    //}
+    public boolean addToTray(Electronic e){
+        if(e.getGroup().getTeamNum()==0 && e.getWorking() == true) {
+            myGroup.add(e);
+            return true;
+        }
+        else {
+            return false;
+        }
+    }
 }
+
