@@ -16,6 +16,9 @@ public class group {
 	public void addMember(String student) {
 		students.add(student);
 	}
+	public List<Electronic> getTray() {
+		return tray;
+	}
 	public String toString() {
 		return team+"";
 	}
@@ -24,6 +27,7 @@ public class group {
 	}
 	public void borrow(Electronic e){
 		items.add(e);
+		tray.remove(e);
 		e.borrow(this);
 	}
 	public void add(Electronic e){
