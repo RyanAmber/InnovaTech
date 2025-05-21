@@ -41,9 +41,6 @@ public class Electronic {
 		return groupUsing;
 	}
 	public boolean getWorking() {
-		if(!IsWorking){
-			System.out.println(summary);
-		}
 		return IsWorking;
 	}
 	public void setWorking(boolean working) {

@@ -13,5 +13,8 @@ public class Student extends User{
             return false;
         }
     }
+    public void break(Electronic e){
+        
+    }
 }
 

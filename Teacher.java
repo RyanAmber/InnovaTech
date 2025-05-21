@@ -7,4 +7,10 @@ public class Teacher extends User{
             g.borrow(e);
         }
     }
+    public void markBroken(Electronic e){
+        e.setWorking(false);
+    }
+    public void markWorking(Electronic e){
+        e.setWorking(true);
+    }
 }
