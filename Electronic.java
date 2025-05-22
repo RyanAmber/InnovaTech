@@ -26,6 +26,9 @@ public class Electronic {
 		summary="";
 		myID=ID;
 	}
+	public String fileFormat(){
+		return type+" "+IsWorking+" "+groupUsing.getTeamNum()+" "+myID;
+	}
 	public boolean equals(Electronic other){
 		return type.equals(other.getType());
 	}

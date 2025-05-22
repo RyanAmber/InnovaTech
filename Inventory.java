@@ -1,4 +1,7 @@
 //package ClientProject;
+import java.io.BufferedWriter;
+import java.io.FileWriter;
+import java.io.IOException;
 import java.util.*;       //Map<String,List<Electronic>
 public class Inventory {
 	private Map<String,List<Electronic>> items;
@@ -29,6 +32,17 @@ public class Inventory {
 			}
 		}
 		return total;
+	}
+	public int maxInt() {
+		int max=0;
+		for (String type:types) {
+			for (Electronic e:items.get(type)){
+				if (e.myID>max) {
+					max=e.myID;
+				}
+			}
+		}
+		return max;
 	}
 	public Electronic get(int ID) {
 		for (String type:types) {

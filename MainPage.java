@@ -6,13 +6,15 @@ public class MainPage {
         Map<String, String[]> users=readUserData();
         User u=signIn(s, users);
         System.out.println("Welcome "+u.toString());
+        Inventory i=readInventoryData(); 
         if (u instanceof Teacher){
             System.out.println("You are a teacher");
         }else if (u instanceof Student){
             System.out.println("You are a student");
             System.out.println("Your group number is "+((Student)u).getGroup().getTeamNum());
         }
-
+        //Split menus
+        //Student or Teacher
         s.close();
     }
     public static Map<String, String[]> readUserData(){
