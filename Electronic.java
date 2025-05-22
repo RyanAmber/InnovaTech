@@ -4,7 +4,6 @@ public class Electronic {
 	private String type;
 	private boolean IsWorking;
 	private group groupUsing;
-	private static int id;
 	public int myID;
 	private String summary;
 	private boolean Check;
@@ -13,21 +12,19 @@ public class Electronic {
 		IsWorking=true;
 		groupUsing=new group(0);
 	}
-	public Electronic(String type,group g) {
+	public Electronic(String type,group g, int ID) {
 		this.type=type;
 		IsWorking=true;
 		groupUsing=g;
-		myID=id;
-		id++;
 		summary="";
+		myID=ID;
 	}
-	public Electronic(String type, boolean working, group g) {
+	public Electronic(String type, boolean working, group g,int ID) {
 		this.type=type;
 		IsWorking=working;
 		groupUsing=g;
-		myID=id;
-		id++;
 		summary="";
+		myID=ID;
 	}
 	public boolean equals(Electronic other){
 		return type.equals(other.getType());

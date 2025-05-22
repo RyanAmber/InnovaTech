@@ -14,12 +14,12 @@ public class TestingPage {
 		group1.addMember("Conrad");
 		group1.addMember("Suhanee");
 		group1.addMember("Radhana");
-		mySystem.addItem(new Electronic("Arduino",true,storage));
-		mySystem.addItem(new Electronic("Arduino",false,storage));
-		mySystem.addItem(new Electronic("Arduino",true,storage));
-		mySystem.addItem(new Electronic("Arduino",true,storage));
-		mySystem.addItem(new Electronic("Arduino",true,storage));
-		mySystem.addItem(new Electronic("Raspberry Pi",true,group1));
+		mySystem.addItem(new Electronic("Arduino",true,storage,0));
+		mySystem.addItem(new Electronic("Arduino",false,storage,1));
+		mySystem.addItem(new Electronic("Arduino",true,storage,2));
+		mySystem.addItem(new Electronic("Arduino",true,storage,3));
+		mySystem.addItem(new Electronic("Arduino",true,storage,4));
+		mySystem.addItem(new Electronic("Raspberry Pi",true,group1,5));
 		System.out.println(mySystem);
 		mySystem.get(0).borrow(group1);
 		mySystem.get(1).borrow(group1);
