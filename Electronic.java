@@ -7,6 +7,7 @@ public class Electronic {
 	private static int id;
 	public int myID;
 	private String summary;
+	private boolean Check;
 	public Electronic(){
 		type="Arduino";
 		IsWorking=true;
@@ -39,6 +40,9 @@ public class Electronic {
 	}
 	public group getGroup() {
 		return groupUsing;
+	}
+	public void setCheck(boolean check) {
+		Check=check;
 	}
 	public boolean getWorking() {
 		return IsWorking;
