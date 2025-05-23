@@ -8,6 +8,8 @@ public class group {
 	public group(int team){
 		students=new ArrayList<String>();
 		this.team=team;
+		//tray = new ArrayList<>();
+		//items = new ArrayList<>();
 	}
 	public group(List<String> members, int team) {
 		students=List.copyOf(members);
