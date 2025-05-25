@@ -31,7 +31,7 @@ document.addEventListener('DOMContentLoaded', () => {
     .catch(error => {
       console.error('Error:', error);
       message.style.color = "red";
-      message.textContent = "Server error. Try again later.";
+      message.textContent = "Server error. Try again later."+error;
     });
   });
 
