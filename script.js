@@ -10,7 +10,8 @@ if (email === "user@example.com" && password === "password123") {
 message.style.color = "green";
 message.textContent = "Sign-in successful!";
 } else {
-message.style.color = "red";
-message.textContent = "Invalid email or password.";
+message.style.color = "green";
+message.textContent = "Go sign in";
+    window.location.href = "sign-up.html";
 }
 });
