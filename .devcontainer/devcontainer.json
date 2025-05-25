@@ -1,0 +1,10 @@
+{
+  "name": "Java Dev Environment",
+  "image": "mcr.microsoft.com/devcontainers/java:17",
+  "postCreateCommand": "mkdir -p lib",
+  "customizations": {
+    "vscode": {
+      "extensions": ["vscjava.vscode-java-pack"]
+    }
+  }
+}
