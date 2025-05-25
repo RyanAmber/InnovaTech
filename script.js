@@ -11,19 +11,23 @@ document.addEventListener('DOMContentLoaded', () => {
     const password = document.getElementById('password').value.trim();
 
     // Fake validation logic
-    if (email === "user@example.com" && password === "password123") {
-      message.style.color = "green";
-      message.textContent = "Sign-in successful!";
-      // Optionally redirect to a dashboard page
-      window.location.href = "dashboard.html";
-    } else {
-      message.style.color = "red";
-      message.textContent = "Account not found. Redirecting to Sign Up...";
-      setTimeout(() => {
-        window.location.href = "dashboard.html";
-      }, 1500); // delay redirect so user sees the message
-    }
-  });
+    fetch("/api/signin", {
+  method: "POST",
+  headers: {
+    "Content-Type": "application/json"
+  },
+  body: JSON.stringify({ username: email, password: password })
+})
+.then(res => res.json())
+.then(data => {
+  if (data.success) {
+    window.location.href = "dashboard.html"; // or use role-specific logic
+  } else {
+    message.textContent = "Login failed.";
+    window.location.href = "dashboard.html";
+  }
+});
+
 
   // Handle sign-up button click
   signupButton.addEventListener('click', function(event) {
