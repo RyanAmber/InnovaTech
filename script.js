@@ -9,7 +9,7 @@ document.addEventListener('DOMContentLoaded', () => {
     const email = document.getElementById('email').value.trim();
     const password = document.getElementById('password').value.trim();
 
-    fetch('http://localhost:4567/api/signin', {
+    fetch('http://localhost:4567/login', {
       method: 'POST',
       headers: {
         'Content-Type': 'application/json'
