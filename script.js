@@ -3,33 +3,38 @@ document.addEventListener('DOMContentLoaded', () => {
   const message = document.getElementById('message');
   const signupButton = document.getElementById('signup-button');
 
-  // Handle sign-in
   signinForm.addEventListener('submit', function(event) {
     event.preventDefault();
 
     const email = document.getElementById('email').value.trim();
     const password = document.getElementById('password').value.trim();
 
-    // Fake validation logic
-    fetch("/api/signin", {
-  method: "POST",
-  headers: {
-    "Content-Type": "application/json"
-  },
-  body: JSON.stringify({ username: email, password: password })
-})
-.then(res => res.json())
-.then(data => {
-  if (data.success) {
-    window.location.href = "dashboard.html"; // or use role-specific logic
-  } else {
-    message.textContent = "Login failed.";
-    window.location.href = "dashboard.html";
-  }
-});
+    fetch('http://localhost:4567/api/signin', {
+      method: 'POST',
+      headers: {
+        'Content-Type': 'application/json'
+      },
+      body: JSON.stringify({ username: email, password: password })
+    })
+    .then(response => response.json())
+    .then(data => {
+      if (data.success) {
+        message.style.color = "green";
+        message.textContent = `Welcome! Role: ${data.role}`;
+        // Optionally redirect based on role
+        window.location.href = "dashboard.html";
+      } else {
+        message.style.color = "red";
+        message.textContent = "Login failed. Please check your credentials.";
+      }
+    })
+    .catch(error => {
+      console.error('Error:', error);
+      message.style.color = "red";
+      message.textContent = "Server error. Try again later.";
+    });
+  });
 
-
-  // Handle sign-up button click
   signupButton.addEventListener('click', function(event) {
     event.preventDefault();
     window.location.href = "sign-up.html";
