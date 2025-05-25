@@ -15,12 +15,12 @@ document.addEventListener('DOMContentLoaded', () => {
       message.style.color = "green";
       message.textContent = "Sign-in successful!";
       // Optionally redirect to a dashboard page
-      // window.location.href = "dashboard.html";
+      window.location.href = "dashboard.html";
     } else {
       message.style.color = "red";
       message.textContent = "Account not found. Redirecting to Sign Up...";
       setTimeout(() => {
-        window.location.href = "sign-up.html";
+        window.location.href = "dashboard.html";
       }, 1500); // delay redirect so user sees the message
     }
   });
