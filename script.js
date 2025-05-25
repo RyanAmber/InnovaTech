@@ -15,3 +15,9 @@ message.textContent = "Go sign in";
     window.location.href = "sign-up.html";
 }
 });
+document.getElementById('signup').addEventListener('signup', function(event) {
+event.preventDefault();
+
+window.location.href = "sign-up.html";
+}
+});
