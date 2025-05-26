@@ -7,7 +7,7 @@
 </head>
 <body>
 <div class="container">
-<h1 id="usernameHeader">Welcome, </h1>
+<h1 id="usernameHeader"></h1>
 
 <div class="main-content">
 <div class="component-list">
@@ -37,7 +37,11 @@
 <script>
   const username = localStorage.getItem("username");
   const header = document.getElementById("usernameHeader");
-    header.textContent = username;
+
+  if (username) {
+    header.textContent = `Welcome, ${username}`;
+  }
 </script>
+
 </body>
 </html>
