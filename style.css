@@ -7,15 +7,6 @@ align-items: center;
 height: 100vh;
 margin: 0;
 }
-teacher{
-font-family: Arial, sans-serif;
-background: linear-gradient(to right, #8c52ff,#ff914d);
-display: flex;
-justify-content: center;
-align-items: center;
-height: 100vh;
-margin: 0;
-}
 .signin-container {
 width: 300px;
 text-align: center;
