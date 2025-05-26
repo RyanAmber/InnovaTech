@@ -29,6 +29,7 @@
     .container {
       flex: 1;
       display: flex;
+      position: relative;
       overflow: hidden;
       padding: 0 20px 20px 20px;
     }
@@ -76,12 +77,16 @@
     }
     
     .right {
-      flex-shrink: 0;
+      position: absolute;
+      top: 0;
+      right: 0;
+      height: 100%;
       width: 320px;
-      display: flex;
-      justify-content: center;
-      align-items: start;
       padding-top: 20px;
+      padding-right: 20px
+      display: flex;
+      justify-content: flex-end;
+      align-items: start;
     }
 
     .notifications {
@@ -90,6 +95,9 @@
       padding: 20px;
       width: 100%;
       box-shadow: 0 6px 16px rgba(0,0,0,0.15);
+
+      max-height: calc(100vh - 60px);
+      overflow-y: auto;
     }
     
     .notifications h2 {
