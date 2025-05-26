@@ -10,46 +10,51 @@
 
     body {
       margin: 0;
-      font-family: Arial, sans-serif;
-      background-color: #f4f4f4;
+      font-family: 'Segoe UI', sans-serif;
+      display: flex;
+      flex-direction: column;
+      height: 100vh;
+      background: linear-gradient(135deg, #a770ef, #f95794, #ff9a44);
+      color: #222;
     }
 
     header {
-      background-color: #333;
-      color: white;
-      padding: 1rem;
-      text-align: center;
+      padding: 20px;
       font-size: 2rem;
+      font-weight: bold;
+      color: white;
     }
 
     .container {
+      flex: 1;
       display: flex;
-      height: calc(100vh - 80px); /* Adjust height minus header */
+      overflow: hidden;
+      padding: 0 20px 20px 20px;
     }
 
     .left {
-      width: 70%;
-      padding: 1rem;
-      overflow: hidden;
+      flex: 1;
+      max-width: 50%;
+      padding-right: 20px;
+      overflow-y: auto;
     }
 
-    .gallery {
-      height: 100%;
-      overflow-y: auto;
+    .grid {
       display: grid;
-      grid-template-columns: repeat(auto-fill, minmax(150px, 1fr));
-      gap: 1rem;
-      padding-right: 10px;
+      grid-template-columns: repeat(auto-fill, minmax(200px, 1fr));
+      gap: 20px;
     }
 
     .card {
       background-color: white;
-      border-radius: 8px;
-      box-shadow: 0 2px 8px rgba(0, 0, 0, 0.1);
-      text-align: center;
-      padding: 1rem;
-      transition: transform 0.2s;
+      border-radius: 16px;
+      padding: 12px;
+      box-shadow: 0 4px 10px rgba(0, 0, 0, 0.1);
+      transition: transform 0.2s ease;
       cursor: pointer;
+      display: flex;
+      flex-direction: column;
+      align-items: center;
     }
 
     .card:hover {
@@ -57,22 +62,61 @@
     }
 
     .card img {
-      max-width: 100%;
-      height: 100px;
+      width: 100%;
+      aspect-ratio: 3 / 2;
       object-fit: contain;
-      margin-bottom: 0.5rem;
+      border-radius: 8px;
     }
 
+    .card p {
+      margin-top: 10px;
+      font-weight: 500;
+      text-align: center;
+    }
+    
     .right {
-      width: 30%;
-      background-color: #e2e8f0;
-      padding: 1rem;
-      border-left: 2px solid #ccc;
+      flex-shrink: 0;
+      width: 320px;
+      display: flex;
+      justify-content: center;
+      align-items: start;
+      padding-top: 20px;
     }
 
-    .right h2 {
+    .notifications {
+      background: white;
+      border-radius: 24px;
+      padding: 20px;
+      width: 100%;
+      box-shadow: 0 6px 16px rgba(0,0,0,0.15);
+    }
+    
+    .notifications h2 {
       margin-top: 0;
-      color: #333;
+      font-size: 1.5rem;
+    }
+
+    .notif {
+      background-color: #ffb072;
+      margin-top: 10px;
+      padding: 12px;
+      border-radius: 20px;
+      display: flex;
+      gap: 10px;
+      align-items: center;
+    }
+
+    .notif-time {
+      background-color: white;
+      padding: 6px 12px;
+      border-radius: 12px;
+      font-size: 0.8rem;
+      font-weight: bold;
+    }
+
+    .notif-text {
+      flex: 1;
+      font-size: 0.9rem;
     }
 
     /* Modal styles */
