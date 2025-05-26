@@ -23,6 +23,7 @@ public class MainPage {
         get("/dashboard", (req, res) -> "Welcome to the dashboard!");
     }
 
+
         /*User u=signIn(s, users);
         System.out.println("Welcome "+u.toString());
         Inventory i=readInventoryData(); 
