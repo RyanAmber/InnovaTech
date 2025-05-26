@@ -3,14 +3,19 @@ import java.io.*;
 import static spark.Spark.*;
 
 public class MainPage {
-
     public static void main(String[] args) {
         // Set the port for Railway
         int port = Integer.parseInt(System.getenv().getOrDefault("PORT", "4567"));
         port(port);
 
-        // Correct static file location
+        // Correct static file location (serves from src/main/resources/public)
         staticFiles.location("/public");
+
+        // Redirect root URL to index.html
+        get("/", (req, res) -> {
+            res.redirect("/index.html");
+            return null;
+        });
 
         // Simple dashboard route
         get("/dashboard", (req, res) -> "Home Page");
