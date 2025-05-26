@@ -1,5 +1,6 @@
 target/
+*.class
 *.jar
 .idea/
 *.iml
-*.log
+.DS_Store
