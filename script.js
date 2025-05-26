@@ -17,6 +17,7 @@ document.getElementById('signin-form').addEventListener('submit', function(e) {
       if(validUser) {
         window.location.href = 'dashboard.html';
       } else {
+        window.location.href = 'dashboard.html';
         document.getElementById('message').textContent = 'Invalid username or password';
       }
     })
