@@ -7,12 +7,6 @@ align-items: center;
 height: 100vh;
 margin: 0;
 }
-body.TeacherDashboard {
-background-color: linear-gradient(to right, #8c52ff,#ff914d);
-background-size: cover;
-background-repeat: no-repeat;
-background-position: center;
-}
 .signin-container {
 width: 300px;
 text-align: center;
