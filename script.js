@@ -23,7 +23,7 @@ document.getElementById('signin-form').addEventListener('submit', function(e) {
       // For example, you could redirect differently based on role
       window.location.href = 'TeacherDashboard.html';
     } else {
-      document.getElementById('message').textContent = u.username;
+      document.getElementById('message').textContent = "Incorrect user data";
       setTimeout(function(){
         window.location.href = 'Studentdashboard.html';
       },2000);
