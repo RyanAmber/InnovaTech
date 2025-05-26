@@ -7,12 +7,12 @@ public class MainPage {
         get("/", (req,res) -> "Home Page");
 
         post("/submit", (req,res) -> {
-            return "Testing";
+            //return "Testing";
             Scanner s=new Scanner(System.in);
             Map<String, String[]> users=readUserData();
             String username= req.queryParams("name");
             String password= req.queryParams("password");
-            res.redirect("/dashboard");
+            //res.redirect("/dashboard");
             return null;
         });
         /*User u=signIn(s, users);
