@@ -12,7 +12,8 @@ public class MainPage {
             Map<String, String[]> users=readUserData();
             String username= req.queryParams("name");
             String password= req.queryParams("password");
-            return "Welcome "+username;
+            res.redirect("/dashboard");
+            return null;
         });
         /*User u=signIn(s, users);
         System.out.println("Welcome "+u.toString());
