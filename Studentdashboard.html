@@ -14,6 +14,108 @@
       background-color: #f4f4f4;
     }
 
+    header {
+      background-color: #333;
+      color: white;
+      padding: 1rem;
+      text-align: center;
+      font-size: 2rem;
+    }
+
+    .container {
+      display: flex;
+      height: calc(100vh - 80px); /* Adjust height minus header */
+    }
+
+    .left {
+      width: 70%;
+      padding: 1rem;
+      overflow: hidden;
+    }
+
+    .gallery {
+      height: 100%;
+      overflow-y: auto;
+      display: grid;
+      grid-template-columns: repeat(auto-fill, minmax(150px, 1fr));
+      gap: 1rem;
+      padding-right: 10px;
+    }
+
+    .card {
+      background-color: white;
+      border-radius: 8px;
+      box-shadow: 0 2px 8px rgba(0, 0, 0, 0.1);
+      text-align: center;
+      padding: 1rem;
+      transition: transform 0.2s;
+      cursor: pointer;
+    }
+
+    .card:hover {
+      transform: scale(1.05);
+    }
+
+    .card img {
+      max-width: 100%;
+      height: 100px;
+      object-fit: contain;
+      margin-bottom: 0.5rem;
+    }
+
+    .right {
+      width: 30%;
+      background-color: #e2e8f0;
+      padding: 1rem;
+      border-left: 2px solid #ccc;
+    }
+
+    .right h2 {
+      margin-top: 0;
+      color: #333;
+    }
+
+    /* Modal styles */
+    .modal {
+      display: none;
+      position: fixed;
+      top: 50%;
+      left: 50%;
+      transform: translate(-50%, -50%);
+      background: white;
+      padding: 2rem;
+      border-radius: 8px;
+      box-shadow: 0 5px 20px rgba(0,0,0,0.3);
+      z-index: 1000;
+    }
+
+    .modal.active {
+      display: block;
+    }
+
+    .overlay {
+      display: none;
+      position: fixed;
+      top: 0; left: 0;
+      width: 100vw;
+      height: 100vh;
+      background: rgba(0,0,0,0.4);
+      z-index: 999;
+    }
+
+    .overlay.active {
+      display: block;
+    }
+
+    .close-btn {
+      position: absolute;
+      top: 10px;
+      right: 15px;
+      font-size: 1.2rem;
+      cursor: pointer;
+    }
+  </style>
+
 </head>
 <body>
   <h1>Welcome, student_name.</h1>
