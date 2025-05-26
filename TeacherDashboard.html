@@ -35,7 +35,9 @@
 </div>
 </div>
 <script>
-  const username = localStorage.getItem("username")
+  const username = localStorage.getItem("username");
+  const header = document.getElementById("usernameHeader");
+    header.textContent = username;
 </script>
 </body>
 </html>
