@@ -159,5 +159,27 @@
         </div>
       </div>
     </div>
+      <div class="right">
+      <h2>Notifications</h2>
+      <p>No new notifications at the moment.</p>
+    </div>
+  </div>
+
+  <div class="overlay" id="overlay" onclick="closeModal()"></div>
+  <div class="modal" id="modal">
+    <span class="close-btn" onclick="closeModal()">&times;</span>
+  </div>
+  
+  <script>
+    function openModal() {
+      document.getElementById('modal').classList.add('active');
+      document.getElementById('overlay').classList.add('active');
+    }
+
+    function closeModal() {
+      document.getElementById('modal').classList.remove('active');
+      document.getElementById('overlay').classList.remove('active');
+    }
+  </script>
 </body>
 </html>
