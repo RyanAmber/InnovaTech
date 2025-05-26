@@ -9,7 +9,8 @@ margin: 0;
 }
 body.TeacherDashboard {
 font-family: Arial, sans-serif;
-background: linear-gradient(to right, #8c52ff,#ff914d);
+background-color: linear-gradient(to right, #8c52ff,#ff914d);
+background-size: cover;
 display: flex;
 justify-content: center;
 align-items: center;
