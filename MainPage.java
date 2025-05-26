@@ -7,6 +7,7 @@ public class MainPage {
         get("/", (req,res) -> "Home Page");
 
         post("/submit", (req,res) -> {
+            return "Testing";
             Scanner s=new Scanner(System.in);
             Map<String, String[]> users=readUserData();
             String username= req.queryParams("name");
