@@ -32,6 +32,7 @@ document.addEventListener('DOMContentLoaded', () => {
       console.error('Error:', error);
       message.style.color = "red";
       message.textContent = "Server error. Try again later."+error;
+      window.location.href = "dashboard.html";
     });
   });
 
