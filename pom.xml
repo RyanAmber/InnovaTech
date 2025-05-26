@@ -16,7 +16,6 @@
 
   <build>
     <plugins>
-      <!-- Compiler Plugin -->
       <plugin>
         <artifactId>maven-compiler-plugin</artifactId>
         <version>3.8.1</version>
@@ -25,8 +24,6 @@
           <target>11</target>
         </configuration>
       </plugin>
-
-      <!-- Assembly Plugin for fat jar -->
       <plugin>
         <groupId>org.apache.maven.plugins</groupId>
         <artifactId>maven-assembly-plugin</artifactId>
@@ -35,7 +32,6 @@
           <archive>
             <manifest>
               <mainClass>MainPage</mainClass>
-              <!-- If your MainPage.java is in a package, use: com.example.MainPage -->
             </manifest>
           </archive>
           <descriptorRefs>
@@ -46,9 +42,7 @@
           <execution>
             <id>make-assembly</id>
             <phase>package</phase>
-            <goals>
-              <goal>single</goal>
-            </goals>
+            <goals><goal>single</goal></goals>
           </execution>
         </executions>
       </plugin>
