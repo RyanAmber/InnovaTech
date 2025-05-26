@@ -1,22 +1,31 @@
 import java.util.*;
 import java.io.*;
 import static spark.Spark.*;
-public class MainPage {
-    public static void main(String[] args){
-        int port=Integer.parseInt(System.getenv().getOrDefault("PORT","4567"));
-        Spark.port(port);
-        statcFiles.location("/public");
-        get("/dashboard", (req,res) -> "Home Page");
 
-        post("/submit", (req,res) -> {
-            //return "Testing";
-            Scanner s=new Scanner(System.in);
-            Map<String, String[]> users=readUserData();
-            String username= req.queryParams("name");
-            String password= req.queryParams("password");
+public class MainPage {
+
+    public static void main(String[] args) {
+        // Set the port for Railway
+        int port = Integer.parseInt(System.getenv().getOrDefault("PORT", "4567"));
+        port(port);
+
+        // Correct static file location
+        staticFiles.location("/public");
+
+        // Simple dashboard route
+        get("/dashboard", (req, res) -> "Home Page");
+
+        // Handle form submission
+        post("/submit", (req, res) -> {
+            String username = req.queryParams("name");
+            String password = req.queryParams("password");
+
+            // You can check username/password here using your own logic
+            // For now, just redirect to dashboard
             res.redirect("/dashboard.html");
             return null;
         });
+    }
         /*User u=signIn(s, users);
         System.out.println("Welcome "+u.toString());
         Inventory i=readInventoryData(); 
