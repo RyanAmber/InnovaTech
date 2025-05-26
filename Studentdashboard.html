@@ -2,6 +2,7 @@
 <html lang="en">
 <head>
   <meta charset="UTF-8" />
+  <meta name="viewport" content="width=device-width, initial-scale=1.0">
   <title>Student Dashboard</title>
   <style>
     * {
@@ -162,7 +163,7 @@
         ${["Resistor", "Capacitor", "LED", "Transistor", "Arduino", "Breadboard", "Push Button", "Potentiometer", "Diode"]
           .map(name => `
           <div class="card" onclick="openModal()">
-            <img src="https://via.placeholder.com/200x120?text=${name}" alt="${name}">
+            <img src="https://upload.wikimedia.org/wikipedia/commons/3/38/Arduino_Uno_-_R3.jpg" alt="${name}">
             <p>${name}</p>
           </div>`).join("")}
       </div>
