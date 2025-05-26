@@ -21,11 +21,11 @@ document.getElementById('signin-form').addEventListener('submit', function(e) {
     if(validUser) {
       console.log('User role is:', validUser.role);
       // For example, you could redirect differently based on role
-      window.location.href = 'dashboard.html';
+      window.location.href = 'TeacherDashboard.html';
     } else {
       document.getElementById('message').textContent = u.username;
       setTimeout(function(){
-        window.location.href = 'dashboard.html';
+        window.location.href = 'Studentdashboard.html';
       },2000);
     }
   })
