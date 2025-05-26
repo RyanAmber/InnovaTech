@@ -1,18 +1,13 @@
 document.getElementById('loginForm').addEventListener('submit', function (e) {
   e.preventDefault();
-  const formData = new URLSearchParams();
-  formData.append('name', document.getElementById('username').value);
-  formData.append('password', document.getElementById('password').value);
 
-  fetch('/submit', {
-    method: 'POST',
-    headers: { 'Content-Type': 'application/x-www-form-urlencoded' },
-    body: formData
-  }).then(res => {
-    if (res.redirected) {
-      window.location.href = res.url;
-    } else {
-      alert('Login failed');
-    }
-  });
+  const username = document.getElementById('username').value;
+  const password = document.getElementById('password').value;
+
+  // Fake login credentials — only for demo purposes
+  if (username === 'admin' && password === 'pass123') {
+    window.location.href = 'dashboard.html';
+  } else {
+    alert('Invalid username or password.');
+  }
 });
