@@ -1,10 +1,19 @@
 import java.util.*;
 import java.io.*;
+import static spark.Spark.*;
 public class MainPage {
     public static void main(String[] args){
-        Scanner s=new Scanner(System.in);
-        Map<String, String[]> users=readUserData();
-        User u=signIn(s, users);
+        statcFiles.location("/public");
+        get("/", (req,res) -> "Home Page");
+
+        post("/submit", (req,res) -> {
+            Scanner s=new Scanner(System.in);
+            Map<String, String[]> users=readUserData();
+            String username= req.queryParams("name");
+            String password= req.queryParams("password");
+            return "Welcome "+username;
+        });
+        /*User u=signIn(s, users);
         System.out.println("Welcome "+u.toString());
         Inventory i=readInventoryData(); 
         if (u instanceof Teacher){
@@ -15,7 +24,7 @@ public class MainPage {
         }
         //Split menus
         //Student or Teacher
-        s.close();
+        s.close();*/
     }
     public static Map<String, String[]> readUserData(){
         Map<String, String[]> users=new HashMap<String,String[]>();
