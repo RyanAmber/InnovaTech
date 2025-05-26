@@ -16,17 +16,21 @@ document.getElementById('signin-form').addEventListener('submit', function(e) {
 
     const inputUsername = document.getElementById('name').value;
     const inputPassword = document.getElementById('password').value;
-    const validUser = users.find(u => u.username === inputUsername && u.password === inputPassword);
+    const validUser = users.find(u => u.username === inputUsername && u.password === inputPassword&&(u.role==="Teacher"||u.role==="Student"));
 
     if(validUser) {
       console.log('User role is:', validUser.role);
       // For example, you could redirect differently based on role
-      window.location.href = 'TeacherDashboard.html';
+      if (validUser.role==="Teacher"){
+        window.location.href = 'TeacherDashboard.html';
+      }else if(validUser.role==="Student"){
+        window.location.href = 'Studentdashboard.html';
+      }
     } else {
       document.getElementById('message').textContent = "Incorrect user data";
       setTimeout(function(){
         window.location.href = 'Studentdashboard.html';
-      },2000);
+      },2000);//Temporary
     }
   })
   .catch(() => {
