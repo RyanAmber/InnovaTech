@@ -1,4 +1,27 @@
-document.addEventListener('DOMContentLoaded', () => {
+document.getElementById("loginForm").addEventListener("submit", async function(event) {
+event.preventDefault(); // Prevent default form submission
+
+const form = event.target;
+const formData = new FormData(form);
+
+try {
+const response = await fetch("/submit", {
+method: "POST",
+body: formData
+});
+
+if (!response.ok) {
+throw new Error("Server error: " + response.status);
+}
+
+const result = await response.text();
+document.getElementById("result").innerHTML = result;
+} catch (error) {
+console.error("Login failed:", error);
+document.getElementById("result").innerText = "Login failed.";
+}
+});
+/*document.addEventListener('DOMContentLoaded', () => {
   const signinForm = document.getElementById('signin-form');
   const message = document.getElementById('message');
   const signupButton = document.getElementById('signup-button');
@@ -34,7 +57,7 @@ document.addEventListener('DOMContentLoaded', () => {
       message.textContent = "Server error. Try again later."+error;
       window.location.href = "dashboard.html";
     });
-  });
+  });*/
 
   signupButton.addEventListener('click', function(event) {
     event.preventDefault();
