@@ -5,7 +5,7 @@ const form = event.target;
 const formData = new FormData(form);
 
 try {
-const response = await fetch("/submit", {
+const response = await fetch(form.action, {
 method: "POST",
 body: formData
 });
@@ -13,7 +13,10 @@ body: formData
 if (!response.ok) {
 throw new Error("Server error: " + response.status);
 }
-
+if (response.redirected){
+  window.location.href=response.url;
+  return;
+}
 const result = await response.text();
 document.getElementById("result").innerHTML = result;
 } catch (error) {
