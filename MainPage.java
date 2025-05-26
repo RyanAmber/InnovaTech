@@ -3,8 +3,10 @@ import java.io.*;
 import static spark.Spark.*;
 public class MainPage {
     public static void main(String[] args){
+        int port=Integer.parseInt(System.getenv().getOrDefault("PORT","4567"));
+        Spark.port(port);
         statcFiles.location("/public");
-        get("/", (req,res) -> "Home Page");
+        get("/dashboard", (req,res) -> "Home Page");
 
         post("/submit", (req,res) -> {
             //return "Testing";
@@ -12,7 +14,7 @@ public class MainPage {
             Map<String, String[]> users=readUserData();
             String username= req.queryParams("name");
             String password= req.queryParams("password");
-            //res.redirect("/dashboard");
+            res.redirect("/dashboard.html");
             return null;
         });
         /*User u=signIn(s, users);
