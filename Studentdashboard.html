@@ -157,63 +157,54 @@
   
   <div class="container">
     <div class="left">
-      <div class="gallery">
-        <!-- Sample component cards -->
-        <div class="card" onclick="openModal()">
-          <img src="https://upload.wikimedia.org/wikipedia/commons/thumb/5/56/Resistor.jpg/200px-Resistor.jpg" alt="Resistor">
-          <div>Resistor</div>
+      <div class="grid">
+        <!-- 9 Cards -->
+        ${["Resistor", "Capacitor", "LED", "Transistor", "Arduino", "Breadboard", "Push Button", "Potentiometer", "Diode"]
+          .map(name => `
+          <div class="card" onclick="openModal()">
+            <img src="https://via.placeholder.com/200x120?text=${name}" alt="${name}">
+            <p>${name}</p>
+          </div>`).join("")}
+      </div>
+    </div>
+    
+    <div class="right">
+      <div class="notifications">
+        <h2>Notifications</h2>
+        <div class="notif">
+          <div class="notif-time">10<br>min</div>
+          <div class="notif-text"><strong>Join Request</strong><br>'191966' requested to join classroom.</div>
         </div>
-        <div class="card" onclick="openModal()">
-          <img src="https://upload.wikimedia.org/wikipedia/commons/thumb/4/4b/Capacitor.jpg/200px-Capacitor.jpg" alt="Capacitor">
-          <div>Capacitor</div>
-        </div>
-        <div class="card" onclick="openModal()">
-          <img src="https://upload.wikimedia.org/wikipedia/commons/thumb/e/e0/LED_0603.jpg/200px-LED_0603.jpg" alt="LED">
-          <div>LED</div>
-        </div>
-        <div class="card" onclick="openModal()">
-          <img src="https://upload.wikimedia.org/wikipedia/commons/thumb/e/e5/Transistor_Bipolar.jpg/200px-Transistor_Bipolar.jpg" alt="Transistor">
-          <div>Transistor</div>
-        </div>
-        <div class="card" onclick="openModal()">
-          <img src="https://commons.wikimedia.org/w/index.php?search=arduino&title=Special:MediaSearch&type=image" alt="Arduino">
-          <div>Arduino</div>
-        </div>
-        <div class="card" onclick="openModal()">
-          <img src="https://upload.wikimedia.org/wikipedia/commons/thumb/7/7e/Breadboard.jpg/200px-Breadboard.jpg" alt="Breadboard">
-          <div>Breadboard</div>
-        </div>
-        <div class="card" onclick="openModal()">
-          <img src="https://upload.wikimedia.org/wikipedia/commons/thumb/f/f4/Pushbutton.jpg/200px-Pushbutton.jpg" alt="Push Button">
-          <div>Push Button</div>
-        </div>
-        <div class="card" onclick="openModal()">
-          <img src="https://upload.wikimedia.org/wikipedia/commons/thumb/9/91/Potentiometer_Rotary.jpg/200px-Potentiometer_Rotary.jpg" alt="Potentiometer">
-          <div>Potentiometer</div>
+        <div class="notif">
+          <div class="notif-time">1D</div>
+          <div class="notif-text"><strong>Quantity Alert</strong><br>‘Arduino Uno’ at only 10% availability.</div>
         </div>
       </div>
     </div>
-      <div class="right">
-      <h2>Notifications</h2>
-      <p>No new notifications at the moment.</p>
-    </div>
   </div>
 
-  <div class="overlay" id="overlay" onclick="closeModal()"></div>
   <div class="modal" id="modal">
-    <span class="close-btn" onclick="closeModal()">&times;</span>
+    <div class="modal-content">
+      <span class="close-btn" onclick="closeModal()">×</span>
+      <p>Component Details Here</p>
+    </div>
   </div>
   
   <script>
     function openModal() {
-      document.getElementById('modal').classList.add('active');
-      document.getElementById('overlay').classList.add('active');
+      document.getElementById('modal').style.display = 'flex';
     }
 
     function closeModal() {
-      document.getElementById('modal').classList.remove('active');
-      document.getElementById('overlay').classList.remove('active');
+      document.getElementById('modal').style.display = 'none';
     }
+
+    window.onclick = function(e) {
+      const modal = document.getElementById('modal');
+      if (e.target === modal) {
+        closeModal();
+      }
+    };
   </script>
 </body>
 </html>
