@@ -19,7 +19,7 @@ document.getElementById('signin-form').addEventListener('submit', function(e) {
     const validUser = users.find(u => u.username === inputUsername && u.password === inputPassword&&(u.role==="Teacher"||u.role==="Student"));
     if(validUser) {
       console.log('User role is:', validUser.role);
-      localStorage.setItem("username", username); 
+      localStorage.setItem("username", inputUsername); 
       if (validUser.role==="Teacher"){
         window.location.href = 'TeacherDashboard.html';
       }else if(validUser.role==="Student"){
