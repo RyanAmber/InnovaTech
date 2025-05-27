@@ -114,7 +114,6 @@
         <img id="modalImage" class="component-img" src="" alt="Component Image">
         <div class="status-bar">
           <div class="status green" style="width: 60%">60%</div>
-          <div class="status yellow" style="width: 25%">25%</div>
           <div class="status red" style="width: 15%">15%</div>
         </div>
       </div>
@@ -136,6 +135,13 @@
   document.getElementById('totalCount').textContent = total;
   document.getElementById('AvailableCount').textContent = total - working;
   document.getElementById('userStatus').textContent = '✔';
+  const greenPercent = total > 0 ? Math.round((working / total) * 100) : 0;
+  const redPercent = total > 0 ? Math.round(((total - working) / total) * 100) : 0;
+
+  const statusBar = document.querySelector('.status-bar');
+  statusBar.innerHTML = `
+  <div class="status green" style="width: ${greenPercent}%">${greenPercent}%</div>
+  <div class="status red" style="width: ${redPercent}%">${redPercent > 0 ? redPercent + '%' : ''}</div>
 }
 
 
