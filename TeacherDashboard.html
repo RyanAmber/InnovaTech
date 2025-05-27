@@ -423,16 +423,20 @@
   <script>
     const username = localStorage.getItem("username") || "Student";
     document.getElementById("usernameHeader").textContent = `Welcome, ${username}`;
-    document.title - `${username}'s Dashboard`;
+    document.title = `${username}'s Dashboard`;
     
     function openModal(name, description, imageUrl) {
-      document.getElementById('modal').style.display = 'flex';
-      document.getElementById('modalTitle').textContent = name;
-      document.getElementById('modalImage').src = imageUrl;
-      document.getElementById('totalCount').textContent = '10';
-      document.getElementById('inUseCount').textContent = '7';
-      document.getElementById('userStatus').textContent = '✔';
-    }
+  const total = countMap.get(name) || 0;
+  const working = workingMap.get(name) || 0;
+
+  document.getElementById('modal').style.display = 'flex';
+  document.getElementById('modalTitle').textContent = name;
+  document.getElementById('modalImage').src = imageUrl;
+  document.getElementById('totalCount').textContent = total;
+  document.getElementById('inUseCount').textContent = total - working;
+  document.getElementById('userStatus').textContent = '✔';
+}
+
 
     function closeModal() {
       document.getElementById('modal').style.display = 'none';
@@ -445,9 +449,9 @@
     const lines = text.split('\n');
     for (const line of lines) {
       const [type,working,team,ID] = line.trim().split(' ');
-      countMap.set(type, countMap.get(type)+1);
-      if(working=='True'){
-        workingMap.set(type, workingMap.get(type)+1;
+      countMap.set(type, (countMap.get(type) || 0) + 1);
+      if (working === 'True') {
+        workingMap.set(type, (workingMap.get(type) || 0) + 1);
       }
     }
     console.log(userMap);
