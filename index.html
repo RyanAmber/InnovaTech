@@ -10,23 +10,21 @@
 <div class="signin-container">
 <h2>Log In</h2>
 
-<form onsubmit="saveUsername(event)">
-  <input type="text" id="usernameInput" required />
-  <button type="submit">Login</button>
+<form onsubmit="handleLogin(event)" id="signin-form">
+  <input type="text" id="name" placeholder="First_Last name" required />
+  <input type="password" id="password" placeholder="ID" required />
+  <button type="submit">Log In</button>
 </form>
-
-<script  src="script.js">
-  function saveUsername(event) {
-    event.preventDefault();
-    const username = document.getElementById("usernameInput").value;
-    localStorage.setItem("username", username);
-    window.location.href = "dashboard.html"; // Redirect to dashboard
-  }
-</script>
-
-
 
 <p id="message"></p>
     <a href="sign-up.html"><button type="signup-button">Sign Up</button></a>
 </div>
 <div id="result"></div>
+<script src="script.js">
+  function handleLogin(event) {
+      event.preventDefault();
+      const username = document.getElementById("usernameInput").value;
+      localStorage.setItem("username", username);
+      window.location.href = "dashboard.html";
+    }
+</script>
