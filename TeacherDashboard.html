@@ -437,11 +437,6 @@
     function closeModal() {
       document.getElementById('modal').style.display = 'none';
     }
-
-    window.onclick = function(e) {
-      const modal = document.getElementById('modal');
-      if (e.target === modal) closeModal();
-    }
     const brokenMap=new Map();
     const countMap=new Map();
     window.onload = function (){
@@ -461,6 +456,10 @@
       };
     });
     }
+    }
+    window.onclick = function(e) {
+      const modal = document.getElementById('modal');
+      if (e.target === modal) closeModal();
     }
   </script>
 </body>
