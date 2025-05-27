@@ -20,7 +20,6 @@ document.getElementById('signin-form').addEventListener('submit', function(e) {
 
     if(validUser) {
       console.log('User role is:', validUser.role);
-      // For example, you could redirect differently based on role
       if (validUser.role==="Teacher"){
         window.location.href = 'TeacherDashboard.html';
       }else if(validUser.role==="Student"){
