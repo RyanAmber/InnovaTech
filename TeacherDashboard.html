@@ -437,9 +437,8 @@
     function closeModal() {
       document.getElementById('modal').style.display = 'none';
     }
-   /* const brokenMap=new Map();
+    const brokenMap=new Map();
     const countMap=new Map();
-    window.onload = function (){
       fetch("InventoyData.txt")
       .then(response => response.text())
         .then(text => {
@@ -456,7 +455,6 @@
       };
     });
     }
-    }*/
     window.onclick = function(e) {
       const modal = document.getElementById('modal');
       if (e.target === modal) closeModal();
