@@ -117,13 +117,8 @@
       display: flex;
       gap: 10px;
       align-items: center;
-      transition: transform 0.2s ease, box-shadow 0.2s ease;
+      transition: transform 0.2s ease-in-out, box-shadow 0.2s ease-in-out;
       cursor: pointer;
-    }
-    
-    .notif-hover {
-      transform: scale(1.05);
-      box-shadow: 0 6px 16px rgba(0, 0, 0, 0.2);
     }
 
     .notif-time {
@@ -140,6 +135,11 @@
     .notif-text {
       flex: 1;
       font-size: 0.9rem;
+    }
+
+    .notif-hover {
+      transform: scale(1.05);
+      box-shadow: 0 6px 16px rgba(0, 0, 0, 0.2);
     }
 
     .bubble-heading {
