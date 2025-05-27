@@ -1,50 +1,414 @@
 <!DOCTYPE html>
 <html lang="en">
 <head>
-<meta charset="UTF-8">
-<title>Teacher Dashboard</title>
-<link rel="stylesheet" href="teacher.css">
-</head>
-<body>
-<div class="container">
-<h1 id="usernameHeader">Welcome, </h1>
-
-<div class="main-content">
-<div class="component-list">
-<h2>Component List</h2>
-<div class="grid">
-<div class="card"><img src="images/arduino.png"><p>Arduino Uno</p></div>
-<div class="card"><img src="images/arduino.png"><p>Arduino Uno</p></div>
-<div class="card"><img src="images/arduino.png"><p>Arduino Uno</p></div>
-<div class="card"><img src="images/arduino.png"><p>Arduino Uno</p></div>
-</div>
-</div>
-
-<div class="navigation">
-<h2>Navigation</h2>
-<button>Manage Classroom</button>
-<button>Add new component</button>
-<button>Remove component</button>
-</div>
-
-<div class="notifications">
-<h2>Notifications</h2>
-<div class="alert">🔔 <strong>Join Request:</strong> '191966' requested to join your classroom.</div>
-<div class="alert">⚠️ <strong>Quantity Alert:</strong> Component 'Arduino Uno' at only 10% availability.</div>
-</div>
-</div>
-</div>
- <script>
-    const username = localStorage.getItem("username");
-    const header = document.getElementById("usernameHeader");
-
-    if (username) {
-      header.textContent = `Welcome, ${username}`;
-      document.title = `${username}'s Dashboard`;
-    }else{
-     window.location.href = "index.html";
+  <meta charset="UTF-8" />
+  <meta name="viewport" content="width=device-width, initial-scale=1.0">
+  <title>Admin Dashboard</title>
+  <link rel="stylesheet" href="teacher.css">
+  <style>
+    /* Global reset and base styles */
+    * {
+      box-sizing: border-box;
     }
-  </script>
 
+    body {
+      margin: 0;
+      font-family: 'Segoe UI', sans-serif;
+      display: flex;
+      flex-direction: column;
+      height: 100vh;
+      background: linear-gradient(135deg, #a770ef, #f95794, #ff9a44);
+      color: #222;
+    }
+
+    /* header */
+    header {
+      padding: 20px;
+      font-size: 2rem;
+      font-weight: bold;
+      color: white;
+    }
+
+    /* layout container */
+    .container {
+      flex: 1;
+      display: flex;
+      position: relative;
+      overflow: hidden;
+      padding: 0 20px 20px 20px;
+    }
+
+    /* left side (component list) */
+    .left {
+      flex: 1;
+      max-width: 50%;
+      padding-right: 20px;
+      display: flex;
+      flex-direction: column;
+      height: calc(100vh - 100px); /* adjusts for header height */
+    } 
+
+    /* component grid */
+    .grid {
+      display: grid;
+      grid-template-columns: repeat(auto-fill, minmax(200px, 1fr));
+      gap: 20px;
+      overflow-y: auto;
+      flex-grow: 1;
+      padding-bottom: 20px;
+    }
+
+    /* individual component card */
+    .card {
+      background-color: white;
+      border-radius: 16px;
+      padding: 12px;
+      box-shadow: 0 4px 10px rgba(0, 0, 0, 0.1);
+      transition: transform 0.2s ease;
+      cursor: pointer;
+      display: flex;
+      flex-direction: column;
+      align-items: center;
+      min-height: 180px;
+    }
+
+    .card:hover {
+      transform: scale(1.05);
+    }
+
+    .card img {
+      width: 100%;
+      aspect-ratio: 3 / 2;
+      object-fit: contain;
+      border-radius: 8px;
+    }
+
+    .card p {
+      margin-top: 10px;
+      font-weight: 500;
+      text-align: center;
+    }
+
+    /* right side (notifications) */
+    .right {
+      width: 320px;
+      margin-left: auto;
+      padding-right: 20px;
+      display: flex;
+      flex-direction: column;
+      align-items: flex-end;
+    }
+
+    .notifications {
+      background: white;
+      border-radius: 24px;
+      padding: 20px;
+      width: 100%;
+      box-shadow: 0 6px 16px rgba(0,0,0,0.15);
+      margin-right: 20px;
+      max-height: calc(100vh - 60px);
+      overflow-y: auto;
+      display: flex;
+      flex-direction: column;
+      gap: 16px;
+    }
+
+    /* notification card */
+    .notif {
+      background-color: #ff9a44;
+      padding: 12px;
+      border-radius: 20px;
+      display: flex;
+      gap: 10px;
+      align-items: center;
+      transition: transform 0.2s ease-in-out, box-shadow 0.2s ease-in-out;
+      will-change: transform;
+    }
+    
+    .notifications h2 {
+      margin-top: 0;
+      font-size: 1.5rem;
+    }
+    
+    .notif-hover {
+      transform: scale(1.05);
+      box-shadow: 0 6px 16px rgba(0, 0, 0, 0.25);
+    }
+
+    .notif-time {
+      background-color: white;
+      padding: 6px 12px;
+      border-radius: 12px;
+      font-size: 0.8rem;
+      font-weight: bold;
+      width: 50px;
+      text-align: center;
+      flex-shrink: 0;
+    }
+
+    .notif-text {
+      flex: 1;
+      font-size: 0.9rem;
+    }
+
+    /* bubbly headings */
+    .bubble-heading {
+      background-color: white;
+      padding: 12px 24px;
+      border-radius: 32px;
+      font-size: 1.2rem;
+      font-weight: 600;
+      display: inline-block;
+      margin-bottom: 20px;
+      box-shadow: 0 4px 10px rgba(0,0,0,0.1);
+    }
+
+    /* Modal stuff */
+    .modal {
+      position: fixed;
+      top: 0; left: 0;
+      width: 100vw;
+      height: 100vh;
+      display: none; /* <--- hidden by default */
+      justify-content: center;
+      align-items: center;
+      background: rgba(0, 0, 0, 0.5);
+      z-index: 1000;
+    }
+
+    .modal-content {
+      background: white;
+      padding: 30px;
+      border-radius: 24px;
+      width: 90%;
+      max-width: 800px;
+      display: flex;
+      flex-direction: row;
+      gap: 30px;
+      position: relative;
+    }
+
+    .modal-left {
+      flex: 1;
+      display: flex;
+      flex-direction: column;
+      gap: 20px;
+    }
+
+    .modal-right {
+      flex: 1;
+      display: flex;
+      flex-direction: column;
+      justify-content: center;
+      align-items: center;
+      gap: 20px;
+    }
+
+    .close-btn {
+      position: absolute;
+      top: 20px;
+      right: 30px;
+      font-size: 30px;
+      font-weight: bold;
+      color: #444;
+      cursor: pointer;
+    }
+
+    .component-name {
+      font-size: 2rem;
+      font-weight: 700;
+      margin-bottom: 10px;
+    }
+
+    .overview-box {
+      background-color: #4069ad;
+      color: white;
+      padding: 16px;
+      border-radius: 8px;
+      width: fit-content;
+    }
+
+    .actions {
+      display: flex;
+      flex-direction: column;
+      gap: 10px;
+    }
+
+    .action-btn {
+      padding: 12px 20px;
+      border: none;
+      border-radius: 20px;
+      background-color: #e0e0e0;
+      font-weight: 600;
+      cursor: pointer;
+    }
+
+    .modal-lower {
+      display: flex;
+      justify-content: space-between;
+      align-items: center;
+      gap: 20px;
+      flex-wrap: wrap;
+    }
+  
+    .component-img {
+      max-width: 300px;
+      height: auto;
+      border-radius: 12px;
+    }
+  
+    .status-bar {
+      display: flex;
+      width: 300px;
+      height: 40px;
+      border-radius: 6px;
+      overflow: hidden;
+      font-weight: bold;
+      text-align: center;
+    }
+  
+    .status {
+      display: flex;
+      align-items: center;
+      justify-content: center;
+      color: black;
+    }
+  
+    .green { background-color: #9be59b; }
+    .yellow { background-color: #fff176; }
+    .red { background-color: #f76e6e; }
+    
+  </style>
+
+</head>
+  
+<body>
+
+  <!-- Header -->
+  <header id="usernameHeader">Welcome, </header>
+  
+  <div class="container">
+    <div class="left">
+      <div class="bubble-heading">Component List</div>
+      <div class="grid">
+        <div class="card" onclick="openModal('Arduino Uno', 'A microcontroller board.', 'https://upload.wikimedia.org/wikipedia/commons/3/38/Arduino_Uno_-_R3.jpg')">
+          <img src="https://upload.wikimedia.org/wikipedia/commons/3/38/Arduino_Uno_-_R3.jpg" alt="Resistor">
+          <p>Resistor</p>
+        </div>
+        <div class="card" onclick="openModal('Capacitor', 'Description.', 'https://upload.wikimedia.org/wikipedia/commons/3/38/Arduino_Uno_-_R3.jpg')">
+          <img src="https://upload.wikimedia.org/wikipedia/commons/3/38/Arduino_Uno_-_R3.jpg" alt="Capacitor">
+          <p>Capacitor</p>
+        </div>
+        <div class="card" onclick="openModal('LED', 'Description.', 'https://upload.wikimedia.org/wikipedia/commons/3/38/Arduino_Uno_-_R3.jpg')">
+          <img src="https://upload.wikimedia.org/wikipedia/commons/3/38/Arduino_Uno_-_R3.jpg" alt="LED">
+          <p>LED</p>
+        </div>
+        <div class="card" onclick="openModal('Transistor', 'Description.', 'https://upload.wikimedia.org/wikipedia/commons/3/38/Arduino_Uno_-_R3.jpg')">
+          <img src="https://upload.wikimedia.org/wikipedia/commons/3/38/Arduino_Uno_-_R3.jpg" alt="Transistor">
+          <p>Transistor</p>
+        </div>
+        <div class="card" onclick="openModal('Arduino', 'Description.', 'https://upload.wikimedia.org/wikipedia/commons/3/38/Arduino_Uno_-_R3.jpg')">
+          <img src="https://upload.wikimedia.org/wikipedia/commons/3/38/Arduino_Uno_-_R3.jpg" alt="Arduino">
+          <p>Arduino</p>
+        </div>
+        <div class="card" onclick="openModal('Breadboard', 'Description.', 'https://upload.wikimedia.org/wikipedia/commons/3/38/Arduino_Uno_-_R3.jpg')">
+          <img src="https://upload.wikimedia.org/wikipedia/commons/3/38/Arduino_Uno_-_R3.jpg" alt="Breadboard">
+          <p>Breadboard</p>
+        </div>
+        <div class="card" onclick="openModal('Push Button', 'Description.', 'https://upload.wikimedia.org/wikipedia/commons/3/38/Arduino_Uno_-_R3.jpg')">
+          <img src="https://upload.wikimedia.org/wikipedia/commons/3/38/Arduino_Uno_-_R3.jpg" alt="Push Button">
+          <p>Push Button</p>
+        </div>
+        <div class="card" onclick="openModal('Potentiometer', 'Description.', 'https://upload.wikimedia.org/wikipedia/commons/3/38/Arduino_Uno_-_R3.jpg')">
+          <img src="https://upload.wikimedia.org/wikipedia/commons/3/38/Arduino_Uno_-_R3.jpg" alt="Potentiometer">
+          <p>Potentiometer</p>
+        </div>
+        <div class="card" onclick="openModal('Diode', 'Description.', 'https://upload.wikimedia.org/wikipedia/commons/3/38/Arduino_Uno_-_R3.jpg')">
+          <img src="https://upload.wikimedia.org/wikipedia/commons/3/38/Arduino_Uno_-_R3.jpg" alt="Diode">
+          <p>Diode</p>
+        </div>
+      </div>
+    </div>
+    
+    <div class="right">
+      <div class="notifications-wrapper">
+        <div class="bubble-heading">Notifications</div>
+        <div class="notifications">
+        <div class="notif">
+          <div class="notif-time">10<br>min</div>
+          <div class="notif-text"><strong>Join Request</strong><br>'191966' requested to join classroom.</div>
+        </div>
+        <div class="notif">
+          <div class="notif-time">1<br>D</div>
+          <div class="notif-text"><strong>Quantity Alert</strong><br>‘Arduino Uno’ at only 10% availability.</div>
+        </div>
+        <div class="notif">
+          <div class="notif-time">35<br>min</div>
+          <div class="notif-text"><strong>Join Request</strong><br>‘123456’ requested to join classroom.</div>
+        </div>
+        </div>
+      </div>
+    </div>
+  </div>
+
+  <div class="modal" id="modal">
+    <div class="modal-content">
+      <span class="close-btn" onclick="closeModal()">&times;</span>
+  
+      <!-- LEFT SIDE: text content -->
+      <div class="modal-left">
+        <h2 id="modalTitle" class="component-name">Component_Name</h2>
+  
+        <h3>Component Overview</h3>
+        <div class="overview-box">
+          <p>Number logged in: <span id="totalCount">X</span></p>
+          <p>Number in use: <span id="inUseCount">X</span></p>
+          <p>Your component: <span id="userStatus">X</span></p>
+        </div>
+  
+        <h3>Actions</h3>
+        <div class="actions">
+          <button class="action-btn">Check out Component</button>
+          <button class="action-btn">Mark as damaged or broken</button>
+          <button class="action-btn">Return Component</button>
+        </div>
+      </div>
+  
+      <!-- RIGHT SIDE: image and bar -->
+      <div class="modal-right">
+        <img id="modalImage" class="component-img" src="" alt="Component Image">
+        <div class="status-bar">
+          <div class="status green" style="width: 60%">60%</div>
+          <div class="status yellow" style="width: 25%">25%</div>
+          <div class="status red" style="width: 15%">15%</div>
+        </div>
+      </div>
+    </div>
+  </div>
+
+  <script>
+    const username = localStorage.getItem("username") || "Student";
+    document.getElementById("usernameHeader").textContent = `Welcome, ${username}`;
+    document.title - `${username}'s Dashboard`;
+    
+    function openModal(name, description, imageUrl) {
+      document.getElementById('modal').style.display = 'flex';
+      document.getElementById('modalTitle').textContent = name;
+      document.getElementById('modalImage').src = imageUrl;
+      document.getElementById('totalCount').textContent = '10';
+      document.getElementById('inUseCount').textContent = '7';
+      document.getElementById('userStatus').textContent = '✔';
+    }
+
+    function closeModal() {
+      document.getElementById('modal').style.display = 'none';
+    }
+
+    window.onclick = function(e) {
+      const modal = document.getElementById('modal');
+      if (e.target === modal) closeModal();
+    }
+    
+  </script>
 </body>
 </html>
