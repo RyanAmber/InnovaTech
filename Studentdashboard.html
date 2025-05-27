@@ -128,6 +128,17 @@
       font-size: 0.9rem;
     }
 
+    .bubble-heading {
+      background-color: white;
+      padding: 12px 24px;
+      border-radius: 32px;
+      font-size: 1.2rem;
+      font-weight: 600;
+      display: inline-black;
+      margin-bottom: 20px;
+      box-shadow: 0 4px 10px rgba(0,0,0,0.1);
+    }
+
     /* Modal styles */
     .modal {
       position: fixed;
@@ -166,6 +177,7 @@
   
   <div class="container">
     <div class="left">
+      <div class="bubble-heading">Component List</div>
       <div class="grid">
         <div class="card" onclick="openModal()">
           <img src="https://upload.wikimedia.org/wikipedia/commons/3/38/Arduino_Uno_-_R3.jpg" alt="Resistor">
@@ -208,7 +220,7 @@
     
     <div class="right">
       <div class="notifications">
-        <h2>Notifications</h2>
+        <div class="bubble-heading">Notifications</div>
         <div class="notif">
           <div class="notif-time">10<br>min</div>
           <div class="notif-text"><strong>Join Request</strong><br>'191966' requested to join classroom.</div>
