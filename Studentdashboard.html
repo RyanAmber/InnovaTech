@@ -4,7 +4,9 @@
   <meta charset="UTF-8" />
   <meta name="viewport" content="width=device-width, initial-scale=1.0">
   <title>Student Dashboard</title>
+  
   <style>
+    /* Global reset and base styles */
     * {
       box-sizing: border-box;
     }
@@ -19,6 +21,7 @@
       color: #222;
     }
 
+    /* header */
     header {
       padding: 20px;
       font-size: 2rem;
@@ -26,6 +29,7 @@
       color: white;
     }
 
+    /* layout container */
     .container {
       flex: 1;
       display: flex;
@@ -34,15 +38,17 @@
       padding: 0 20px 20px 20px;
     }
 
+    /* left side (component list) */
     .left {
       flex: 1;
       max-width: 50%;
       padding-right: 20px;
       display: flex;
       flex-direction: column;
-      height: calc(100vh - 100px);
-    }
+      height: calc(100vh - 100px); /* adjusts for header height */
+    } 
 
+    /* component grid */
     .grid {
       display: grid;
       grid-template-columns: repeat(auto-fill, minmax(200px, 1fr));
@@ -52,6 +58,7 @@
       padding-bottom: 20px;
     }
 
+    /* individual component card */
     .card {
       background-color: white;
       border-radius: 16px;
@@ -81,7 +88,8 @@
       font-weight: 500;
       text-align: center;
     }
-    
+
+    /* right side (notifications) */
     .right {
       width: 320px;
       margin-left: auto;
@@ -110,6 +118,7 @@
       font-size: 1.5rem;
     }
 
+    /* notification card */
     .notif {
       background-color: #ff9a44;
       padding: 12px;
@@ -119,6 +128,11 @@
       align-items: center;
       transition: transform 0.2s ease-in-out, box-shadow 0.2s ease-in-out;
       will-change: transform;
+    }
+
+    .notif-hover {
+      transform: scale(1.05);
+      box-shadow: 0 6px 16px rgba(0, 0, 0, 0.25);
     }
 
     .notif-time {
@@ -137,11 +151,7 @@
       font-size: 0.9rem;
     }
 
-    .notif-hover {
-      transform: scale(1.05);
-      box-shadow: 0 6px 16px rgba(0, 0, 0, 0.25);
-    }
-
+    /* bubbly headings */
     .bubble-heading {
       background-color: white;
       padding: 12px 24px;
@@ -184,7 +194,10 @@
   </style>
 
 </head>
+  
 <body>
+
+  <!-- Header -->
   <h1 id="usernameHeader">Welcome, </h1>
   
   <div class="container">
