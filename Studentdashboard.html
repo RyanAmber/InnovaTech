@@ -183,7 +183,24 @@
       width: 90%;
       max-width: 800px;
       display: flex;
+      flex-direction: row;
+      gap: 30px;
+      position: relative;
+    }
+
+    .modal-left {
+      flex: 1;
+      display: flex;
       flex-direction: column;
+      gap: 20px;
+    }
+
+    .modal-right {
+      flex: 1;
+      display: flex;
+      flex-direction: column;
+      justify-content: center;
+      align-items: center;
       gap: 20px;
     }
 
@@ -193,7 +210,7 @@
       right: 30px;
       font-size: 30px;
       font-weight: bold;
-      color: #888;
+      color: #444;
       cursor: pointer;
     }
 
@@ -338,23 +355,27 @@
     <div class="modal-content">
       <span class="close-btn" onclick="closeModal()">&times;</span>
   
-      <h2 id="modalTitle" class="component-name">Component_Name</h2>
+      <!-- LEFT SIDE: text content -->
+      <div class="modal-left">
+        <h2 id="modalTitle" class="component-name">Component_Name</h2>
   
-      <h3>Component Overview</h3>
-      <div class="overview-box">
-        <p>Number logged in: <span id="totalCount">X</span></p>
-        <p>Number in use: <span id="inUseCount">X</span></p>
-        <p>Your component: <span id="userStatus">X</span></p>
+        <h3>Component Overview</h3>
+        <div class="overview-box">
+          <p>Number logged in: <span id="totalCount">X</span></p>
+          <p>Number in use: <span id="inUseCount">X</span></p>
+          <p>Your component: <span id="userStatus">X</span></p>
+        </div>
+  
+        <h3>Actions</h3>
+        <div class="actions">
+          <button class="action-btn">Check out Component</button>
+          <button class="action-btn">Mark as damaged or broken</button>
+          <button class="action-btn">Return Component</button>
+        </div>
       </div>
   
-      <h3>Actions</h3>
-      <div class="actions">
-        <button class="action-btn">Check out Component</button>
-        <button class="action-btn">Mark as damaged or broken</button>
-        <button class="action-btn">Return Component</button>
-      </div>
-  
-      <div class="modal-lower">
+      <!-- RIGHT SIDE: image and bar -->
+      <div class="modal-right">
         <img id="modalImage" class="component-img" src="" alt="Component Image">
         <div class="status-bar">
           <div class="status green" style="width: 60%">60%</div>
@@ -364,7 +385,7 @@
       </div>
     </div>
   </div>
-  
+
   <script>
     const username = localStorage.getItem("username") || "Student";
     document.getElementById("usernameHeader").textContent = `Welcome, ${username}`;
