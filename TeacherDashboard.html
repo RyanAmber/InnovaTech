@@ -437,24 +437,24 @@
     function closeModal() {
       document.getElementById('modal').style.display = 'none';
     }
-    const brokenMap=new Map();
-    const countMap=new Map();
-      fetch("InventoyData.txt")
-      .then(response => response.text())
-        .then(text => {
-          const lines = text.split('\n').map(line => line.trim()).filter(Boolean);
-          const users = lines.map(line => {
-            const parts = line.split(' ');
-            brokenMap.set(parts[0],brokenMap.get(parts[0])+(Boolean.parseBoolean(parts[2])?1:0));
-            countMap.set(parts[0],brokenMap.get(parts[0])+1);
-            return {
-            type: parts[0],
-            working: parts[1],
-            group: parts[2],
-            ID: parts[3]
-      };
-    });
+    const workingMap=new Map();
+    const countMap = new Map();
+  fetch('https://raw.githubusercontent.com/RyanAmber/InnovaTech/refs/heads/main/InventoryData.txt')
+  .then(response => response.text())
+  .then(text => {
+    const lines = text.split('\n');
+    for (const line of lines) {
+      const [type,working,team,ID] = line.trim().split(' ');
+      countMap.set(type, countMap.get(type)+1);
+      if(working=='True'){
+        workingMap.set(type, workingMap.get(type)+1;
+      }
     }
+    console.log(userMap);
+    console.log(workingMap);
+  })
+  .catch(error => console.error('Error loading file:', error));
+
     window.onclick = function(e) {
       const modal = document.getElementById('modal');
       if (e.target === modal) closeModal();
