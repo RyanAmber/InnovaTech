@@ -112,11 +112,6 @@
       flex-direction: column;
       gap: 16px;
     }
-    
-    .notifications h2 {
-      margin-top: 0;
-      font-size: 1.5rem;
-    }
 
     /* notification card */
     .notif {
@@ -129,7 +124,12 @@
       transition: transform 0.2s ease-in-out, box-shadow 0.2s ease-in-out;
       will-change: transform;
     }
-
+    
+    .notifications h2 {
+      margin-top: 0;
+      font-size: 1.5rem;
+    }
+    
     .notif-hover {
       transform: scale(1.05);
       box-shadow: 0 6px 16px rgba(0, 0, 0, 0.25);
@@ -185,6 +185,16 @@
       display: flex;
       flex-direction: column;
       gap: 20px;
+    }
+
+    .close-btn {
+      position: absolute;
+      top: 20px;
+      right: 30px;
+      font-size: 30px;
+      font-weight: bold;
+      color: #888;
+      cursor: pointer;
     }
 
     .component-name {
@@ -354,49 +364,12 @@
       </div>
     </div>
   </div>
-
-  <span class="close-btn" onclick="closeModal()">&times;</span>
-
-  <!-- Title: Component Name -->
-  <h2 id="modalTitle" class="component-name">Component_Name</h2>
-
-  <!-- Overview Section -->
-  <h3>Component Overview</h3>
-  <div class="overview-box">
-    <p>Number logged in: <span id="totalCount">X</span></p>
-    <p>Number in use: <span id="inUseCount">X</span></p>
-    <p>Your component: <span id="userStatus">X</span></p>
-  </div>
-
-  <!-- Actions Section -->
-  <h3>Actions</h3>
-  <div class="actions">
-    <button class="action-btn">Check out Component</button>
-    <button class="action-btn">Mark as damaged or broken</button>
-    <button class="action-btn">Return Component</button>
-  </div>
-
-  <!-- Image and Status Bar -->
-  <div class="modal-lower">
-    <img id="modalImage" class="component-img" src="" alt="Component Image">
-
-    <!-- Availability Bar -->
-    <div class="status-bar">
-      <div class="status green" style="width: 60%">60%</div>
-      <div class="status yellow" style="width: 25%">25%</div>
-      <div class="status red" style="width: 15%">15%</div>
-    </div>
-  </div>
-</div>
   
   <script>
     const username = localStorage.getItem("username") || "Student";
-    const header = document.getElementById("usernameHeader");
-
-    if (username) {
-      header.textContent = `Welcome, ${username}`;
-      document.title = `${username}'s Dashboard`;
-    }
+    document.getElementById("usernameHeader").textContent = `Welcome, ${username}`;
+    document.title - `${username}'s Dashboard`;
+    
     function openModal(name, description, imageUrl) {
       document.getElementById('modal').style.display = 'flex';
       document.getElementById('modalTitle').textContent = name;
@@ -412,10 +385,9 @@
 
     window.onclick = function(e) {
       const modal = document.getElementById('modal');
-      if (e.target === modal) {
-        closeModal();
-      }
-    };
+      if (e.target === modal) closeModal();
+    }
+    
   </script>
 </body>
 </html>
