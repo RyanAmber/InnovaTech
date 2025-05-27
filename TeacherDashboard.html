@@ -34,16 +34,19 @@
 </div>
 </div>
 </div>
-<script>
-  const username = localStorage.getItem("username");
-  const header = document.getElementById("usernameHeader");
+ <script>
+    const username = localStorage.getItem("username");
+    const header = document.getElementById("usernameHeader");
 
-  if (username) {
-    header.textContent = `Welcome, ${username}`;
-  }else{
-    window.location.href = "index.html";
-  }
-</script>
+    if (username) {
+      header.textContent = `Welcome, ${username}`;
+      document.title = `${username}'s Dashboard`;
+    } else {
+      setTimeout(() => {
+        window.location.href = "index.html";
+      }, 100);
+    }
+  </script>
 
 </body>
 </html>
