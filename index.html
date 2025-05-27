@@ -23,7 +23,7 @@
 <script src="script.js">
   function handleLogin(event) {
       event.preventDefault();
-      const username = document.getElementById("usernameInput").value;
+      const username = document.getElementById("name").value;
       localStorage.setItem("username", username);
       window.location.href = "dashboard.html";
     }
