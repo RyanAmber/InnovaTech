@@ -97,7 +97,7 @@
         <h3>Component Overview</h3>
         <div class="overview-box">
           <p>Number logged in: <span id="totalCount">X</span></p>
-          <p>Number in use: <span id="inUseCount">X</span></p>
+          <p>Number in use: <span id="AvailableCount">X</span></p>
           <p>Your component: <span id="userStatus">X</span></p>
         </div>
   
@@ -151,7 +151,7 @@
     for (const line of lines) {
       const [type,working,team,ID] = line.trim().split(',');
       countMap.set(type, (countMap.get(type) || 0) + 1);
-      if (working === 'True') {
+      if (working == 'True'&&team=='0') {
         workingMap.set(type, (workingMap.get(type) || 0) + 1);
       }
     }
