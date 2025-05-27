@@ -319,7 +319,7 @@
       <div class="grid">
         <div class="card" onclick="openModal('Arduino', 'A microcontroller board.', 'https://upload.wikimedia.org/wikipedia/commons/3/38/Arduino_Uno_-_R3.jpg')">
           <img src="https://upload.wikimedia.org/wikipedia/commons/3/38/Arduino_Uno_-_R3.jpg" alt="Arduino">
-          <p>Resistor</p>
+          <p>Arduino</p>
         </div>
         <div class="card" onclick="openModal('Capacitor', 'Description.', 'https://upload.wikimedia.org/wikipedia/commons/3/38/Arduino_Uno_-_R3.jpg')">
           <img src="https://upload.wikimedia.org/wikipedia/commons/3/38/Arduino_Uno_-_R3.jpg" alt="Capacitor">
@@ -333,9 +333,9 @@
           <img src="https://upload.wikimedia.org/wikipedia/commons/3/38/Arduino_Uno_-_R3.jpg" alt="Transistor">
           <p>Transistor</p>
         </div>
-        <div class="card" onclick="openModal('RaspberryPi', 'Description.', 'https://upload.wikimedia.org/wikipedia/commons/3/38/Arduino_Uno_-_R3.jpg')">
+        <div class="card" onclick="openModal('Raspberry Pi', 'Description.', 'https://upload.wikimedia.org/wikipedia/commons/3/38/Arduino_Uno_-_R3.jpg')">
           <img src="https://upload.wikimedia.org/wikipedia/commons/3/38/Arduino_Uno_-_R3.jpg" alt="Raspberry Pi">
-          <p>Arduino</p>
+          <p>Raspberry Pi</p>
         </div>
         <div class="card" onclick="openModal('Breadboard', 'Description.', 'https://upload.wikimedia.org/wikipedia/commons/3/38/Arduino_Uno_-_R3.jpg')">
           <img src="https://upload.wikimedia.org/wikipedia/commons/3/38/Arduino_Uno_-_R3.jpg" alt="Breadboard">
@@ -448,7 +448,7 @@
   .then(text => {
     const lines = text.split('\n');
     for (const line of lines) {
-      const [type,working,team,ID] = line.trim().split(' ');
+      const [type,working,team,ID] = line.trim().split(',');
       countMap.set(type, (countMap.get(type) || 0) + 1);
       if (working === 'True') {
         workingMap.set(type, (workingMap.get(type) || 0) + 1);
