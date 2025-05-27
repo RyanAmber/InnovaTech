@@ -185,9 +185,7 @@
 
 </head>
 <body>
-  <header>
-    Welcome, student_name.
-  </header>
+  <h1 id="usernameHeader">Welcome, </h1>
   
   <div class="container">
     <div class="left">
@@ -261,6 +259,13 @@
   </div>
   
   <script>
+    const username = localStorage.getItem("username");
+    const header = document.getElementById("usernameHeader");
+
+    if (username) {
+      header.textContent = `Welcome, ${username}`;
+      document.title = `${username}'s Dashboard`;
+    }
     function openModal() {
       document.getElementById('modal').style.display = 'flex';
     }
