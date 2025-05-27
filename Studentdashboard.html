@@ -38,13 +38,17 @@
       flex: 1;
       max-width: 50%;
       padding-right: 20px;
-      overflow-y: auto;
+      display: flex;
+      flex-direction: column;
     }
 
     .grid {
       display: grid;
       grid-template-columns: repeat(auto-fill, minmax(200px, 1fr));
       gap: 20px;
+      overflow-y: auto;
+      max-height: calc(100vh - 140 px);
+      padding-right: 10px /* space for scrolling bar*/
     }
 
     .card {
