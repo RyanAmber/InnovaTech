@@ -117,7 +117,7 @@
   <script>
     const username = localStorage.getItem("username") || "Student";
     document.getElementById("usernameHeader").textContent = `Welcome, ${username}`;
-    document.title - `${username}'s Dashboard`;
+    document.title = `${username}'s Dashboard`;
     
     function openModal(name, description, imageUrl) {
      const total = countMap.get(name) || 0;
