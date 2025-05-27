@@ -198,7 +198,7 @@
 <body>
 
   <!-- Header -->
-  <h1 id="usernameHeader">Welcome, </h1>
+  <header id="usernameHeader">Welcome, </header>
   
   <div class="container">
     <div class="left">
@@ -272,7 +272,7 @@
   </div>
   
   <script>
-    const username = localStorage.getItem("username");
+    const username = localStorage.getItem("username") || "Student";
     const header = document.getElementById("usernameHeader");
 
     if (username) {
