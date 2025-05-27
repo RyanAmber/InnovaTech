@@ -24,14 +24,12 @@ document.getElementById('signin-form').addEventListener('submit', function(e) {
         window.location.href = 'TeacherDashboard.html';
       }else if(validUser.role==="Student"){
         window.location.href = 'Studentdashboard.html';
-      }else{
-         window.location.href = 'Studentdashboard.html';
       }
     } else {
       document.getElementById('message').textContent = "Incorrect user data";
-      setTimeout(function(){
-        window.location.href = 'Studentdashboard.html';
-      },2000);//Temporary
+      //setTimeout(function(){
+      //  window.location.href = 'Studentdashboard.html';
+      //},2000);//Temporary
     }
   })
   .catch(() => {
