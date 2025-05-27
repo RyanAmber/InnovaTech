@@ -40,7 +40,7 @@
       padding-right: 20px;
       display: flex;
       flex-direction: column;
-      height: calc(100vh - 80px);
+      height: calc(100vh - 100px);
     }
 
     .grid {
@@ -50,8 +50,7 @@
       overflow-y: auto;
       flex-grow: 1;
       padding-right: 10px; /* space for scrolling bar*/
-      margin-bottom: 24px;
-      max-height: calc(100vh - 220px);
+      padding-bottom: 20px;
     }
 
     .card {
@@ -96,7 +95,7 @@
     .notifications {
       background: white;
       border-radius: 24px;
-      padding: 24px 20px;
+      padding: 20px;
       width: 100%;
       box-shadow: 0 6px 16px rgba(0,0,0,0.15);
       margin-right: 20px;
@@ -104,7 +103,7 @@
       overflow-y: auto;
       display: flex;
       flex-direction: column;
-      gap: 12px;
+      gap: 16px;
     }
     
     .notifications h2 {
@@ -114,7 +113,6 @@
 
     .notif {
       background-color: #ff9a44;
-      margin-top: 10px;
       padding: 12px;
       border-radius: 20px;
       display: flex;
@@ -122,6 +120,11 @@
       align-items: center;
       transition: transform 0.2s ease, box-shadow 0.2s ease;
       cursor: pointer;
+    }
+    
+    .notif-hover {
+      transform: scale(1.05);
+      box-shadow: 0 6px 16px rgba(0, 0, 0, 0.2);
     }
 
     .notif-time {
@@ -138,11 +141,6 @@
     .notif-text {
       flex: 1;
       font-size: 0.9rem;
-    }
-
-    .notif-hover {
-      transform: scale(1.05);
-      box-shadow: 0 4px 12px rgba(0, 0, 0, 0.2);
     }
 
     .bubble-heading {
