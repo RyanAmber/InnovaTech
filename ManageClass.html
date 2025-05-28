@@ -10,6 +10,19 @@
 <div class="container">
   <a href="TeacherDashboard.html"><button type="button">Back to Dashboard</button></a>
 </div>
-<script src="script.js"></script>
+<script>
+  const groups=new Map();
+  fetch('https://raw.githubusercontent.com/RyanAmber/InnovaTech/refs/heads/main/ClassData.txt')
+  .then(response => response.text())
+  .then(text => {
+    const lines = text.split('\n');
+    for (const line of lines) {
+      const [group,users] = line.trim().split(':');
+      groups.set(group,users);
+    }
+    console.log(groups);
+  })
+  .catch(error => console.error('Error loading file:', error));
+</script>
 </body>
 </html>
