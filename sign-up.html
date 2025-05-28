@@ -37,27 +37,37 @@
     <a href="index.html"><button type="button">Back to Log In</button></a>
   </div>
 
-  <script>
-document.getElementById("signupForm").addEventListener("submit", async function(e) {
-e.preventDefault();
-const form = new FormData(e.target);
-const userData = {
-username: form.get('username'),
-password: form.get('password'),
-team: form.get('team')
-};
+<script>
+document.getElementById("signup-form").addEventListener("submit", async function(e) {
+  e.preventDefault();
 
-const res = await fetch("http://localhost:5000/signup", {
-method: "POST",
-headers: {
-"Content-Type": "application/json"
-},
-body: JSON.stringify(userData)
+  const form = new FormData(e.target);
+  const userData = {
+    username: form.get('username'),
+    password: form.get('password'),
+    team: form.get('team')
+  };
+
+  try {
+    const res = await fetch("http://localhost:5000/signup", {
+      method: "POST",
+      headers: {
+        "Content-Type": "application/json"
+      },
+      body: JSON.stringify(userData)
+    });
+
+    const result = await res.json();
+
+    alert(result.message);
+    if (result.success) {
+      window.location.href = 'index.html';
+    }
+  } catch (err) {
+    alert("Signup failed. Please try again.");
+  }
 });
-window.location.href = 'index.html';
-const result = await res.json();
-alert(result.message);
-});
-  </script>
+</script>
+
 </body>
 </html>
