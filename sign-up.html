@@ -37,6 +37,27 @@
     <a href="index.html"><button type="button">Back to Log In</button></a>
   </div>
 
-  <script src="script.js"></script>
+  <script>
+document.getElementById("signupForm").addEventListener("submit", async function(e) {
+e.preventDefault();
+const form = new FormData(e.target);
+const userData = {
+username: form.get('username'),
+password: form.get('password'),
+team: form.get('team')
+};
+
+const res = await fetch("http://localhost:5000/signup", {
+method: "POST",
+headers: {
+"Content-Type": "application/json"
+},
+body: JSON.stringify(userData)
+});
+
+const result = await res.json();
+alert(result.message);
+});
+  </script>
 </body>
 </html>
