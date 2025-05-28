@@ -1,9 +1,12 @@
 from flask import Flask, request, jsonify
+from flask_cors import CORS
 
 app = Flask(__name__)
+CORS(app)
+
 USER_FILE = 'UserData.txt'
 
-@app.route('/signup', methods=['POST'])  # <-- Route decorator
+@app.route('/signup', methods=['POST'])
 def signup():
     data = request.get_json()
     username = data.get('username')
@@ -19,3 +22,6 @@ def signup():
         return jsonify({'success': True, 'message': 'User signed up'})
     except Exception as e:
         return jsonify({'success': False, 'message': str(e)}), 500
+
+if __name__ == '__main__':
+    app.run(debug=True)
