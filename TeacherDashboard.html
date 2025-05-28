@@ -140,10 +140,16 @@
   const redPercent = total > 0 ? Math.round(((total - working) / total) * 100) : 0;
 
   const statusBar = document.querySelector('.status-bar');
+  if(greenPercent+redPercent==0){
+    statusBar.innerHTML = `
+    <div class="status yellow" style="width: 100%">100%</div>
+  `;
+  }else{
   statusBar.innerHTML = `
     <div class="status green" style="width: ${greenPercent}%">${greenPercent}%</div>
     <div class="status red" style="width: ${redPercent}%">${redPercent > 0 ? redPercent + '%' : ''}</div>
   `;
+  }
 }
 
 
