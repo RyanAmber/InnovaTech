@@ -134,7 +134,9 @@
 
   const statusBar = document.querySelector('.status-bar');
   if(greenPercent+redPercent==0){
+    statusBar.innerHTML = `
     div class="status yellow" style="width: 100%">100%</div>
+  `;
   }else{
   statusBar.innerHTML = `
     <div class="status green" style="width: ${greenPercent}%">${greenPercent}%</div>
