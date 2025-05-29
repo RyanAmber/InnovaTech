@@ -1,15 +1,61 @@
 <!DOCTYPE html>
 <html lang="en">
 <head>
-<meta charset="UTF-8">
-<meta name="viewport" content="width=device-width, initial-scale=1.0">
-<title>Manage Classroom</title>
-<link rel="stylesheet" href="teacher.css">
+  <meta charset="UTF-8">
+  <meta name="viewport" content="width=device-width, initial-scale=1">
+  <title>Manage Classroom</title>
+  <link rel="stylesheet" href="styles.css">
 </head>
 <body>
-<div class="container">
-  <a href="TeacherDashboard.html"><button type="button">Back to Dashboard</button></a>
-</div>
+  <div class="container">
+    <h1>Manage Classroom</h1>
+    
+    <div class="tabs">
+      <button class="tab active">Overview</button>
+      <button class="tab">Teams</button>
+      <button class="tab">Flagged</button>
+    </div>
+
+    <div class="main-content">
+      
+      <!-- Left Column -->
+      <div class="section">
+        <h2>For approval</h2>
+        <ul class="approval-list">
+          <li><span class="dot green"></span> 191966</li>
+          <li><span class="dot red"></span> spammmm</li>
+          <li><span class="dot green"></span> 192832</li>
+        </ul>
+
+        <h3>Current List</h3>
+        <ul class="current-list">
+          <li>112342</li>
+          <li>321329</li>
+          <li>421312</li>
+          <li>492193</li>
+          <li>184921</li>
+        </ul>
+      </div>
+
+      <!-- Middle Column -->
+      <div class="section teams">
+        <p class="instruction">free for admin to type IDs</p>
+        <div class="id-boxes">
+          <div class="id-box"></div>
+          <div class="id-box"></div>
+          <div class="id-box"></div>
+          <div class="id-box"></div>
+          <div class="id-box"></div>
+          <div class="id-box"></div>
+        </div>
+      </div>
+
+      <!-- Right Column -->
+      <div class="section flagged">
+        <!-- Currently empty -->
+      </div>
+    </div>
+  </div>
 <script>
   const groups=new Map();
   fetch('https://raw.githubusercontent.com/RyanAmber/InnovaTech/refs/heads/main/ClassData.txt')
