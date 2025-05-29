@@ -23,9 +23,9 @@
           <img src="https://upload.wikimedia.org/wikipedia/commons/3/38/Arduino_Uno_-_R3.jpg" alt="Arduino">
           <p>Arduino</p>
         </div>
-        <div class="card" onclick="openModal('Capacitor', 'Description.', 'https://upload.wikimedia.org/wikipedia/commons/3/38/Arduino_Uno_-_R3.jpg')">
-          <img src="https://upload.wikimedia.org/wikipedia/commons/3/38/Arduino_Uno_-_R3.jpg" alt="Capacitor">
-          <p>Capacitor</p>
+        <div class="card" onclick="openModal('Arduino Motor Shield', 'Description.', 'https://upload.wikimedia.org/wikipedia/commons/3/38/Arduino_Uno_-_R3.jpg')">
+          <img src="https://upload.wikimedia.org/wikipedia/commons/3/38/Arduino_Uno_-_R3.jpg" alt="Arduino Motor Shield">
+          <p>Arduino Motor Shield</p>
         </div>
         <div class="card" onclick="openModal('LED', 'Description.', 'https://upload.wikimedia.org/wikipedia/commons/3/38/Arduino_Uno_-_R3.jpg')">
           <img src="https://upload.wikimedia.org/wikipedia/commons/3/38/Arduino_Uno_-_R3.jpg" alt="LED">
@@ -155,6 +155,7 @@
 
     function closeModal() {
       document.getElementById('modal').style.display = 'none';
+      addNotification("Model Closed");
     }
    const workingMap=new Map();
     const countMap = new Map();
