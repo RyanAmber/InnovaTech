@@ -168,6 +168,8 @@
       countMap.set(type, (countMap.get(type) || 0) + 1);
       if (working == 'True'&&team=='0') {
         workingMap.set(type, (workingMap.get(type) || 0) + 1);
+      }else{
+        workingMap.set(type, (workingMap.get(type) || 0));
       }
     }
     for (const [key, value] of countMap) {
