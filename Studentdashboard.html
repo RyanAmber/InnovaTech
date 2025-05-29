@@ -155,7 +155,6 @@
 
     function closeModal() {
       document.getElementById('modal').style.display = 'none';
-      addNotification("Model Closed");
     }
    const workingMap=new Map();
     const countMap = new Map();
@@ -173,7 +172,6 @@
       }
     }
     for (const [key, value] of countMap) {
-      addNotification("Quantity of "+key+" has "+workingMap.get(key)+" working of "+countMap.get(key)+" items.");
       if (value>=workingMap.get(key)*10) {
         addNotification("Quantity Alert: "+key+" is at less than 10% working quantity");
       }
