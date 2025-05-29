@@ -69,6 +69,7 @@
       <div class="notifications-wrapper">
         <div class="bubble-heading">Notifications</div>
         <div class="notifications">
+          <!--
           <div class="notif">
             <div class="notif-time">10<br>min</div>
             <div class="notif-text"><strong>Join Request</strong><br>'191966' requested to join classroom.</div>
@@ -80,7 +81,7 @@
           <div class="notif">
             <div class="notif-time">35<br>min</div>
             <div class="notif-text"><strong>Join Request</strong><br>‘123456’ requested to join classroom.</div>
-          </div>
+          </div>-->
         </div>
       </div>
     </div>
@@ -155,7 +156,14 @@
   }
 }
 
-
+     function addNotification(message) {
+    const bar = document.getElementById('notification-bar');
+    const note = document.createElement('div');
+    note.className = 'notif';
+    note.textContent = message;
+    bar.appendChild(note);
+    bar.style.display = 'block';
+    }
 
     function closeModal() {
       document.getElementById('modal').style.display = 'none';
@@ -171,6 +179,11 @@
       countMap.set(type, (countMap.get(type) || 0) + 1);
       if (working == 'True'&&team=='0') {
         workingMap.set(type, (workingMap.get(type) || 0) + 1);
+      }
+    }
+    for (const [key, value] of countMap) {
+      if (value>=workingMap.get(key)*10&&key!="") {
+        addNotification("Quantity Alert: "+key+" is at less than 10% working quantity");
       }
     }
     console.log(countMap);
