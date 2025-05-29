@@ -27,9 +27,6 @@ document.getElementById('signin-form').addEventListener('submit', function(e) {
       }
     } else {
       document.getElementById('message').textContent = "Incorrect user data";
-      //setTimeout(function(){
-      //  window.location.href = 'Studentdashboard.html';
-      //},2000);//Temporary
     }
   })
   .catch(() => {
