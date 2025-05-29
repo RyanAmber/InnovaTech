@@ -61,8 +61,8 @@
     <div class="right">
       <div class="notifications-wrapper">
         <div class="bubble-heading">Notifications</div>
-        <div class="notifications">
-        <div class="notif">
+        <div id="notification-bar" class="notifications">
+        <!--<div class="notif">
           <div class="notif-time">10<br>min</div>
           <div class="notif-text"><strong>Join Request</strong><br>'191966' requested to join classroom.</div>
         </div>
@@ -73,7 +73,7 @@
         <div class="notif">
           <div class="notif-time">35<br>min</div>
           <div class="notif-text"><strong>Join Request</strong><br>‘123456’ requested to join classroom.</div>
-        </div>
+        </div>-->
         </div>
       </div>
     </div>
@@ -115,6 +115,14 @@
   </div>
 
   <script>
+    function addNotification(message) {
+    const bar = document.getElementById('notification-bar');
+    const note = document.createElement('div');
+    note.className = 'notification';
+    note.textContent = message;
+    bar.appendChild(note);
+    bar.style.display = 'block';
+    }
     const username = localStorage.getItem("username") || "Student";
     document.getElementById("usernameHeader").textContent = `Welcome, ${username}`;
     document.title = `${username}'s Dashboard`;
@@ -147,6 +155,7 @@
 
     function closeModal() {
       document.getElementById('modal').style.display = 'none';
+      addNotification("Model Closed");
     }
    const workingMap=new Map();
     const countMap = new Map();
@@ -165,7 +174,7 @@
     console.log(workingMap);
   })
   .catch(error => console.error('Error loading file:', error));
-
+  
     window.onclick = function(e) {
       const modal = document.getElementById('modal');
       if (e.target === modal) closeModal();
