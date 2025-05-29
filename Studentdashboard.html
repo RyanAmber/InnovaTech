@@ -157,6 +157,7 @@
       document.getElementById('modal').style.display = 'none';
     }
    const workingMap=new Map();
+    const availableMap=new Map();
     const countMap = new Map();
   fetch('https://raw.githubusercontent.com/RyanAmber/InnovaTech/refs/heads/main/InventoryData.txt')
   .then(response => response.text())
@@ -166,6 +167,11 @@
       const [type,working,team,ID] = line.trim().split(',');
       countMap.set(type, (countMap.get(type) || 0) + 1);
       if (working == 'True'&&team=='0') {
+        availableMap.set(type, (availableMap.get(type) || 0) + 1);
+      }else{
+        availableMap.set(type, (availableMap.get(type) || 0));
+      }
+      if (working == 'True') {
         workingMap.set(type, (workingMap.get(type) || 0) + 1);
       }else{
         workingMap.set(type, (workingMap.get(type) || 0));
@@ -175,9 +181,13 @@
       if (value>=workingMap.get(key)*10&&key!="") {
         addNotification("Quantity Alert: "+key+" is at less than 10% working quantity");
       }
+      if (availableMap.get(key)==0) {
+        addNotification("Quantity Alert: "+key+" has no items available to be borrowed");
+      }
     }
     console.log(countMap);
     console.log(workingMap);
+    console.log(availableMap);
   })
   .catch(error => console.error('Error loading file:', error));
   
