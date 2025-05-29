@@ -181,7 +181,7 @@
       if (value>=workingMap.get(key)*10&&key!="") {
         addNotification("Quantity Alert: "+key+" is at less than 10% working quantity");
       }
-      if (availableMap.get(key)==0) {
+      if (availableMap.get(key)==0&&key!="") {
         addNotification("Quantity Alert: "+key+" has no items available to be borrowed");
       }
     }
