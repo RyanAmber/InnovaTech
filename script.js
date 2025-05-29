@@ -1,3 +1,4 @@
+localStorage.clear();
 document.getElementById('signin-form').addEventListener('submit', function(e) {
   e.preventDefault();
 
