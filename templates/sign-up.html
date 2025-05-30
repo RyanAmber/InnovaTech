@@ -1,74 +1,58 @@
-<!--<!DOCTYPE html>
-<html lang="en">
-<head>
-<meta charset="UTF-8">
-<meta name="viewport" content="width=device-width, initial-scale=1.0">
-<title>Sign In</title>
-<link rel="stylesheet" href="style.css">
-</head>
-<body>
-<div class="signin-container">
-<p id="message"></p>
-</div>
-<script src="script.js"></script>
-</body>
-</html> -->
-
 <!DOCTYPE html>
 <html lang="en">
 <head>
-  <meta charset="UTF-8">
-  <meta name="viewport" content="width=device-width, initial-scale=1.0">
+  <meta charset="UTF-8" />
+  <meta name="viewport" content="width=device-width, initial-scale=1.0" />
   <title>Sign Up</title>
-  <!-- templates/sign-up.html -->
-<link rel="stylesheet" href="{{ url_for('static', filename='style.css') }}" />
+  <link rel="stylesheet" href="{{ url_for('static', filename='style.css') }}" />
 </head>
 <body>
   <div class="signin-container">
     <h2>Sign Up</h2>
 
     <form id="signup-form">
-  <input type="text" id="name" name="username" placeholder="Full Name" required />
-  <input type="password" id="password" name="password" placeholder="Password" required />
-  <input type="text" id="team" name="team" placeholder="Team" required />
-  <button type="submit">Create Account</button>
-</form>
-
+      <input type="text" name="username" placeholder="Full Name" required />
+      <input type="password" name="password" placeholder="Password" required />
+      <input type="text" name="team" placeholder="Team" required />
+      <button type="submit">Create Account</button>
+    </form>
 
     <p id="message"></p>
-    <a href="index.html"><button type="button">Back to Log In</button></a>
+    <a href="{{ url_for('login_page') }}">
+      <button type="button">Back to Log In</button>
+    </a>
   </div>
 
-<script>
-document.getElementById("login-form").addEventListener("submit", async function(e) {
-  e.preventDefault();
-  const formData = new FormData(e.target);
-  const data = {
-    username: formData.get("username"),
-    password: formData.get("password"),
-    team: formData.get("team")
-  };
+  <script>
+    document.getElementById("signup-form").addEventListener("submit", async function(e) {
+      e.preventDefault();
 
-  try {
-    const res = await fetch("http://localhost:5000/signup", {
-      method: "POST",
-      headers: {
-        "Content-Type": "application/json"
-      },
-      body: JSON.stringify(userData)
+      const form = new FormData(e.target);
+      const data = {
+        username: form.get("username"),
+        password: form.get("password"),
+        team: form.get("team")
+      };
+
+      try {
+        const res = await fetch("/signup", {
+          method: "POST",
+          headers: {
+            "Content-Type": "application/json"
+          },
+          body: JSON.stringify(data)
+        });
+
+        const result = await res.json();
+        alert(result.message);
+
+        if (result.success) {
+          window.location.href = '/login-page';
+        }
+      } catch (err) {
+        alert("Signup failed. Please try again.");
+      }
     });
-
-    const result = await res.json();
-
-    alert(result.message);
-    if (result.success) {
-      window.location.href = 'index.html';
-    }
-  } catch (err) {
-    alert("Signup failed. Please try again.");
-  }
-});
-</script>
-
+  </script>
 </body>
 </html>
