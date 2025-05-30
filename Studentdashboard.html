@@ -129,13 +129,13 @@
     
     function openModal(name, description, imageUrl) {
      const total = countMap.get(name) || 0;
-  const working = workingMap.get(name) || 0;
+  const working = availableMap.get(name) || 0;
 
   document.getElementById('modal').style.display = 'flex';
   document.getElementById('modalTitle').textContent = name;
   document.getElementById('modalImage').src = imageUrl;
   document.getElementById('totalCount').textContent = total;
-  document.getElementById('AvailableCount').textContent = total - working;
+  document.getElementById('AvailableCount').textContent = working;
   document.getElementById('userStatus').textContent = '✔';
       const greenPercent = total > 0 ? Math.round((working / total) * 100) : 0;
   const redPercent = total > 0 ? Math.round(((total - working) / total) * 100) : 0;
