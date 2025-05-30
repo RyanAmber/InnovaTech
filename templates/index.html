@@ -5,6 +5,27 @@
   <meta name="viewport" content="width=device-width, initial-scale=1.0"/>
   <title>Sign In</title>
   <link rel="stylesheet" href="style.css" />
+
+  <!-- Firebase App (Core SDK) -->
+  <script src="https://www.gstatic.com/firebasejs/10.11.0/firebase-app-compat.js"></script>
+  <!-- Firestore -->
+  <script src="https://www.gstatic.com/firebasejs/10.11.0/firebase-firestore-compat.js"></script>
+
+  <script>
+    const firebaseConfig = {
+  apiKey: "AIzaSyDq7FI-N984HO2M7Q0l25WEoiTBqZvZfHs",
+  authDomain: "innovatech-86917.firebaseapp.com",
+  projectId: "innovatech-86917",
+  storageBucket: "innovatech-86917.firebasestorage.app",
+  messagingSenderId: "222788972248",
+  appId: "1:222788972248:web:d0d5b8968f24b9c00671ad",
+  measurementId: "G-GTX1QPXJ2R"
+};
+
+    // Initialize Firebase
+    firebase.initializeApp(firebaseConfig);
+    const db = firebase.firestore();
+  </script>
 </head>
 <body>
   <div class="signin-container">
@@ -23,8 +44,6 @@
   </div>
 
   <script>
-    const API_URL = "https://sheetdb.io/api/v1/giw1usbvqa0q8";
-
     document.getElementById("signin-form").addEventListener("submit", async function (e) {
       e.preventDefault();
       const form = e.target;
@@ -33,23 +52,18 @@
       const message = document.getElementById("message");
 
       try {
-        const response = await fetch(API_URL);
-        const users = await response.json();
+        const snapshot = await db.collection("users").where("username", "==", username).where("password", "==", password).get();
 
-        const match = users.find(
-          user => user.username === username && user.password === password
-        );
-
-        if (match) {
+        if (!snapshot.empty) {
           message.textContent = "✅ Login successful!";
           message.style.color = "green";
-          // You could redirect or reveal content here
+          // Redirect or reveal protected content here
         } else {
           message.textContent = "❌ Invalid username or password.";
           message.style.color = "red";
         }
       } catch (error) {
-        message.textContent = "⚠️ Error connecting to login database.";
+        message.textContent = "⚠️ Error connecting to Firebase.";
         message.style.color = "orange";
         console.error("Login error:", error);
       }
