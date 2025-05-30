@@ -46,8 +46,6 @@
       const username = e.target.username.value.trim();
       const password = e.target.password.value.trim();
       const message = document.getElementById("message");
-
-      // TODO: Replace 'users' structure with your actual Firebase path
       const userRef = database.ref("users/" + username);
 
       userRef.get().then(snapshot => {
