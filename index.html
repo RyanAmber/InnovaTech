@@ -6,20 +6,23 @@
   <title>Sign In</title>
   <link rel="stylesheet" href="style.css" />
 
+  <!-- Firebase App and Database CDN -->
+  <script src="https://www.gstatic.com/firebasejs/9.22.0/firebase-app-compat.js"></script>
+  <script src="https://www.gstatic.com/firebasejs/9.22.0/firebase-database-compat.js"></script>
+
   <script>
     const firebaseConfig = {
-  apiKey: "AIzaSyDq7FI-N984HO2M7Q0l25WEoiTBqZvZfHs",
-  authDomain: "innovatech-86917.firebaseapp.com",
-  projectId: "innovatech-86917",
-  storageBucket: "innovatech-86917.firebasestorage.app",
-  messagingSenderId: "222788972248",
-  appId: "1:222788972248:web:d0d5b8968f24b9c00671ad",
-  measurementId: "G-GTX1QPXJ2R"
-};
+      apiKey: "AIzaSyDq7FI-N984HO2M7Q0l25WEoiTBqZvZfHs",
+      authDomain: "innovatech-86917.firebaseapp.com",
+      projectId: "innovatech-86917",
+      storageBucket: "innovatech-86917.firebasestorage.app",
+      messagingSenderId: "222788972248",
+      appId: "1:222788972248:web:d0d5b8968f24b9c00671ad",
+      measurementId: "G-GTX1QPXJ2R"
+    };
 
-    import { getDatabase } from "firebase/database";
-
-    const database = getDatabase();
+    firebase.initializeApp(firebaseConfig);
+    const database = firebase.database();
   </script>
 </head>
 <body>
@@ -33,47 +36,33 @@
     </form>
 
     <p id="message"></p>
-    <a href="sign-up.html">
-      <button type="button">Sign Up</button>
-    </a>
+    <button type="button" onclick="location.href='sign-up.html'">Sign Up</button>
   </div>
 
   <script>
-    import { getDatabase, ref, child, get } from "firebase/database";
-
-    const dbRef = ref(getDatabase());
-      get(child(dbRef, `users/${userId}`)).then((snapshot) => {
-        if (snapshot.exists()) {
-          console.log(snapshot.val());
-        } else {
-          console.log("No data available");
-        }
-      }).catch((error) => {
-      console.error(error);
-    });
-    document.getElementById("signin-form").addEventListener("submit", async function (e) {
+    document.getElementById("signin-form").addEventListener("submit", function (e) {
       e.preventDefault();
-      const form = e.target;
-      const username = form.username.value.trim();
-      const password = form.password.value.trim();
+
+      const username = e.target.username.value.trim();
+      const password = e.target.password.value.trim();
       const message = document.getElementById("message");
 
-      try {
-        
+      // TODO: Replace 'users' structure with your actual Firebase path
+      const userRef = database.ref("users/" + username);
 
-        if (true) {
+      userRef.get().then(snapshot => {
+        if (snapshot.exists() && snapshot.val().password === password) {
           message.textContent = "✅ Login successful!";
           message.style.color = "green";
-          // Redirect or reveal protected content here
         } else {
           message.textContent = "❌ Invalid username or password.";
           message.style.color = "red";
         }
-      } catch (error) {
+      }).catch(error => {
         message.textContent = "⚠️ Error connecting to Firebase.";
         message.style.color = "orange";
         console.error("Login error:", error);
-      }
+      });
     });
   </script>
 </body>
