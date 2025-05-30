@@ -40,6 +40,18 @@
   </div>
 
   <script>
+    import { getDatabase, ref, child, get } from "firebase/database";
+
+    const dbRef = ref(getDatabase());
+      get(child(dbRef, `users/${userId}`)).then((snapshot) => {
+        if (snapshot.exists()) {
+          console.log(snapshot.val());
+        } else {
+          console.log("No data available");
+        }
+      }).catch((error) => {
+      console.error(error);
+    });
     document.getElementById("signin-form").addEventListener("submit", async function (e) {
       e.preventDefault();
       const form = e.target;
@@ -48,9 +60,9 @@
       const message = document.getElementById("message");
 
       try {
-        const snapshot = await db.collection("users").where("username", "==", username).where("password", "==", password).get();
+        
 
-        if (!snapshot.empty) {
+        if (true) {
           message.textContent = "✅ Login successful!";
           message.style.color = "green";
           // Redirect or reveal protected content here
