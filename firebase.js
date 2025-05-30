@@ -1,7 +1,7 @@
 // firebase.js
 
 import { initializeApp } from 'firebase/app';
-import { getFirestore } from 'firebase/firestore';
+import { getDatabase } from 'firebase/database';
 
 const firebaseConfig = {
   apiKey: "AIzaSyDq7FI-N984HO2M7Q0l25WEoiTBqZvZfHs",
@@ -10,10 +10,8 @@ const firebaseConfig = {
   storageBucket: "innovatech-86917.firebasestorage.app",
   messagingSenderId: "222788972248",
   appId: "1:222788972248:web:d0d5b8968f24b9c00671ad",
-  measurementId: "G-GTX1QPXJ2R"
+  measurementId: "G-GTX1QPXJ2R",
+  databaseURL: "https://InnovaTech.firebaseio.com"
 };
-
 const app = initializeApp(firebaseConfig);
-const db = getFirestore(app);
-
-export { db };
+const database = getDatabase(app);
