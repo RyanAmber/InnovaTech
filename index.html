@@ -21,7 +21,6 @@
       measurementId: "G-GTX1QPXJ2R"
     };
 
-    // Initialize Firebase
     firebase.initializeApp(firebaseConfig);
     const db = firebase.firestore();
   </script>
@@ -48,24 +47,36 @@
       const password = e.target.password.value.trim();
       const message = document.getElementById("message");
 
-      db.collection("users")
-        .where("username", "==", username)
-        .where("password", "==", password)
-        .get()
-        .then((querySnapshot) => {
-          if (!querySnapshot.empty) {
-            message.textContent = "✅ Login successful!";
+      const userRef = db.collection("users").doc(username);
+
+      userRef.get().then((doc) => {
+        if (!doc.exists) {
+          message.textContent = "❌ User not found.";
+          message.style.color = "red";
+        } else {
+          const data = doc.data();
+          if (data.password == password) {
+            message.textContent = `✅ Welcome ${username}! Role: ${data.role}, Group: ${data.group}`;
             message.style.color = "green";
+
+            localStorage.setItem('role', data.role);
+            localStorage.setItem('group', data.group);
+            if (data.role=="Student"){
+              location.href='Studentdashboard.html';
+            }else if(data.role=="Teacher"){
+              location.href='TeacherDashboard.html';
+            }
+
           } else {
-            message.textContent = "❌ Invalid username or password.";
+            message.textContent = "❌ Incorrect password.";
             message.style.color = "red";
           }
-        })
-        .catch((error) => {
-          message.textContent = "⚠️ Error connecting to Firebase.";
-          message.style.color = "orange";
-          console.error("Login error:", error);
-        });
+        }
+      }).catch((error) => {
+        message.textContent = "⚠️ Error connecting to Firebase.";
+        message.style.color = "orange";
+        console.error("Login error:", error);
+      });
     });
   </script>
 </body>
