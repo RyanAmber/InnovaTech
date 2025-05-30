@@ -6,7 +6,7 @@
   <title>Sign In</title>
   <link rel="stylesheet" href="style.css" />
 
-  <!-- Firebase App and Database CDN -->
+  <!-- Firebase App and Realtime Database -->
   <script src="https://www.gstatic.com/firebasejs/9.22.0/firebase-app-compat.js"></script>
   <script src="https://www.gstatic.com/firebasejs/9.22.0/firebase-database-compat.js"></script>
 
@@ -15,7 +15,7 @@
       apiKey: "AIzaSyDq7FI-N984HO2M7Q0l25WEoiTBqZvZfHs",
       authDomain: "innovatech-86917.firebaseapp.com",
       projectId: "innovatech-86917",
-      storageBucket: "innovatech-86917.firebasestorage.app",
+      storageBucket: "innovatech-86917.appspot.com", // ✅ FIXED
       messagingSenderId: "222788972248",
       appId: "1:222788972248:web:d0d5b8968f24b9c00671ad",
       measurementId: "G-GTX1QPXJ2R"
@@ -48,7 +48,7 @@
       const message = document.getElementById("message");
       const userRef = database.ref("users/" + username);
 
-      userRef.get().then(snapshot => {
+      userRef.once("value").then(snapshot => {
         if (snapshot.exists() && snapshot.val().password === password) {
           message.textContent = "✅ Login successful!";
           message.style.color = "green";
