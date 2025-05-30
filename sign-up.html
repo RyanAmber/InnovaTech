@@ -5,6 +5,27 @@
   <meta name="viewport" content="width=device-width, initial-scale=1.0" />
   <title>Sign Up</title>
   <link rel="stylesheet" href="style.css" />
+
+  <!-- Firebase App and Firestore -->
+  <script src="https://www.gstatic.com/firebasejs/9.22.0/firebase-app-compat.js"></script>
+  <script src="https://www.gstatic.com/firebasejs/9.22.0/firebase-firestore-compat.js"></script>
+
+  <script>
+    // Firebase config
+    const firebaseConfig = {
+      apiKey: "AIzaSyDq7FI-N984HO2M7Q0l25WEoiTBqZvZfHs",
+      authDomain: "innovatech-86917.firebaseapp.com",
+      projectId: "innovatech-86917",
+      storageBucket: "innovatech-86917.appspot.com",
+      messagingSenderId: "222788972248",
+      appId: "1:222788972248:web:d0d5b8968f24b9c00671ad",
+      measurementId: "G-GTX1QPXJ2R"
+    };
+
+    // Initialize Firebase
+    firebase.initializeApp(firebaseConfig);
+    const db = firebase.firestore();
+  </script>
 </head>
 <body>
   <div class="signin-container">
@@ -22,33 +43,36 @@
   </div>
 
   <script>
-    document.getElementById("signup-form").addEventListener("submit", async function(e) {
+    document.getElementById("signup-form").addEventListener("submit", async function (e) {
       e.preventDefault();
 
-      const form = new FormData(e.target);
-      const data = {
-        username: form.get("username"),
-        password: form.get("password"),
-        team: form.get("team")
-      };
+      const username = e.target.username.value.trim();
+      const password = e.target.password.value.trim();
+      const team = e.target.team.value.trim();
+      const message = document.getElementById("message");
+
+      const userRef = db.collection("users").doc(username);
 
       try {
-        const res = await fetch("/signup", {
-          method: "POST",
-          headers: {
-            "Content-Type": "application/json"
-          },
-          body: JSON.stringify(data)
-        });
+        const doc = await userRef.get();
+        if (doc.exists) {
+          message.textContent = "❌ Username already exists.";
+          message.style.color = "red";
+        } else {
+          await userRef.set({
+            password: password,
+            group: team,
+            role: "Student" 
+          });
 
-        const result = await res.json();
-        alert(result.message);
-
-        if (result.success) {
-          window.location.href = '/login-page';
+          message.textContent = "✅ Account created! Redirecting...";
+          message.style.color = "green";
+          setTimeout(() => window.location.href = "index.html", 1500);
         }
-      } catch (err) {
-        alert("Signup failed. Please try again.");
+      } catch (error) {
+        message.textContent = "⚠️ Error creating account.";
+        message.style.color = "orange";
+        console.error("Signup error:", error);
       }
     });
   </script>
