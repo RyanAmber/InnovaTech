@@ -6,23 +6,24 @@
   <title>Sign In</title>
   <link rel="stylesheet" href="style.css" />
 
-  <!-- Firebase App and Realtime Database -->
+  <!-- Firebase App and Firestore (Compat SDK) -->
   <script src="https://www.gstatic.com/firebasejs/9.22.0/firebase-app-compat.js"></script>
-  <script src="https://www.gstatic.com/firebasejs/9.22.0/firebase-database-compat.js"></script>
+  <script src="https://www.gstatic.com/firebasejs/9.22.0/firebase-firestore-compat.js"></script>
 
   <script>
     const firebaseConfig = {
       apiKey: "AIzaSyDq7FI-N984HO2M7Q0l25WEoiTBqZvZfHs",
       authDomain: "innovatech-86917.firebaseapp.com",
       projectId: "innovatech-86917",
-      storageBucket: "innovatech-86917.appspot.com", // ✅ FIXED
+      storageBucket: "innovatech-86917.appspot.com",
       messagingSenderId: "222788972248",
       appId: "1:222788972248:web:d0d5b8968f24b9c00671ad",
       measurementId: "G-GTX1QPXJ2R"
     };
 
+    // Initialize Firebase
     firebase.initializeApp(firebaseConfig);
-    const database = firebase.database();
+    const db = firebase.firestore();
   </script>
 </head>
 <body>
@@ -46,21 +47,25 @@
       const username = e.target.username.value.trim();
       const password = e.target.password.value.trim();
       const message = document.getElementById("message");
-      const userRef = database.ref("users/" + username);
 
-      userRef.once("value").then(snapshot => {
-        if (snapshot.exists() && snapshot.val().password === password) {
-          message.textContent = "✅ Login successful!";
-          message.style.color = "green";
-        } else {
-          message.textContent = "❌ Invalid username or password.";
-          message.style.color = "red";
-        }
-      }).catch(error => {
-        message.textContent = "⚠️ Error connecting to Firebase.";
-        message.style.color = "orange";
-        console.error("Login error:", error);
-      });
+      db.collection("users")
+        .where("username", "==", username)
+        .where("password", "==", password)
+        .get()
+        .then((querySnapshot) => {
+          if (!querySnapshot.empty) {
+            message.textContent = "✅ Login successful!";
+            message.style.color = "green";
+          } else {
+            message.textContent = "❌ Invalid username or password.";
+            message.style.color = "red";
+          }
+        })
+        .catch((error) => {
+          message.textContent = "⚠️ Error connecting to Firebase.";
+          message.style.color = "orange";
+          console.error("Login error:", error);
+        });
     });
   </script>
 </body>
