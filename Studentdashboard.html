@@ -4,96 +4,56 @@
   <meta charset="UTF-8" />
   <meta name="viewport" content="width=device-width, initial-scale=1.0">
   <title>Student Dashboard</title>
-  <link rel="stylesheet" href="student.css">
-  <style rel="stylesheet" href="student.css">
+  <link rel="stylesheet" href="student.css" />
 
-  </style>
+  <!-- Firebase SDKs -->
+  <script src="https://www.gstatic.com/firebasejs/10.11.0/firebase-app-compat.js"></script>
+  <script src="https://www.gstatic.com/firebasejs/10.11.0/firebase-firestore-compat.js"></script>
 
+  <script>
+    const firebaseConfig = {
+      apiKey: "AIzaSyDq7FI-N984HO2M7Q0l25WEoiTBqZvZfHs",
+      authDomain: "innovatech-86917.firebaseapp.com",
+      projectId: "innovatech-86917",
+      storageBucket: "innovatech-86917.appspot.com",
+      messagingSenderId: "222788972248",
+      appId: "1:222788972248:web:d0d5b8968f24b9c00671ad",
+      measurementId: "G-GTX1QPXJ2R"
+    };
+
+    firebase.initializeApp(firebaseConfig);
+    const db = firebase.firestore();
+  </script>
 </head>
-  
 <body>
-
   <header id="usernameHeader">Welcome, </header>
-  
   <div class="container">
     <div class="left">
       <div class="bubble-heading">Component List</div>
-      <div class="grid">
-        <div class="card" onclick="openModal('Arduino', 'A microcontroller board.', 'https://upload.wikimedia.org/wikipedia/commons/3/38/Arduino_Uno_-_R3.jpg')">
-          <img src="https://upload.wikimedia.org/wikipedia/commons/3/38/Arduino_Uno_-_R3.jpg" alt="Arduino">
-          <p>Arduino</p>
-        </div>
-        <div class="card" onclick="openModal('Arduino Motor Shield', 'Description.', 'https://upload.wikimedia.org/wikipedia/commons/3/38/Arduino_Uno_-_R3.jpg')">
-          <img src="https://upload.wikimedia.org/wikipedia/commons/3/38/Arduino_Uno_-_R3.jpg" alt="Arduino Motor Shield">
-          <p>Arduino Motor Shield</p>
-        </div>
-        <div class="card" onclick="openModal('LED', 'Description.', 'https://upload.wikimedia.org/wikipedia/commons/3/38/Arduino_Uno_-_R3.jpg')">
-          <img src="https://upload.wikimedia.org/wikipedia/commons/3/38/Arduino_Uno_-_R3.jpg" alt="LED">
-          <p>LED</p>
-        </div>
-        <div class="card" onclick="openModal('Transistor', 'Description.', 'https://upload.wikimedia.org/wikipedia/commons/3/38/Arduino_Uno_-_R3.jpg')">
-          <img src="https://upload.wikimedia.org/wikipedia/commons/3/38/Arduino_Uno_-_R3.jpg" alt="Transistor">
-          <p>Transistor</p>
-        </div>
-        <div class="card" onclick="openModal('Raspberry Pi', 'Description.', 'https://upload.wikimedia.org/wikipedia/commons/3/38/Arduino_Uno_-_R3.jpg')">
-          <img src="https://upload.wikimedia.org/wikipedia/commons/3/38/Arduino_Uno_-_R3.jpg" alt="Raspberry Pi">
-          <p>Raspberry Pi</p>
-        </div>
-        <div class="card" onclick="openModal('Breadboard', 'Description.', 'https://upload.wikimedia.org/wikipedia/commons/3/38/Arduino_Uno_-_R3.jpg')">
-          <img src="https://upload.wikimedia.org/wikipedia/commons/3/38/Arduino_Uno_-_R3.jpg" alt="Breadboard">
-          <p>Breadboard</p>
-        </div>
-        <div class="card" onclick="openModal('Push Button', 'Description.', 'https://upload.wikimedia.org/wikipedia/commons/3/38/Arduino_Uno_-_R3.jpg')">
-          <img src="https://upload.wikimedia.org/wikipedia/commons/3/38/Arduino_Uno_-_R3.jpg" alt="Push Button">
-          <p>Push Button</p>
-        </div>
-        <div class="card" onclick="openModal('Potentiometer', 'Description.', 'https://upload.wikimedia.org/wikipedia/commons/3/38/Arduino_Uno_-_R3.jpg')">
-          <img src="https://upload.wikimedia.org/wikipedia/commons/3/38/Arduino_Uno_-_R3.jpg" alt="Potentiometer">
-          <p>Potentiometer</p>
-        </div>
-        <div class="card" onclick="openModal('Diode', 'Description.', 'https://upload.wikimedia.org/wikipedia/commons/3/38/Arduino_Uno_-_R3.jpg')">
-          <img src="https://upload.wikimedia.org/wikipedia/commons/3/38/Arduino_Uno_-_R3.jpg" alt="Diode">
-          <p>Diode</p>
-        </div>
+      <div class="grid" id="component-grid">
+        <!-- Cards added dynamically -->
       </div>
     </div>
-    
     <div class="right">
       <div class="notifications-wrapper">
         <div class="bubble-heading">Notifications</div>
-        <div id="notification-bar" class="notifications">
-        <!--<div class="notif">
-          <div class="notif-time">10<br>min</div>
-          <div class="notif-text"><strong>Join Request</strong><br>'191966' requested to join classroom.</div>
-        </div>
-        <div class="notif">
-          <div class="notif-time">1<br>D</div>
-          <div class="notif-text"><strong>Quantity Alert</strong><br>‘Arduino Uno’ at only 10% availability.</div>
-        </div>
-        <div class="notif">
-          <div class="notif-time">35<br>min</div>
-          <div class="notif-text"><strong>Join Request</strong><br>‘123456’ requested to join classroom.</div>
-        </div>-->
-        </div>
+        <div id="notification-bar" class="notifications"></div>
       </div>
     </div>
   </div>
 
+  <!-- Modal -->
   <div class="modal" id="modal">
     <div class="modal-content">
       <span class="close-btn" onclick="closeModal()">&times;</span>
-  
-      <!-- LEFT SIDE: text content -->
       <div class="modal-left">
         <h2 id="modalTitle" class="component-name">Component_Name</h2>
-  
         <h3>Component Overview</h3>
         <div class="overview-box">
           <p>Number logged in: <span id="totalCount">X</span></p>
           <p>Number in use: <span id="AvailableCount">X</span></p>
           <p>Your component: <span id="userStatus">X</span></p>
         </div>
-  
         <h3>Actions</h3>
         <div class="actions">
           <button class="action-btn">Check out Component</button>
@@ -101,101 +61,111 @@
           <button class="action-btn">Return Component</button>
         </div>
       </div>
-  
-      <!-- RIGHT SIDE: image and bar -->
       <div class="modal-right">
         <img id="modalImage" class="component-img" src="" alt="Component Image">
-        <div class="status-bar">
-          <div class="status green" style="width: 60%">60%</div>
-          <div class="status yellow" style="width: 25%">25%</div>
-          <div class="status red" style="width: 15%">15%</div>
-        </div>
+        <div class="status-bar"></div>
       </div>
     </div>
   </div>
 
   <script>
-    function addNotification(message) {
-    const bar = document.getElementById('notification-bar');
-    const note = document.createElement('div');
-    note.className = 'notif';
-    note.textContent = message;
-    bar.appendChild(note);
-    bar.style.display = 'block';
-    }
     const username = localStorage.getItem("username") || "Student";
     document.getElementById("usernameHeader").textContent = `Welcome, ${username}`;
     document.title = `${username}'s Dashboard`;
-    
+
+    const availableMap = new Map();
+    const workingMap = new Map();
+    const countMap = new Map();
+
+    const defaultImg = "https://upload.wikimedia.org/wikipedia/commons/3/38/Arduino_Uno_-_R3.jpg";
+
+    function addNotification(message) {
+      const bar = document.getElementById('notification-bar');
+      const note = document.createElement('div');
+      note.className = 'notif';
+      note.textContent = message;
+      bar.appendChild(note);
+      bar.style.display = 'block';
+    }
+
     function openModal(name, description, imageUrl) {
-     const total = countMap.get(name) || 0;
-  const working = availableMap.get(name) || 0;
+      const total = countMap.get(name) || 0;
+      const working = availableMap.get(name) || 0;
 
-  document.getElementById('modal').style.display = 'flex';
-  document.getElementById('modalTitle').textContent = name;
-  document.getElementById('modalImage').src = imageUrl;
-  document.getElementById('totalCount').textContent = total;
-  document.getElementById('AvailableCount').textContent = working;
-  document.getElementById('userStatus').textContent = '✔';
-      const greenPercent = total > 0 ? Math.round((working / total) * 100) : 0;
-  const redPercent = total > 0 ? Math.round(((total - working) / total) * 100) : 0;
+      document.getElementById('modal').style.display = 'flex';
+      document.getElementById('modalTitle').textContent = name;
+      document.getElementById('modalImage').src = imageUrl;
+      document.getElementById('totalCount').textContent = total;
+      document.getElementById('AvailableCount').textContent = working;
+      document.getElementById('userStatus').textContent = '✔';
 
-  const statusBar = document.querySelector('.status-bar');
-  if(greenPercent+redPercent==0){
-    statusBar.innerHTML = `
-    <div class="status yellow" style="width: 100%">100%</div>
-  `;
-  }else{
-  statusBar.innerHTML = `
-    <div class="status green" style="width: ${greenPercent}%">${greenPercent}%</div>
-    <div class="status red" style="width: ${redPercent}%">${redPercent > 0 ? redPercent + '%' : ''}</div>
-  `;
-  }
+      const greenPercent = total ? Math.round((working / total) * 100) : 0;
+      const redPercent = total ? 100 - greenPercent : 0;
+
+      const statusBar = document.querySelector('.status-bar');
+      if (greenPercent + redPercent === 0) {
+        statusBar.innerHTML = `<div class="status yellow" style="width: 100%">100%</div>`;
+      } else {
+        statusBar.innerHTML = `
+          <div class="status green" style="width: ${greenPercent}%">${greenPercent}%</div>
+          <div class="status red" style="width: ${redPercent}%">${redPercent > 0 ? redPercent + '%' : ''}</div>
+        `;
+      }
     }
 
     function closeModal() {
       document.getElementById('modal').style.display = 'none';
     }
-   const workingMap=new Map();
-    const availableMap=new Map();
-    const countMap = new Map();
-  fetch('https://raw.githubusercontent.com/RyanAmber/InnovaTech/refs/heads/main/InventoryData.txt')
-  .then(response => response.text())
-  .then(text => {
-    const lines = text.split('\n');
-    for (const line of lines) {
-      const [type,working,team,ID] = line.trim().split(',');
-      countMap.set(type, (countMap.get(type) || 0) + 1);
-      if (working == 'True'&&team=='0') {
-        availableMap.set(type, (availableMap.get(type) || 0) + 1);
-      }else{
-        availableMap.set(type, (availableMap.get(type) || 0));
-      }
-      if (working == 'True') {
-        workingMap.set(type, (workingMap.get(type) || 0) + 1);
-      }else{
-        workingMap.set(type, (workingMap.get(type) || 0));
+
+    async function loadComponents() {
+      const grid = document.getElementById('component-grid');
+      try {
+        const snapshot = await db.collection("inventory").get();
+
+        snapshot.forEach(doc => {
+          const item = doc.data();
+          const { type, working, team, id, image = defaultImg } = item;
+
+          if (!type) return;
+
+          countMap.set(type, (countMap.get(type) || 0) + 1);
+          if (working === true && team === "0") {
+            availableMap.set(type, (availableMap.get(type) || 0) + 1);
+          }
+          if (working === true) {
+            workingMap.set(type, (workingMap.get(type) || 0) + 1);
+          }
+
+          if (!document.getElementById(`card-${type}`)) {
+            const card = document.createElement("div");
+            card.className = "card";
+            card.id = `card-${type}`;
+            card.onclick = () => openModal(type, "Description", image);
+            card.innerHTML = `<img src="${image}" alt="${type}"><p>${type}</p>`;
+            grid.appendChild(card);
+          }
+        });
+
+        for (const [key, total] of countMap) {
+          const working = workingMap.get(key) || 0;
+          const available = availableMap.get(key) || 0;
+
+          if (total >= working * 10) {
+            addNotification(`Quantity Alert: ${key} is at less than 10% working quantity`);
+          }
+          if (available === 0) {
+            addNotification(`Quantity Alert: ${key} has no items available to be borrowed`);
+          }
+        }
+      } catch (error) {
+        console.error("Error loading inventory from Firestore:", error);
       }
     }
-    for (const [key, value] of countMap) {
-      if (value>=workingMap.get(key)*10&&key!="") {
-        addNotification("Quantity Alert: "+key+" is at less than 10% working quantity");
-      }
-      if (availableMap.get(key)==0&&key!="") {
-        addNotification("Quantity Alert: "+key+" has no items available to be borrowed");
-      }
-    }
-    console.log(countMap);
-    console.log(workingMap);
-    console.log(availableMap);
-  })
-  .catch(error => console.error('Error loading file:', error));
-  
+
+    window.onload = loadComponents;
     window.onclick = function(e) {
-      const modal = document.getElementById('modal');
-      if (e.target === modal) closeModal();
+      if (e.target === document.getElementById('modal')) closeModal();
     }
-    
   </script>
 </body>
 </html>
