@@ -38,6 +38,22 @@
       <div class="notifications-wrapper">
         <div class="bubble-heading">Notifications</div>
         <div id="notification-bar" class="notifications"></div>
+        <button onclick="toggleAddForm()" class="add-btn">+ Add Component</button>
+
+<div id="addForm" class="add-form" style="display: none;">
+  <input type="text" id="newType" placeholder="Component type" />
+  <input type="text" id="newImage" placeholder="Image URL (optional)" />
+  <label>
+    <input type="checkbox" id="newWorking" checked />
+    Working
+  </label>
+  <label>
+    <input type="checkbox" id="newAvailable" checked />
+    Available (team 0)
+  </label>
+  <button onclick="addComponent()">Submit</button>
+</div>
+
       </div>
     </div>
   </div>
@@ -116,6 +132,47 @@
     function closeModal() {
       document.getElementById('modal').style.display = 'none';
     }
+    function toggleAddForm() {
+  const form = document.getElementById("addForm");
+  form.style.display = form.style.display === "none" ? "block" : "none";
+}
+
+async function addComponent() {
+  const type = document.getElementById("newType").value.trim();
+  const image = document.getElementById("newImage").value.trim() || "https://upload.wikimedia.org/wikipedia/commons/3/38/Arduino_Uno_-_R3.jpg";
+  const working = document.getElementById("newWorking").checked;
+  const team = document.getElementById("newAvailable").value.trim();
+
+  if (!type) {
+    alert("Component type is required.");
+    return;
+  }
+
+  try {
+    await db.collection("inventory").add({
+      type,
+      image,
+      working,
+      team,
+      id: `${type}-${Date.now()}`
+    });
+    alert("Component added successfully!");
+
+    document.getElementById("newType").value = "";
+    document.getElementById("newImage").value = "";
+    document.getElementById("newWorking").checked = true;
+    document.getElementById("newAvailable").checked = true;
+
+    document.getElementById("component-grid").innerHTML = "";
+    countMap.clear();
+    availableMap.clear();
+    workingMap.clear();
+    loadComponents();
+  } catch (error) {
+    console.error("Error adding component:", error);
+    alert("Failed to add component.");
+  }
+}
 
     async function loadComponents() {
       const grid = document.getElementById('component-grid');
