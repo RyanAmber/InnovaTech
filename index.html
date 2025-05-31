@@ -58,7 +58,7 @@
           if (data.password == password) {
             message.textContent = `✅ Welcome ${username}! Role: ${data.role}, Group: ${data.group}`;
             message.style.color = "green";
-
+            localStorage.setItem("username", username);
             localStorage.setItem('role', data.role);
             localStorage.setItem('group', data.group);
             if (data.role=="Student"){
