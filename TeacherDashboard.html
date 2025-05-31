@@ -5,10 +5,6 @@
   <meta name="viewport" content="width=device-width, initial-scale=1.0">
   <title>Admin Dashboard</title>
   <link rel="stylesheet" href="teacher.css">
-  <style rel="stylesheet" href="teacher.css">
-
-  </style>
-
 </head>
   
 <body>
@@ -17,88 +13,32 @@
   <div class="container">
     <div class="left">
       <div class="bubble-heading">Component List</div>
-      <div class="grid">
-        <div class="card" onclick="openModal('Arduino', 'A microcontroller board.', 'https://upload.wikimedia.org/wikipedia/commons/3/38/Arduino_Uno_-_R3.jpg')">
-          <img src="https://upload.wikimedia.org/wikipedia/commons/3/38/Arduino_Uno_-_R3.jpg" alt="Arduino">
-          <p>Arduino</p>
-        </div>
-        <div class="card" onclick="openModal('Capacitor', 'Description.', 'https://upload.wikimedia.org/wikipedia/commons/3/38/Arduino_Uno_-_R3.jpg')">
-          <img src="https://upload.wikimedia.org/wikipedia/commons/3/38/Arduino_Uno_-_R3.jpg" alt="Capacitor">
-          <p>Capacitor</p>
-        </div>
-        <div class="card" onclick="openModal('LED', 'Description.', 'https://upload.wikimedia.org/wikipedia/commons/3/38/Arduino_Uno_-_R3.jpg')">
-          <img src="https://upload.wikimedia.org/wikipedia/commons/3/38/Arduino_Uno_-_R3.jpg" alt="LED">
-          <p>LED</p>
-        </div>
-        <div class="card" onclick="openModal('Transistor', 'Description.', 'https://upload.wikimedia.org/wikipedia/commons/3/38/Arduino_Uno_-_R3.jpg')">
-          <img src="https://upload.wikimedia.org/wikipedia/commons/3/38/Arduino_Uno_-_R3.jpg" alt="Transistor">
-          <p>Transistor</p>
-        </div>
-        <div class="card" onclick="openModal('Raspberry Pi', 'Description.', 'https://upload.wikimedia.org/wikipedia/commons/3/38/Arduino_Uno_-_R3.jpg')">
-          <img src="https://upload.wikimedia.org/wikipedia/commons/3/38/Arduino_Uno_-_R3.jpg" alt="Raspberry Pi">
-          <p>Raspberry Pi</p>
-        </div>
-        <div class="card" onclick="openModal('Breadboard', 'Description.', 'https://upload.wikimedia.org/wikipedia/commons/3/38/Arduino_Uno_-_R3.jpg')">
-          <img src="https://upload.wikimedia.org/wikipedia/commons/3/38/Arduino_Uno_-_R3.jpg" alt="Breadboard">
-          <p>Breadboard</p>
-        </div>
-        <div class="card" onclick="openModal('Push Button', 'Description.', 'https://upload.wikimedia.org/wikipedia/commons/3/38/Arduino_Uno_-_R3.jpg')">
-          <img src="https://upload.wikimedia.org/wikipedia/commons/3/38/Arduino_Uno_-_R3.jpg" alt="Push Button">
-          <p>Push Button</p>
-        </div>
-        <div class="card" onclick="openModal('Potentiometer', 'Description.', 'https://upload.wikimedia.org/wikipedia/commons/3/38/Arduino_Uno_-_R3.jpg')">
-          <img src="https://upload.wikimedia.org/wikipedia/commons/3/38/Arduino_Uno_-_R3.jpg" alt="Potentiometer">
-          <p>Potentiometer</p>
-        </div>
-        <div class="card" onclick="openModal('Diode', 'Description.', 'https://upload.wikimedia.org/wikipedia/commons/3/38/Arduino_Uno_-_R3.jpg')">
-          <img src="https://upload.wikimedia.org/wikipedia/commons/3/38/Arduino_Uno_-_R3.jpg" alt="Diode">
-          <p>Diode</p>
-        </div>
+      <div class="grid" id="component-grid">
+        <!-- Firebase component cards will be inserted here -->
       </div>
     </div>
     
     <div class="right">
       <div class="admin-nav">
         <div class="bubble-heading">Navigation</div>
-        <!--<button>Manage Classroom</button>-->
         <a href="ManageClass.html"><button type="button">Manage Classroom</button></a>
-        <button>Add New Component</button>
+        <button onclick="toggleAddForm()">Add New Component</button>
         <button>Remove Component</button>
       </div>
 
       <div class="notifications-wrapper">
         <div class="bubble-heading">Notifications</div>
-        <div class="notifications">
-          <!--
-          <div class="notif">
-            <div class="notif-time">10<br>min</div>
-            <div class="notif-text"><strong>Join Request</strong><br>'191966' requested to join classroom.</div>
-          </div>
-          <div class="notif">
-            <div class="notif-time">1<br>D</div>
-            <div class="notif-text"><strong>Quantity Alert</strong><br>‘Arduino Uno’ at only 10% availability.</div>
-          </div>
-          <div class="notif">
-            <div class="notif-time">35<br>min</div>
-            <div class="notif-text"><strong>Join Request</strong><br>‘123456’ requested to join classroom.</div>
-          </div>-->
-        </div>
+        <div class="notifications" id="notification-bar"></div>
+
         <button onclick="toggleAddForm()" class="add-btn">+ Add Component</button>
 
-<div id="addForm" class="add-form" style="display: none;">
-  <input type="text" id="newType" placeholder="Component type" />
-  <input type="text" id="newImage" placeholder="Image URL (optional)" />
-  <label>
-    <input type="checkbox" id="newWorking" checked />
-    Working
-  </label>
-  <label>
-    <input type="checkbox" id="newAvailable" checked />
-    Available (team 0)
-  </label>
-  <button onclick="addComponent()">Submit</button>
-</div>
-
+        <div id="addForm" class="add-form" style="display: none;">
+          <input type="text" id="newType" placeholder="Component type" />
+          <input type="text" id="newImage" placeholder="Image URL (optional)" />
+          <label><input type="checkbox" id="newWorking" checked /> Working</label>
+          <label><input type="checkbox" id="newAvailable" checked /> Available (team 0)</label>
+          <button onclick="addComponent()">Submit</button>
+        </div>
       </div>
     </div>
   </div>
@@ -106,18 +46,14 @@
   <div class="modal" id="modal">
     <div class="modal-content">
       <span class="close-btn" onclick="closeModal()">&times;</span>
-  
-      <!-- LEFT SIDE: text content -->
       <div class="modal-left">
         <h2 id="modalTitle" class="component-name">Component_Name</h2>
-  
         <h3>Component Overview</h3>
         <div class="overview-box">
           <p>Number logged in: <span id="totalCount">X</span></p>
           <p>Number in use: <span id="AvailableCount">X</span></p>
           <p>Your component: <span id="userStatus">X</span></p>
         </div>
-  
         <h3>Actions</h3>
         <div class="actions">
           <button class="action-btn">Check out Component</button>
@@ -125,138 +61,161 @@
           <button class="action-btn">Return Component</button>
         </div>
       </div>
-  
-      <!-- RIGHT SIDE: image and bar -->
       <div class="modal-right">
         <img id="modalImage" class="component-img" src="" alt="Component Image">
-        <div class="status-bar">
-          <div class="status green" style="width: 60%">60%</div>
-          <div class="status red" style="width: 15%">15%</div>
-        </div>
+        <div class="status-bar"></div>
       </div>
     </div>
   </div>
 
-  <script>
+  <script type="module">
+    import { initializeApp } from "https://www.gstatic.com/firebasejs/10.11.0/firebase-app.js";
+    import { getFirestore, collection, getDocs, addDoc } from "https://www.gstatic.com/firebasejs/10.11.0/firebase-firestore.js";
+
+    const firebaseConfig = {
+      apiKey: "YOUR_API_KEY",
+      authDomain: "YOUR_AUTH_DOMAIN",
+      projectId: "YOUR_PROJECT_ID",
+      storageBucket: "YOUR_STORAGE_BUCKET",
+      messagingSenderId: "YOUR_SENDER_ID",
+      appId: "YOUR_APP_ID"
+    };
+
+    const app = initializeApp(firebaseConfig);
+    const db = getFirestore(app);
+
     const username = localStorage.getItem("username") || "Student";
-    if (username==="Student"){
+    if (username === "Student") {
       window.location.href = 'index.html';
     }
     document.getElementById("usernameHeader").textContent = `Welcome, ${username}`;
     document.title = `${username}'s Dashboard`;
-    
+
+    const workingMap = new Map();
+    const availableMap = new Map();
+    const countMap = new Map();
+
     function openModal(name, description, imageUrl) {
-  const total = countMap.get(name) || 0;
-  const working = workingMap.get(name) || 0;
+      const total = countMap.get(name) || 0;
+      const working = workingMap.get(name) || 0;
+      document.getElementById('modal').style.display = 'flex';
+      document.getElementById('modalTitle').textContent = name;
+      document.getElementById('modalImage').src = imageUrl;
+      document.getElementById('totalCount').textContent = total;
+      document.getElementById('AvailableCount').textContent = total - working;
+      document.getElementById('userStatus').textContent = '✔';
 
-  document.getElementById('modal').style.display = 'flex';
-  document.getElementById('modalTitle').textContent = name;
-  document.getElementById('modalImage').src = imageUrl;
-  document.getElementById('totalCount').textContent = total;
-  document.getElementById('AvailableCount').textContent = total - working;
-  document.getElementById('userStatus').textContent = '✔';
+      const greenPercent = total > 0 ? Math.round((working / total) * 100) : 0;
+      const redPercent = total > 0 ? Math.round(((total - working) / total) * 100) : 0;
+      const statusBar = document.querySelector('.status-bar');
 
-  const greenPercent = total > 0 ? Math.round((working / total) * 100) : 0;
-  const redPercent = total > 0 ? Math.round(((total - working) / total) * 100) : 0;
-
-  const statusBar = document.querySelector('.status-bar');
-  if(greenPercent+redPercent==0){
-    statusBar.innerHTML = `
-    <div class="status yellow" style="width: 100%">100%</div>
-  `;
-  }else{
-  statusBar.innerHTML = `
-    <div class="status green" style="width: ${greenPercent}%">${greenPercent}%</div>
-    <div class="status red" style="width: ${redPercent}%">${redPercent > 0 ? redPercent + '%' : ''}</div>
-  `;
-  }
-}
-
-     function addNotification(message) {
-    const bar = document.getElementById('notification-bar');
-    const note = document.createElement('div');
-    note.className = 'notif';
-    note.textContent = message;
-    bar.appendChild(note);
-    bar.style.display = 'block';
+      if (greenPercent + redPercent === 0) {
+        statusBar.innerHTML = `<div class="status yellow" style="width: 100%">100%</div>`;
+      } else {
+        statusBar.innerHTML = `
+          <div class="status green" style="width: ${greenPercent}%">${greenPercent}%</div>
+          <div class="status red" style="width: ${redPercent}%">${redPercent > 0 ? redPercent + '%' : ''}</div>
+        `;
+      }
     }
-    function toggleAddForm() {
-  const form = document.getElementById("addForm");
-  form.style.display = form.style.display === "none" ? "block" : "none";
-}
-    async function addComponent() {
-  const type = document.getElementById("newType").value.trim();
-  const image = document.getElementById("newImage").value.trim() || "https://upload.wikimedia.org/wikipedia/commons/3/38/Arduino_Uno_-_R3.jpg";
-  const working = document.getElementById("newWorking").checked;
-  const team = document.getElementById("newAvailable").value.trim();
 
-  if (!type) {
-    alert("Component type is required.");
-    return;
-  }
-
-  try {
-    await db.collection("inventory").add({
-      type,
-      image,
-      working,
-      team,
-      id: `${type}-${Date.now()}`
-    });
-    alert("Component added successfully!");
-
-    document.getElementById("newType").value = "";
-    document.getElementById("newImage").value = "";
-    document.getElementById("newWorking").checked = true;
-    document.getElementById("newAvailable").checked = true;
-
-    document.getElementById("component-grid").innerHTML = "";
-    countMap.clear();
-    availableMap.clear();
-    workingMap.clear();
-    loadComponents();
-  } catch (error) {
-    console.error("Error adding component:", error);
-    alert("Failed to add component.");
-  }
-}
     function closeModal() {
       document.getElementById('modal').style.display = 'none';
     }
-    const workingMap=new Map();
-    const availableMap=new Map();
-    const countMap = new Map();
-  fetch('https://raw.githubusercontent.com/RyanAmber/InnovaTech/refs/heads/main/InventoryData.txt')
-  .then(response => response.text())
-  .then(text => {
-    const lines = text.split('\n');
-    for (const line of lines) {
-      const [type,working,team,ID] = line.trim().split(',');
-      countMap.set(type, (countMap.get(type) || 0) + 1);
-      if (working == 'True'&&team=='0') {
-        availableMap.set(type, (availableMap.get(type) || 0) + 1);
-      }else{
-        availableMap.set(type, (availableMap.get(type) || 0));
+
+    function toggleAddForm() {
+      const form = document.getElementById("addForm");
+      form.style.display = form.style.display === "none" ? "block" : "none";
+    }
+
+    async function addComponent() {
+      const type = document.getElementById("newType").value.trim();
+      const image = document.getElementById("newImage").value.trim() || "https://upload.wikimedia.org/wikipedia/commons/3/38/Arduino_Uno_-_R3.jpg";
+      const working = document.getElementById("newWorking").checked;
+      const team = document.getElementById("newAvailable").checked ? "0" : "1";
+
+      if (!type) {
+        alert("Component type is required.");
+        return;
       }
-      if (working == 'True') {
-        workingMap.set(type, (workingMap.get(type) || 0) + 1);
-      }else{
-        workingMap.set(type, (workingMap.get(type) || 0));
+
+      try {
+        await addDoc(collection(db, "inventory"), {
+          type,
+          image,
+          working,
+          team,
+          id: `${type}-${Date.now()}`
+        });
+        alert("Component added successfully!");
+
+        document.getElementById("newType").value = "";
+        document.getElementById("newImage").value = "";
+        document.getElementById("newWorking").checked = true;
+        document.getElementById("newAvailable").checked = true;
+
+        document.getElementById("component-grid").innerHTML = "";
+        countMap.clear();
+        availableMap.clear();
+        workingMap.clear();
+        loadComponents();
+      } catch (error) {
+        console.error("Error adding component:", error);
+        alert("Failed to add component.");
       }
     }
-    for (const [key, value] of countMap) {
-      if (value>=workingMap.get(key)*10&&key!="") {
-        addNotification("Quantity Alert: "+key+" is at less than 10% working quantity");
-      }
-      if (availableMap.get(key)==0&&key!="") {
-        addNotification("Quantity Alert: "+key+" has no items available to be borrowed");
+
+    function addNotification(message) {
+      const bar = document.getElementById('notification-bar');
+      const note = document.createElement('div');
+      note.className = 'notif';
+      note.textContent = message;
+      bar.appendChild(note);
+      bar.style.display = 'block';
+    }
+
+    async function loadComponents() {
+      const grid = document.getElementById("component-grid");
+      const snapshot = await getDocs(collection(db, "inventory"));
+      const imageMap = new Map();
+
+      snapshot.forEach(doc => {
+        const data = doc.data();
+        const { type, image, working, team } = data;
+
+        countMap.set(type, (countMap.get(type) || 0) + 1);
+        if (working && team === "0") {
+          availableMap.set(type, (availableMap.get(type) || 0) + 1);
+        }
+        if (working) {
+          workingMap.set(type, (workingMap.get(type) || 0) + 1);
+        }
+        if (!imageMap.has(type)) {
+          imageMap.set(type, image);
+        }
+      });
+
+      imageMap.forEach((image, type) => {
+        const card = document.createElement("div");
+        card.className = "card";
+        card.onclick = () => openModal(type, "Component description here", image);
+        card.innerHTML = `<img src="${image}" alt="${type}"><p>${type}</p>`;
+        grid.appendChild(card);
+      });
+
+      for (const [type, total] of countMap) {
+        const working = workingMap.get(type) || 0;
+        const available = availableMap.get(type) || 0;
+        if (total >= working * 10 && type !== "") {
+          addNotification("Quantity Alert: " + type + " is at less than 10% working quantity");
+        }
+        if (available === 0 && type !== "") {
+          addNotification("Quantity Alert: " + type + " has no items available to be borrowed");
+        }
       }
     }
-    console.log(countMap);
-    console.log(workingMap);
-    console.log(availableMap);
-  })
-  .catch(error => console.error('Error loading file:', error));
+
+    loadComponents();
 
     window.onclick = function(e) {
       const modal = document.getElementById('modal');
