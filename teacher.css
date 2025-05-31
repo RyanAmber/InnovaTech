@@ -292,7 +292,46 @@
       justify-content: center;
       color: black;
     }
-  
+    .add-btn {
+  margin-top: 10px;
+  padding: 8px 12px;
+  background-color: #4CAF50;
+  color: white;
+  border: none;
+  border-radius: 6px;
+  cursor: pointer;
+}
+
+.add-form {
+  margin-top: 10px;
+  padding: 10px;
+  border: 1px solid #ccc;
+  background: #f4f4f4;
+  border-radius: 8px;
+}
+
+.add-form input[type="text"] {
+  width: calc(100% - 10px);
+  margin-bottom: 6px;
+  padding: 6px;
+  border: 1px solid #ccc;
+  border-radius: 4px;
+}
+
+.add-form label {
+  display: block;
+  margin-bottom: 6px;
+  font-size: 0.9em;
+}
+
+.add-form button {
+  background-color: #007BFF;
+  color: white;
+  border: none;
+  padding: 6px 12px;
+  border-radius: 5px;
+  cursor: pointer;
+}
     .green { background-color: #9be59b; }
     .yellow { background-color: #fff176; }
     .red { background-color: #f76e6e; }
