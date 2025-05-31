@@ -6,18 +6,19 @@
   <title>Admin Dashboard</title>
   <link rel="stylesheet" href="teacher.css">
 </head>
-  
+
 <body>
   <header id="usernameHeader">Welcome, </header>
-  
+
   <div class="container">
     <div class="left">
       <div class="bubble-heading">Component List</div>
-      <div class="grid" id="component-grid">
+      <div id="loading" style="padding: 10px;">Loading components...</div>
+      <div class="grid" id="component-grid" style="display: none;">
         <!-- Firebase component cards will be inserted here -->
       </div>
     </div>
-    
+
     <div class="right">
       <div class="admin-nav">
         <div class="bubble-heading">Navigation</div>
@@ -30,15 +31,13 @@
         <div class="bubble-heading">Notifications</div>
         <div class="notifications" id="notification-bar"></div>
 
-        <button onclick="toggleAddForm()" class="add-btn">+ Add Component</button>
-
-        <div id="addForm" class="add-form" style="display: none;">
-          <input type="text" id="newType" placeholder="Component type" />
+        <form id="addForm" class="add-form" style="display: none;" onsubmit="event.preventDefault(); addComponent();">
+          <input type="text" id="newType" placeholder="Component type" required />
           <input type="text" id="newImage" placeholder="Image URL (optional)" />
           <label><input type="checkbox" id="newWorking" checked /> Working</label>
           <label><input type="checkbox" id="newAvailable" checked /> Available (team 0)</label>
-          <button onclick="addComponent()">Submit</button>
-        </div>
+          <button type="submit">Submit</button>
+        </form>
       </div>
     </div>
   </div>
@@ -73,12 +72,13 @@
     import { getFirestore, collection, getDocs, addDoc } from "https://www.gstatic.com/firebasejs/10.11.0/firebase-firestore.js";
 
     const firebaseConfig = {
-      apiKey: "YOUR_API_KEY",
-      authDomain: "YOUR_AUTH_DOMAIN",
-      projectId: "YOUR_PROJECT_ID",
-      storageBucket: "YOUR_STORAGE_BUCKET",
-      messagingSenderId: "YOUR_SENDER_ID",
-      appId: "YOUR_APP_ID"
+      apiKey: "AIzaSyDq7FI-N984HO2M7Q0l25WEoiTBqZvZfHs",
+      authDomain: "innovatech-86917.firebaseapp.com",
+      projectId: "innovatech-86917",
+      storageBucket: "innovatech-86917.appspot.com",
+      messagingSenderId: "222788972248",
+      appId: "1:222788972248:web:d0d5b8968f24b9c00671ad",
+      measurementId: "G-GTX1QPXJ2R"
     };
 
     const app = initializeApp(firebaseConfig);
@@ -106,10 +106,10 @@
       document.getElementById('userStatus').textContent = '✔';
 
       const greenPercent = total > 0 ? Math.round((working / total) * 100) : 0;
-      const redPercent = total > 0 ? Math.round(((total - working) / total) * 100) : 0;
+      const redPercent = 100 - greenPercent;
       const statusBar = document.querySelector('.status-bar');
 
-      if (greenPercent + redPercent === 0) {
+      if (total === 0) {
         statusBar.innerHTML = `<div class="status yellow" style="width: 100%">100%</div>`;
       } else {
         statusBar.innerHTML = `
@@ -176,42 +176,52 @@
 
     async function loadComponents() {
       const grid = document.getElementById("component-grid");
-      const snapshot = await getDocs(collection(db, "inventory"));
-      const imageMap = new Map();
+      const loading = document.getElementById("loading");
 
-      snapshot.forEach(doc => {
-        const data = doc.data();
-        const { type, image, working, team } = data;
+      try {
+        const snapshot = await getDocs(collection(db, "inventory"));
+        const imageMap = new Map();
 
-        countMap.set(type, (countMap.get(type) || 0) + 1);
-        if (working && team === "0") {
-          availableMap.set(type, (availableMap.get(type) || 0) + 1);
-        }
-        if (working) {
-          workingMap.set(type, (workingMap.get(type) || 0) + 1);
-        }
-        if (!imageMap.has(type)) {
-          imageMap.set(type, image);
-        }
-      });
+        snapshot.forEach(doc => {
+          const data = doc.data();
+          const { type, image, working, team } = data;
 
-      imageMap.forEach((image, type) => {
-        const card = document.createElement("div");
-        card.className = "card";
-        card.onclick = () => openModal(type, "Component description here", image);
-        card.innerHTML = `<img src="${image}" alt="${type}"><p>${type}</p>`;
-        grid.appendChild(card);
-      });
+          countMap.set(type, (countMap.get(type) || 0) + 1);
+          if (working && team === "0") {
+            availableMap.set(type, (availableMap.get(type) || 0) + 1);
+          }
+          if (working) {
+            workingMap.set(type, (workingMap.get(type) || 0) + 1);
+          }
+          if (!imageMap.has(type)) {
+            imageMap.set(type, image);
+          }
+        });
 
-      for (const [type, total] of countMap) {
-        const working = workingMap.get(type) || 0;
-        const available = availableMap.get(type) || 0;
-        if (total >= working * 10 && type !== "") {
-          addNotification("Quantity Alert: " + type + " is at less than 10% working quantity");
+        imageMap.forEach((image, type) => {
+          const card = document.createElement("div");
+          card.className = "card";
+          card.onclick = () => openModal(type, "Component description here", image);
+          card.innerHTML = `<img src="${image}" alt="${type}"><p>${type}</p>`;
+          grid.appendChild(card);
+        });
+
+        for (const [type, total] of countMap) {
+          const working = workingMap.get(type) || 0;
+          const available = availableMap.get(type) || 0;
+          if (type !== "" && total > 0 && (working / total) < 0.1) {
+            addNotification("Quantity Alert: " + type + " has less than 10% working components");
+          }
+          if (type !== "" && available === 0) {
+            addNotification("Quantity Alert: " + type + " has no available items to be borrowed");
+          }
         }
-        if (available === 0 && type !== "") {
-          addNotification("Quantity Alert: " + type + " has no items available to be borrowed");
-        }
+
+        loading.style.display = "none";
+        grid.style.display = "grid";
+      } catch (error) {
+        loading.textContent = "Error loading components.";
+        console.error("Error loading data:", error);
       }
     }
 
