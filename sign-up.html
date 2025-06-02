@@ -48,11 +48,11 @@
 
       const username = e.target.username.value.trim();
       const password = e.target.password.value.trim();
-      const team = e.target.team.value.trim();
+      const team = parseInt(e.target.team.value.trim(), 10);
       const message = document.getElementById("message");
 
       const userRef = db.collection("users").doc(username);
-      const groupRef = db.collection("Groups").doc(team).collection("Users").doc(username);
+      const groupRef = db.collection("Groups").doc(team.toString()).collection("Users").doc(username);
 
       try {
         const doc = await userRef.get();
