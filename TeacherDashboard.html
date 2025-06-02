@@ -6,30 +6,24 @@
   <title>Admin Dashboard</title>
   <link rel="stylesheet" href="teacher.css">
 </head>
-
 <body>
   <header id="usernameHeader">Welcome, </header>
-
   <div class="container">
     <div class="left">
       <div class="bubble-heading">Component List</div>
       <div id="loading" style="padding: 10px;">Loading components...</div>
-      <div class="grid" id="component-grid" style="display: none;">
-      </div>
+      <div class="grid" id="component-grid" style="display: none;"></div>
     </div>
-
     <div class="right">
       <div class="admin-nav">
         <div class="bubble-heading">Navigation</div>
         <a href="ManageClass.html"><button type="button">Manage Classroom</button></a>
-        <button onclick="toggleAddForm()">Add New Component</button>
+        <button type="button" onclick="toggleAddForm()">Add New Component</button>
         <button>Remove Component</button>
       </div>
-
       <div class="notifications-wrapper">
         <div class="bubble-heading">Notifications</div>
         <div class="notifications" id="notification-bar"></div>
-
         <form id="addForm" class="add-form" style="display: none;" onsubmit="event.preventDefault(); addComponent();">
           <input type="text" id="newType" placeholder="Component type" required />
           <input type="text" id="newImage" placeholder="Image URL (optional)" />
@@ -40,7 +34,6 @@
       </div>
     </div>
   </div>
-
   <div class="modal" id="modal">
     <div class="modal-content">
       <span class="close-btn" onclick="closeModal()">&times;</span>
@@ -65,19 +58,11 @@
       </div>
     </div>
   </div>
+  <script type="module">
+    import { initializeApp } from "https://www.gstatic.com/firebasejs/10.11.0/firebase-app.js";
+    import { getFirestore, collection, doc, getDocs, addDoc } from "https://www.gstatic.com/firebasejs/10.11.0/firebase-firestore.js";
 
- <script type="module">
-  import { initializeApp } from "https://www.gstatic.com/firebasejs/10.11.0/firebase-app.js";
-  import {
-    getFirestore,
-    collection,
-    doc,
-    getDocs,
-    addDoc,
-    query
-  } from "https://www.gstatic.com/firebasejs/10.11.0/firebase-firestore.js";
-
-  const firebaseConfig = {
+    const firebaseConfig = {
       apiKey: "AIzaSyDq7FI-N984HO2M7Q0l25WEoiTBqZvZfHs",
       authDomain: "innovatech-86917.firebaseapp.com",
       projectId: "innovatech-86917",
@@ -87,169 +72,140 @@
       measurementId: "G-GTX1QPXJ2R"
     };
 
-  const app = initializeApp(firebaseConfig);
-  const db = getFirestore(app);
+    const app = initializeApp(firebaseConfig);
+    const db = getFirestore(app);
 
-  const username = localStorage.getItem("username") || "Student";
-  if (username === "Student") {
-    window.location.href = 'index.html';
-  }
-  document.getElementById("usernameHeader").textContent = `Welcome, ${username}`;
-  document.title = `${username}'s Dashboard`;
-
-  const workingMap = new Map();
-  const availableMap = new Map();
-  const countMap = new Map();
-  const imageMap = new Map();
-
-  function openModal(name, imageUrl) {
-    const total = countMap.get(name) || 0;
-    const working = workingMap.get(name) || 0;
-
-    document.getElementById('modal').style.display = 'flex';
-    document.getElementById('modalTitle').textContent = name;
-    document.getElementById('modalImage').src = imageUrl;
-    document.getElementById('totalCount').textContent = total;
-    document.getElementById('AvailableCount').textContent = total - working;
-    document.getElementById('userStatus').textContent = '✔';
-
-    const greenPercent = total > 0 ? Math.round((working / total) * 100) : 0;
-    const redPercent = 100 - greenPercent;
-    const statusBar = document.querySelector('.status-bar');
-
-    if (total === 0) {
-      statusBar.innerHTML = `<div class="status yellow" style="width: 100%">100%</div>`;
-    } else {
-      statusBar.innerHTML = `
-        <div class="status green" style="width: ${greenPercent}%">${greenPercent}%</div>
-        <div class="status red" style="width: ${redPercent}%">${redPercent > 0 ? redPercent + '%' : ''}</div>
-      `;
+    const username = localStorage.getItem("username") || "Student";
+    if (username === "Student") {
+      window.location.href = 'index.html';
     }
-  }
+    document.getElementById("usernameHeader").textContent = `Welcome, ${username}`;
+    document.title = `${username}'s Dashboard`;
 
-  function closeModal() {
-    document.getElementById('modal').style.display = 'none';
-  }
+    const workingMap = new Map();
+    const availableMap = new Map();
+    const countMap = new Map();
+    const imageMap = new Map();
 
-  function toggleAddForm() {
-    const form = document.getElementById("addForm");
-    form.style.display = form.style.display === "none" ? "block" : "none";
-  }
-
-  async function addComponent() {
-    const type = document.getElementById("newType").value.trim();
-    const image = document.getElementById("newImage").value.trim() || "https://upload.wikimedia.org/wikipedia/commons/3/38/Arduino_Uno_-_R3.jpg";
-    const working = document.getElementById("newWorking").checked;
-    const team = document.getElementById("newAvailable").checked ? "0" : "1";
-
-    if (!type) {
-      alert("Component type is required.");
-      return;
-    }
-
-    try {
-      const partData = {
-        working,
-        team,
-        id: `${type}-${Date.now()}`
-      };
-
-      // Write to inventory/[type]/parts
-      const partsRef = collection(db, "inventory", type, "parts");
-      await addDoc(partsRef, partData);
-
-      // Save image in the top-level doc (once)
-      if (!imageMap.has(type)) {
-        await addDoc(collection(db, "inventory"), { image }, { merge: true });
+    function openModal(name, imageUrl) {
+      const total = countMap.get(name) || 0;
+      const working = workingMap.get(name) || 0;
+      document.getElementById('modal').style.display = 'flex';
+      document.getElementById('modalTitle').textContent = name;
+      document.getElementById('modalImage').src = imageUrl;
+      document.getElementById('totalCount').textContent = total;
+      document.getElementById('AvailableCount').textContent = total - working;
+      document.getElementById('userStatus').textContent = '✔';
+      const greenPercent = total > 0 ? Math.round((working / total) * 100) : 0;
+      const redPercent = 100 - greenPercent;
+      const statusBar = document.querySelector('.status-bar');
+      if (total === 0) {
+        statusBar.innerHTML = `<div class="status yellow" style="width: 100%">100%</div>`;
+      } else {
+        statusBar.innerHTML = `<div class="status green" style="width: ${greenPercent}%">${greenPercent}%</div><div class="status red" style="width: ${redPercent}%">${redPercent > 0 ? redPercent + '%' : ''}</div>`;
       }
-
-      alert("Component added successfully!");
-      document.getElementById("newType").value = "";
-      document.getElementById("newImage").value = "";
-      document.getElementById("newWorking").checked = true;
-      document.getElementById("newAvailable").checked = true;
-
-      document.getElementById("component-grid").innerHTML = "";
-      countMap.clear();
-      availableMap.clear();
-      workingMap.clear();
-      loadComponents();
-    } catch (error) {
-      console.error("Error adding component:", error);
-      alert("Failed to add component.");
     }
-  }
 
-  function addNotification(message) {
-    const bar = document.getElementById('notification-bar');
-    const note = document.createElement('div');
-    note.className = 'notif';
-    note.textContent = message;
-    bar.appendChild(note);
-    bar.style.display = 'block';
-  }
+    function closeModal() {
+      document.getElementById('modal').style.display = 'none';
+    }
 
-  async function loadComponents() {
-    const grid = document.getElementById("component-grid");
-    const loading = document.getElementById("loading");
+    function toggleAddForm() {
+      const form = document.getElementById("addForm");
+      form.style.display = form.style.display === "none" ? "block" : "none";
+    }
 
-    try {
-      const inventorySnapshot = await getDocs(collection(db, "inventory"));
-
-      for (const typeDoc of inventorySnapshot.docs) {
-        const type = typeDoc.id;
-        const image = typeDoc.data().image || "https://upload.wikimedia.org/wikipedia/commons/3/38/Arduino_Uno_-_R3.jpg";
-        imageMap.set(type, image);
-
+    async function addComponent() {
+      const type = document.getElementById("newType").value.trim();
+      const image = document.getElementById("newImage").value.trim() || "https://upload.wikimedia.org/wikipedia/commons/3/38/Arduino_Uno_-_R3.jpg";
+      const working = document.getElementById("newWorking").checked;
+      const team = document.getElementById("newAvailable").checked ? "0" : "1";
+      if (!type) {
+        alert("Component type is required.");
+        return;
+      }
+      try {
+        const partData = { working, team, id: `${type}-${Date.now()}` };
         const partsRef = collection(db, "inventory", type, "parts");
-        const partsSnapshot = await getDocs(partsRef);
-
-        partsSnapshot.forEach(partDoc => {
-          const { working, team } = partDoc.data();
-          countMap.set(type, (countMap.get(type) || 0) + 1);
-          if (working) {
-            workingMap.set(type, (workingMap.get(type) || 0) + 1);
-            if (team === "0") {
-              availableMap.set(type, (availableMap.get(type) || 0) + 1);
-            }
-          }
-        });
+        await addDoc(partsRef, partData);
+        const typeDocRef = doc(db, "inventory", type);
+        await addDoc(collection(db, "inventory", type), { image });
+        alert("Component added successfully!");
+        document.getElementById("addForm").reset();
+        document.getElementById("addForm").style.display = "none";
+        document.getElementById("component-grid").innerHTML = "";
+        countMap.clear();
+        availableMap.clear();
+        workingMap.clear();
+        imageMap.clear();
+        loadComponents();
+      } catch (error) {
+        console.error("Error adding component:", error);
+        alert("Failed to add component.");
       }
-
-      for (const [type, image] of imageMap) {
-        const card = document.createElement("div");
-        card.className = "card";
-        card.onclick = () => openModal(type, image);
-        card.innerHTML = `<img src="${image}" alt="${type}"><p>${type}</p>`;
-        grid.appendChild(card);
-      }
-
-      for (const [type, total] of countMap) {
-        const working = workingMap.get(type) || 0;
-        const available = availableMap.get(type) || 0;
-        if (type !== "" && total > 0 && (working / total) < 0.1) {
-          addNotification("Quantity Alert: " + type + " has less than 10% working components");
-        }
-        if (type !== "" && available === 0) {
-          addNotification("Quantity Alert: " + type + " has no available items to be borrowed");
-        }
-      }
-
-      loading.style.display = "none";
-      grid.style.display = "grid";
-    } catch (error) {
-      loading.textContent = "Error loading components.";
-      console.error("Error loading data:", error);
     }
-  }
 
-  loadComponents();
+    function addNotification(message) {
+      const bar = document.getElementById('notification-bar');
+      const note = document.createElement('div');
+      note.className = 'notif';
+      note.textContent = message;
+      bar.appendChild(note);
+      bar.style.display = 'block';
+    }
 
-  window.onclick = function(e) {
-    const modal = document.getElementById('modal');
-    if (e.target === modal) closeModal();
-  };
-</script>
+    async function loadComponents() {
+      const grid = document.getElementById("component-grid");
+      const loading = document.getElementById("loading");
+      try {
+        const inventorySnapshot = await getDocs(collection(db, "inventory"));
+        for (const typeDoc of inventorySnapshot.docs) {
+          const type = typeDoc.id;
+          const image = typeDoc.data().image || "https://upload.wikimedia.org/wikipedia/commons/3/38/Arduino_Uno_-_R3.jpg";
+          imageMap.set(type, image);
+          const partsRef = collection(db, "inventory", type, "parts");
+          const partsSnapshot = await getDocs(partsRef);
+          partsSnapshot.forEach(partDoc => {
+            const { working, team } = partDoc.data();
+            countMap.set(type, (countMap.get(type) || 0) + 1);
+            if (working) {
+              workingMap.set(type, (workingMap.get(type) || 0) + 1);
+              if (team === "0") {
+                availableMap.set(type, (availableMap.get(type) || 0) + 1);
+              }
+            }
+          });
+        }
+        for (const [type, image] of imageMap) {
+          const card = document.createElement("div");
+          card.className = "card";
+          card.onclick = () => openModal(type, image);
+          card.innerHTML = `<img src="${image}" alt="${type}"><p>${type}</p>`;
+          grid.appendChild(card);
+        }
+        for (const [type, total] of countMap) {
+          const working = workingMap.get(type) || 0;
+          const available = availableMap.get(type) || 0;
+          if (type !== "" && total > 0 && (working / total) < 0.1) {
+            addNotification("Quantity Alert: " + type + " has less than 10% working components");
+          }
+          if (type !== "" && available === 0) {
+            addNotification("Quantity Alert: " + type + " has no available items to be borrowed");
+          }
+        }
+        loading.style.display = "none";
+        grid.style.display = "grid";
+      } catch (error) {
+        loading.textContent = "Error loading components.";
+        console.error("Error loading data:", error);
+      }
+    }
 
+    loadComponents();
+    window.onclick = function(e) {
+      const modal = document.getElementById('modal');
+      if (e.target === modal) closeModal();
+    };
+  </script>
 </body>
 </html>
