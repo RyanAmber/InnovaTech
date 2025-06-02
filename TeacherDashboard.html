@@ -48,7 +48,6 @@
         <div class="overview-box">
           <p>Number logged in: <span id="totalCount">X</span></p>
           <p>Number Available: <span id="AvailableCount">X</span></p>
-          <p>Your component: <span id="userStatus">X</span></p>
         </div>
         <h3>Actions</h3>
         <div class="actions">
@@ -162,7 +161,6 @@
       document.getElementById('modalImage').src = imageUrl;
       document.getElementById('totalCount').textContent = total;
       document.getElementById('AvailableCount').textContent = available;
-      document.getElementById('userStatus').textContent = '✔';
 
       const greenPercent = total > 0 ? Math.round((working / total) * 100) : 0;
       const redPercent = 100 - greenPercent;
