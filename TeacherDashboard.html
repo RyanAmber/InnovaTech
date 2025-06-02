@@ -32,7 +32,7 @@
           <input type="text" id="newType" placeholder="Component type" required />
           <input type="text" id="newImage" placeholder="Image URL (optional)" />
           <label><input type="checkbox" id="newWorking" checked /> Working</label>
-          <label><input type="checkbox" id="newAvailable" checked /> Available (team 0)</label>
+          <input type="text" id="newAvailable" placeholder="Group (Set to 0 if in storage)" required />
           <button type="submit">Submit</button>
         </form>
       </div>
@@ -111,13 +111,16 @@
       const type = document.getElementById("newType").value.trim();
       const image = document.getElementById("newImage").value.trim() || "https://upload.wikimedia.org/wikipedia/commons/3/38/Arduino_Uno_-_R3.jpg";
       const working = document.getElementById("newWorking").checked;
-      const team = document.getElementById("newAvailable").checked ? "0" : "1";
+      const team = document.getElementById("newGroup").value.trim();
 
       if (!type) {
         alert("Component type is required.");
         return;
       }
-
+      if (!team) {
+        alert("Component team is required.");
+        return;
+      }
       try {
         // Set the image for the type in inventory/[type] doc
         await setDoc(doc(db, "inventory", type), { image }, { merge: true });
@@ -126,8 +129,7 @@
         const partsRef = collection(db, "inventory", type, "parts");
         await addDoc(partsRef, {
           working,
-          team,
-          id: `${type}-${Date.now()}`
+          team
         });
 
         alert("Component added successfully!");
