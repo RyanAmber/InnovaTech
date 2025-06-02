@@ -52,7 +52,7 @@
         <h3>Component Overview</h3>
         <div class="overview-box">
           <p>Number logged in: <span id="totalCount">X</span></p>
-          <p>Number in use: <span id="AvailableCount">X</span></p>
+          <p>Number Available: <span id="AvailableCount">X</span></p>
           <p>Your component: <span id="userStatus">X</span></p>
         </div>
         <h3>Actions</h3>
@@ -160,47 +160,56 @@ async function addComponent() {
 }
 
     async function loadComponents() {
-      const grid = document.getElementById('component-grid');
+      const grid = document.getElementById("component-grid");
+      const loading = document.getElementById("loading");
+
       try {
-        const snapshot = await db.collection("inventory").get();
+        const inventorySnapshot = await getDocs(collection(db, "inventory"));
 
-        snapshot.forEach(doc => {
-          const item = doc.data();
-          const { type, working, team, id, image = defaultImg } = item;
+        for (const typeDoc of inventorySnapshot.docs) {
+          const type = typeDoc.id;
+          const image = typeDoc.data().image || "https://upload.wikimedia.org/wikipedia/commons/3/38/Arduino_Uno_-_R3.jpg";
+          imageMap.set(type, image);
 
-          if (!type) return;
+          const partsRef = collection(db, "inventory", type, "parts");
+          const partsSnapshot = await getDocs(partsRef);
 
-          countMap.set(type, (countMap.get(type) || 0) + 1);
-          if (working === true && team === "0") {
-            availableMap.set(type, (availableMap.get(type) || 0) + 1);
+          partsSnapshot.forEach(partDoc => {
+            const { working, team } = partDoc.data();
+            countMap.set(type, (countMap.get(type) || 0) + 1);
+            if (working) {
+              workingMap.set(type, (workingMap.get(type) || 0) + 1);
+              if (team == "0") {
+                availableMap.set(type, (availableMap.get(type) || 0) + 1);
+              }
+            }
+          });
+        }
+
+        for (const [type, image] of imageMap) {
+          const card = document.createElement("div");
+          card.className = "card";
+          card.onclick = () => openModal(type, image);
+          card.innerHTML = `<img src="${image}" alt="${type}"><p>${type}</p>`;
+          grid.appendChild(card);
+        }
+
+        for (const [type, total] of countMap) {
+          const working = workingMap.get(type) || 0;
+          const available = availableMap.get(type) || 0;
+          if (type !== "" && total > 0 && (working / total) < 0.1) {
+            addNotification("Quantity Alert: " + type + " has less than 10% working components");
           }
-          if (working === true) {
-            workingMap.set(type, (workingMap.get(type) || 0) + 1);
-          }
-
-          if (!document.getElementById(`card-${type}`)) {
-            const card = document.createElement("div");
-            card.className = "card";
-            card.id = `card-${type}`;
-            card.onclick = () => openModal(type, "Description", image);
-            card.innerHTML = `<img src="${image}" alt="${type}"><p>${type}</p>`;
-            grid.appendChild(card);
-          }
-        });
-
-        for (const [key, total] of countMap) {
-          const working = workingMap.get(key) || 0;
-          const available = availableMap.get(key) || 0;
-
-          if (total >= working * 10) {
-            addNotification(`Quantity Alert: ${key} is at less than 10% working quantity`);
-          }
-          if (available === 0) {
-            addNotification(`Quantity Alert: ${key} has no items available to be borrowed`);
+          if (type !== "" && available === 0) {
+            addNotification("Quantity Alert: " + type + " has no available items to be borrowed");
           }
         }
+
+        loading.style.display = "none";
+        grid.style.display = "grid";
       } catch (error) {
-        console.error("Error loading inventory from Firestore:", error);
+        loading.textContent = "Error loading components.";
+        console.error("Error loading data:", error);
       }
     }
 

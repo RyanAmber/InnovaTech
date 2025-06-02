@@ -122,10 +122,10 @@
         return;
       }
       try {
-        // Set the image for the type in inventory/[type] doc
+        // Sets the image for the type in inventory/[type] doc
         await setDoc(doc(db, "inventory", type), { image }, { merge: true });
 
-        // Add a new part in inventory/[type]/parts/
+        // Adds a new part in inventory/[type]/parts/
         const partsRef = collection(db, "inventory", type, "parts");
         await addDoc(partsRef, {
           working,
@@ -136,7 +136,7 @@
         document.getElementById("addForm").reset();
         document.getElementById("addForm").style.display = "none";
 
-        // Clear and reload
+        // Clears and reloads
         document.getElementById("component-grid").innerHTML = "";
         countMap.clear();
         workingMap.clear();
@@ -211,7 +211,7 @@
             countMap.set(type, (countMap.get(type) || 0) + 1);
             if (working) {
               workingMap.set(type, (workingMap.get(type) || 0) + 1);
-              if (team === "0") {
+              if (team == "0") {
                 availableMap.set(type, (availableMap.get(type) || 0) + 1);
               }
             }
