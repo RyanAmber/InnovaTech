@@ -147,6 +147,10 @@
         alert("Failed to add component.");
       }
     }
+    document.getElementById("addForm").addEventListener("submit", async (e) => {
+      e.preventDefault();
+      await addComponent();
+    });
 
     function openModal(name, imageUrl) {
       const total = countMap.get(name) || 0;
