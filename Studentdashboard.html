@@ -4,6 +4,101 @@
   <meta charset="UTF-8" />
   <meta name="viewport" content="width=device-width, initial-scale=1.0">
   <title>Student Dashboard</title>
+  <style>
+    body {
+      margin: 0;
+      font-family: 'Segoe UI', sans-serif;
+      background: linear-gradient(135deg, #3cbefc, #5d5dfc);
+      color: #333;
+    }
+
+    .banner {
+      font-size: 2.5rem;
+      font-weight: bold;
+      color: white;
+      padding: 20px 40px;
+    }
+
+    .dashboard {
+      display: grid;
+      grid-template-columns: 2fr 1fr 1fr;
+      gap: 20px;
+      padding: 0 40px 40px;
+    }
+
+    .section {
+      background: white;
+      border-radius: 24px;
+      padding: 20px;
+      box-shadow: 0 4px 12px rgba(0, 0, 0, 0.1);
+      height: fit-content;
+    }
+
+    .section h2 {
+      margin-top: 0;
+      font-size: 1.5rem;
+      margin-bottom: 15px;
+    }
+
+    .component-list {
+      display: grid;
+      grid-template-columns: repeat(3, 1fr);
+      gap: 10px;
+    }
+
+    .component-card {
+      text-align: center;
+    }
+
+    .component-card img {
+      width: 100%;
+      border-radius: 12px;
+    }
+
+    .your-components .item {
+      display: flex;
+      gap: 10px;
+      align-items: center;
+      background: #f0f0f0;
+      border-radius: 16px;
+      padding: 10px;
+      margin-bottom: 10px;
+    }
+
+    .your-components .item img {
+      width: 60px;
+      border-radius: 8px;
+    }
+
+    .your-components .actions button {
+      background-color: #6366f1;
+      color: white;
+      border: none;
+      padding: 5px 10px;
+      border-radius: 12px;
+      font-size: 0.8rem;
+      margin-right: 5px;
+      cursor: pointer;
+    }
+
+    .notification {
+      background-color: #3c82f6;
+      color: white;
+      border-radius: 16px;
+      padding: 10px;
+      margin-bottom: 10px;
+    }
+
+    .notification span {
+      font-weight: bold;
+    }
+
+    .notification small {
+      display: block;
+      font-size: 0.75rem;
+      margin-top: 4px;
+    }
+  </style>
   <link rel="stylesheet" href="student.css" />
 
   <script src="https://www.gstatic.com/firebasejs/10.11.0/firebase-app-compat.js"></script>
