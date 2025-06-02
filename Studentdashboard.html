@@ -6,7 +6,6 @@
   <title>Student Dashboard</title>
   <link rel="stylesheet" href="student.css" />
 
-  <!-- Firebase SDKs -->
   <script src="https://www.gstatic.com/firebasejs/10.11.0/firebase-app-compat.js"></script>
   <script src="https://www.gstatic.com/firebasejs/10.11.0/firebase-firestore-compat.js"></script>
 
@@ -38,7 +37,6 @@
       <div class="notifications-wrapper">
         <div class="bubble-heading">Notifications</div>
         <div id="notification-bar" class="notifications"></div>
-
       </div>
     </div>
   </div>
@@ -77,6 +75,7 @@
     const availableMap = new Map();
     const workingMap = new Map();
     const countMap = new Map();
+    const imageMap = new Map(); 
 
     const defaultImg = "https://upload.wikimedia.org/wikipedia/commons/3/38/Arduino_Uno_-_R3.jpg";
 
@@ -117,69 +116,26 @@
     function closeModal() {
       document.getElementById('modal').style.display = 'none';
     }
-    function toggleAddForm() {
-  const form = document.getElementById("addForm");
-  form.style.display = form.style.display === "none" ? "block" : "none";
-}
-
-async function addComponent() {
-  const type = document.getElementById("newType").value.trim();
-  const image = document.getElementById("newImage").value.trim() || "https://upload.wikimedia.org/wikipedia/commons/3/38/Arduino_Uno_-_R3.jpg";
-  const working = document.getElementById("newWorking").checked;
-  const team = document.getElementById("newAvailable").value.trim();
-
-  if (!type) {
-    alert("Component type is required.");
-    return;
-  }
-
-  try {
-    await db.collection("inventory").add({
-      type,
-      image,
-      working,
-      team,
-      id: `${type}-${Date.now()}`
-    });
-    alert("Component added successfully!");
-
-    document.getElementById("newType").value = "";
-    document.getElementById("newImage").value = "";
-    document.getElementById("newWorking").checked = true;
-    document.getElementById("newAvailable").checked = true;
-
-    document.getElementById("component-grid").innerHTML = "";
-    countMap.clear();
-    availableMap.clear();
-    workingMap.clear();
-    loadComponents();
-  } catch (error) {
-    console.error("Error adding component:", error);
-    alert("Failed to add component.");
-  }
-}
 
     async function loadComponents() {
       const grid = document.getElementById("component-grid");
-      const loading = document.getElementById("loading");
 
       try {
-        const inventorySnapshot = await getDocs(collection(db, "inventory"));
+        const inventorySnapshot = await db.collection("inventory").get();
 
         for (const typeDoc of inventorySnapshot.docs) {
           const type = typeDoc.id;
-          const image = typeDoc.data().image || "https://upload.wikimedia.org/wikipedia/commons/3/38/Arduino_Uno_-_R3.jpg";
+          const image = typeDoc.data().image || defaultImg;
           imageMap.set(type, image);
 
-          const partsRef = collection(db, "inventory", type, "parts");
-          const partsSnapshot = await getDocs(partsRef);
+          const partsSnapshot = await db.collection("inventory").doc(type).collection("parts").get();
 
           partsSnapshot.forEach(partDoc => {
             const { working, team } = partDoc.data();
             countMap.set(type, (countMap.get(type) || 0) + 1);
             if (working) {
               workingMap.set(type, (workingMap.get(type) || 0) + 1);
-              if (team == "0") {
+              if (team === "0") {
                 availableMap.set(type, (availableMap.get(type) || 0) + 1);
               }
             }
@@ -189,7 +145,7 @@ async function addComponent() {
         for (const [type, image] of imageMap) {
           const card = document.createElement("div");
           card.className = "card";
-          card.onclick = () => openModal(type, image);
+          card.onclick = () => openModal(type, "", image);
           card.innerHTML = `<img src="${image}" alt="${type}"><p>${type}</p>`;
           grid.appendChild(card);
         }
@@ -197,19 +153,17 @@ async function addComponent() {
         for (const [type, total] of countMap) {
           const working = workingMap.get(type) || 0;
           const available = availableMap.get(type) || 0;
-          if (type !== "" && total > 0 && (working / total) < 0.1) {
+          if (type && total > 0 && (working / total) < 0.1) {
             addNotification("Quantity Alert: " + type + " has less than 10% working components");
           }
-          if (type !== "" && available === 0) {
+          if (type && available === 0) {
             addNotification("Quantity Alert: " + type + " has no available items to be borrowed");
           }
         }
 
-        loading.style.display = "none";
         grid.style.display = "grid";
       } catch (error) {
-        loading.textContent = "Error loading components.";
-        console.error("Error loading data:", error);
+        console.error("Error loading components:", error);
       }
     }
 
