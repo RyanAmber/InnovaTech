@@ -28,11 +28,11 @@
         <div class="bubble-heading">Notifications</div>
         <div class="notifications" id="notification-bar"></div>
 
-        <form id="addForm" class="add-form" style="display: none;" onsubmit="event.preventDefault(); addComponent();">
+        <form id="addForm" class="add-form" style="display: none;">
           <input type="text" id="newType" placeholder="Component type" required />
           <input type="text" id="newImage" placeholder="Image URL (optional)" />
           <label><input type="checkbox" id="newWorking" checked /> Working</label>
-          <input type="text" id="newAvailable" placeholder="Group (Set to 0 if in storage)" required />
+          <input type="text" id="newGroup" placeholder="Group (Set to 0 if in storage)" required />
           <button type="submit">Submit</button>
         </form>
       </div>
