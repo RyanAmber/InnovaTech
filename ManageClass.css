@@ -1,32 +1,35 @@
 body {
   margin: 0;
   font-family: 'Segoe UI', sans-serif;
-  background: linear-gradient(135deg, #61c9bd, #70a4db, #9470db);
+  background: linear-gradient(135deg, #6dd5ed, #c44569);
   color: #333;
 }
 
 .container {
-  padding: 20px;
+  padding: 30px;
 }
 
 h1 {
   color: white;
+  font-size: 36px;
   margin-bottom: 20px;
 }
 
 .tabs {
   display: flex;
   gap: 10px;
-  margin-bottom: 20px;
+  margin-bottom: 30px;
 }
 
 .tab {
-  padding: 10px 20px;
+  padding: 12px 28px;
+  font-size: 16px;
   background: white;
-  border-radius: 20px;
-  font-weight: bold;
   border: none;
+  border-radius: 25px;
+  font-weight: bold;
   cursor: pointer;
+  transition: background 0.2s ease;
 }
 
 .tab.active {
@@ -35,23 +38,26 @@ h1 {
 }
 
 .main-content {
-  display: flex;
-  gap: 20px;
-  justify-content: space-between;
+  display: grid;
+  grid-template-columns: 1fr 2fr 1fr;
+  gap: 25px;
 }
 
 .section {
   background: white;
-  border-radius: 20px;
-  padding: 20px;
-  flex: 1;
-  box-shadow: 0 4px 10px rgba(0,0,0,0.1);
+  border-radius: 25px;
+  padding: 25px;
+  min-height: 500px;
+  box-shadow: 0 4px 20px rgba(0, 0, 0, 0.08);
 }
 
 .approval-list li,
 .current-list li {
-  margin-bottom: 8px;
-  font-size: 16px;
+  margin-bottom: 12px;
+  font-size: 17px;
+  display: flex;
+  align-items: center;
+  justify-content: space-between;
 }
 
 .dot {
@@ -59,7 +65,7 @@ h1 {
   width: 12px;
   border-radius: 50%;
   display: inline-block;
-  margin-right: 10px;
+  margin-right: 8px;
 }
 
 .dot.green {
@@ -70,31 +76,63 @@ h1 {
   background-color: #ff4d4d;
 }
 
-.current-list .remove-btn {
+.remove-btn {
   background-color: #ff6b6b;
   border: none;
-  padding: 4px 8px;
-  border-radius: 10px;
+  padding: 4px 10px;
+  border-radius: 15px;
   color: white;
-  margin-left: 10px;
   cursor: pointer;
+  font-size: 13px;
 }
 
 .id-boxes {
   display: grid;
-  grid-template-columns: repeat(3, 1fr);
-  gap: 15px;
+  grid-template-columns: repeat(auto-fill, minmax(180px, 1fr));
+  gap: 20px;
+  margin-top: 10px;
 }
 
 .id-box {
-  background: #f6f6f6;
-  padding: 12px;
-  border-radius: 15px;
-  box-shadow: inset 0 1px 2px rgba(0,0,0,0.05);
+  background: #f8f8f8;
+  padding: 15px;
+  border-radius: 20px;
   font-size: 14px;
-  line-height: 1.5;
+  box-shadow: inset 0 1px 2px rgba(0, 0, 0, 0.05);
+  display: flex;
+  flex-direction: column;
+  gap: 6px;
 }
 
-button {
-  margin-top: 20px;
+.id-box input {
+  padding: 6px 10px;
+  border-radius: 12px;
+  border: 1px solid #ccc;
+  font-size: 13px;
+}
+
+.id-box button {
+  align-self: flex-start;
+  background-color: #0ad200;
+  color: white;
+  border: none;
+  padding: 4px 10px;
+  border-radius: 12px;
+  font-size: 13px;
+  margin-top: 4px;
+  cursor: pointer;
+}
+
+.id-box button.remove-btn {
+  background-color: #ff6b6b;
+}
+
+.id-box:last-child {
+  font-size: 28px;
+  font-weight: bold;
+  color: #aaa;
+  justify-content: center;
+  align-items: center;
+  text-align: center;
+  cursor: pointer;
 }
