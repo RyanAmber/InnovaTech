@@ -13,5 +13,6 @@ const firebaseConfig = {
   measurementId: "G-GTX1QPXJ2R",
   databaseURL: "https://InnovaTech.firebaseio.com"
 };
+
 const app = initializeApp(firebaseConfig);
 const database = getDatabase(app);
