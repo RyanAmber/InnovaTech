@@ -46,7 +46,7 @@
         </div>
         <h3>Actions</h3>
         <div class="actions">
-          <button class="action-btn">Check out Component</button>
+          <button class="action-btn" onclick="checkOutComponent()">Check out Component</button>
           <button class="action-btn">Mark as damaged or broken</button>
           <button class="action-btn">Return Component</button>
         </div>
@@ -185,6 +185,35 @@
         console.error("Error loading data:", error);
       }
     }
+    async function checkOutComponent() {
+  const name = document.getElementById('modalTitle').textContent;
+
+  try {
+    const partsRef = collection(db, "inventory", name, "parts");
+    const partsSnapshot = await getDocs(partsRef);
+
+    const availablePart = partsSnapshot.docs.find(doc => {
+      const data = doc.data();
+      return data.working === true && data.team === "0";
+    });
+
+    if (!availablePart) {
+      alert("No available components to check out.");
+      return;
+    }
+
+    const userGroup = localStorage.getItem("group") || "Group 0";
+    const partDocRef = doc(db, "inventory", name, "parts", availablePart.id);
+    await setDoc(partDocRef, { team: userGroup }, { merge: true });
+
+    alert(`Checked out one ${name} to ${userGroup}.`);
+    closeModal();
+    location.reload(); // optional: refresh state/UI
+  } catch (err) {
+    console.error("Checkout failed:", err);
+    alert("Error checking out component.");
+  }
+}
 
     loadComponents();
 
