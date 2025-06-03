@@ -46,61 +46,106 @@
       gap: 10px;
     }
 
-    .component-card {
+    .card {
+      background: white;
+      border-radius: 12px;
+      padding: 10px;
       text-align: center;
+      box-shadow: 0 2px 6px rgba(0, 0, 0, 0.1);
+      cursor: pointer;
     }
 
-    .component-card img {
+    .card img {
+      width: 100%;
+      border-radius: 8px;
+      height: 120px;
+      object-fit: cover;
+    }
+
+    .notif {
+      background-color: #3c82f6;
+      color: white;
+      border-radius: 12px;
+      padding: 10px;
+      margin-bottom: 10px;
+    }
+
+    .modal {
+      display: none;
+      position: fixed;
+      top: 0; left: 0;
+      width: 100%;
+      height: 100%;
+      background: rgba(0,0,0,0.6);
+      justify-content: center;
+      align-items: center;
+    }
+
+    .modal-content {
+      background: white;
+      padding: 20px;
+      display: flex;
+      gap: 20px;
+      border-radius: 12px;
+      max-width: 800px;
+      width: 100%;
+    }
+
+    .modal-left {
+      flex: 1;
+    }
+
+    .modal-right {
+      flex: 1;
+    }
+
+    .component-img {
       width: 100%;
       border-radius: 12px;
     }
 
-    .your-components .item {
-      display: flex;
-      gap: 10px;
-      align-items: center;
-      background: #f0f0f0;
-      border-radius: 16px;
-      padding: 10px;
-      margin-bottom: 10px;
-    }
-
-    .your-components .item img {
-      width: 60px;
-      border-radius: 8px;
-    }
-
-    .your-components .actions button {
-      background-color: #6366f1;
-      color: white;
-      border: none;
-      padding: 5px 10px;
-      border-radius: 12px;
-      font-size: 0.8rem;
-      margin-right: 5px;
+    .close-btn {
+      float: right;
+      font-size: 1.5rem;
       cursor: pointer;
     }
 
-    .notification {
-      background-color: #3c82f6;
+    .status-bar {
+      margin-top: 10px;
+      height: 20px;
+      display: flex;
+      border-radius: 10px;
+      overflow: hidden;
+    }
+
+    .status.green {
+      background-color: #6fcf97;
       color: white;
-      border-radius: 16px;
-      padding: 10px;
-      margin-bottom: 10px;
+      text-align: center;
     }
 
-    .notification span {
-      font-weight: bold;
+    .status.red {
+      background-color: #eb5757;
+      color: white;
+      text-align: center;
     }
 
-    .notification small {
-      display: block;
-      font-size: 0.75rem;
-      margin-top: 4px;
+    .actions {
+      margin-top: 10px;
+    }
+
+    .action-btn {
+      background-color: #6366f1;
+      color: white;
+      border: none;
+      padding: 8px 12px;
+      border-radius: 8px;
+      margin-right: 10px;
+      cursor: pointer;
     }
   </style>
-  <link rel="stylesheet" href="student.css" />
 
+  <!-- Firebase -->
   <script src="https://www.gstatic.com/firebasejs/10.11.0/firebase-app-compat.js"></script>
   <script src="https://www.gstatic.com/firebasejs/10.11.0/firebase-firestore-compat.js"></script>
 
@@ -120,39 +165,31 @@
   </script>
 </head>
 <body>
-  <header id="usernameHeader">Welcome, </header>
-  <div class="container">
-    <div class="left">
-      <div class="bubble-heading">Component List</div>
-      <div class="grid" id="component-grid">
-        <!-- Cards added dynamically -->
-      </div>
+  <header id="usernameHeader" class="banner">Welcome, </header>
+  <div class="dashboard">
+    <div class="section">
+      <h2>Component List</h2>
+      <div class="component-list" id="component-grid"></div>
     </div>
-    <div class="right">
-      <div class="notifications-wrapper">
-        <div class="bubble-heading">Notifications</div>
-        <div id="notification-bar" class="notifications"></div>
-      </div>
+    <div class="section">
+      <h2>Notifications</h2>
+      <div id="notification-bar"></div>
     </div>
   </div>
 
   <!-- Modal -->
   <div class="modal" id="modal">
     <div class="modal-content">
-      <span class="close-btn" onclick="closeModal()">&times;</span>
       <div class="modal-left">
-        <h2 id="modalTitle" class="component-name">Component_Name</h2>
-        <h3>Component Overview</h3>
+        <span class="close-btn" onclick="closeModal()">&times;</span>
+        <h2 id="modalTitle">Component_Name</h2>
         <div class="overview-box">
           <p>Number logged in: <span id="totalCount">X</span></p>
           <p>Number Available: <span id="AvailableCount">X</span></p>
-          <p>Your component: <span id="userStatus">X</span></p>
+          <p>Your component: <span id="userStatus">✔</span></p>
         </div>
-        <h3>Actions</h3>
         <div class="actions">
-          <button class="action-btn">Check out Component</button>
-          <button class="action-btn">Mark as damaged or broken</button>
-          <button class="action-btn">Return Component</button>
+          <button class="action-btn" id="checkout-btn">Check out Component</button>
         </div>
       </div>
       <div class="modal-right">
@@ -170,8 +207,7 @@
     const availableMap = new Map();
     const workingMap = new Map();
     const countMap = new Map();
-    const imageMap = new Map(); 
-
+    const imageMap = new Map();
     const defaultImg = "https://upload.wikimedia.org/wikipedia/commons/3/38/Arduino_Uno_-_R3.jpg";
 
     function addNotification(message) {
@@ -180,92 +216,105 @@
       note.className = 'notif';
       note.textContent = message;
       bar.appendChild(note);
-      bar.style.display = 'block';
-    }
-
-    function openModal(name, description, imageUrl) {
-      const total = countMap.get(name) || 0;
-      const working = availableMap.get(name) || 0;
-
-      document.getElementById('modal').style.display = 'flex';
-      document.getElementById('modalTitle').textContent = name;
-      document.getElementById('modalImage').src = imageUrl;
-      document.getElementById('totalCount').textContent = total;
-      document.getElementById('AvailableCount').textContent = working;
-      document.getElementById('userStatus').textContent = '✔';
-
-      const greenPercent = total ? Math.round((working / total) * 100) : 0;
-      const redPercent = total ? 100 - greenPercent : 0;
-
-      const statusBar = document.querySelector('.status-bar');
-      if (greenPercent + redPercent === 0) {
-        statusBar.innerHTML = `<div class="status yellow" style="width: 100%">100%</div>`;
-      } else {
-        statusBar.innerHTML = `
-          <div class="status green" style="width: ${greenPercent}%">${greenPercent}%</div>
-          <div class="status red" style="width: ${redPercent}%">${redPercent > 0 ? redPercent + '%' : ''}</div>
-        `;
-      }
     }
 
     function closeModal() {
       document.getElementById('modal').style.display = 'none';
     }
 
+    function openModal(name, _, imageUrl) {
+      document.getElementById('modal').style.display = 'flex';
+      document.getElementById('modalTitle').textContent = name;
+      document.getElementById('modalImage').src = imageUrl;
+      document.getElementById('totalCount').textContent = countMap.get(name) || 0;
+      document.getElementById('AvailableCount').textContent = availableMap.get(name) || 0;
+      document.getElementById('userStatus').textContent = '✔';
+
+      const total = countMap.get(name) || 0;
+      const working = availableMap.get(name) || 0;
+      const greenPercent = total ? Math.round((working / total) * 100) : 0;
+      const redPercent = 100 - greenPercent;
+      const statusBar = document.querySelector('.status-bar');
+      statusBar.innerHTML = `
+        <div class="status green" style="width: ${greenPercent}%">${greenPercent}%</div>
+        <div class="status red" style="width: ${redPercent}%">${redPercent > 0 ? redPercent + '%' : ''}</div>
+      `;
+
+      document.getElementById('checkout-btn').onclick = () => checkoutComponent(name);
+    }
+
+    async function getStudentGroup(username) {
+      const doc = await db.collection("students").doc(username).get();
+      return doc.exists ? doc.data().group : null;
+    }
+
+    async function checkoutComponent(componentName) {
+      const group = await getStudentGroup(username);
+      if (!group) return alert("Group not found.");
+
+      const partsRef = db.collection("inventory").doc(componentName).collection("parts");
+      const available = await partsRef.where("working", "==", true).where("team", "==", "0").limit(1).get();
+
+      if (available.empty) return alert("No available components.");
+
+      const partDoc = available.docs[0];
+      await partDoc.ref.update({ team: group });
+      alert(`Checked out 1 ${componentName} to group ${group}`);
+      closeModal();
+      location.reload();
+    }
+
     async function loadComponents() {
       const grid = document.getElementById("component-grid");
 
       try {
-        const inventorySnapshot = await db.collection("inventory").get();
-
-        for (const typeDoc of inventorySnapshot.docs) {
-          const type = typeDoc.id;
-          const image = typeDoc.data().image || defaultImg;
+        const inventory = await db.collection("inventory").get();
+        for (const doc of inventory.docs) {
+          const type = doc.id;
+          const image = doc.data().image || defaultImg;
           imageMap.set(type, image);
 
-          const partsSnapshot = await db.collection("inventory").doc(type).collection("parts").get();
-
-          partsSnapshot.forEach(partDoc => {
-            const { working, team } = partDoc.data();
+          const parts = await db.collection("inventory").doc(type).collection("parts").get();
+          parts.forEach(part => {
+            const data = part.data();
             countMap.set(type, (countMap.get(type) || 0) + 1);
-            if (working) {
+            if (data.working) {
               workingMap.set(type, (workingMap.get(type) || 0) + 1);
-              if (team === "0") {
+              if (data.team === "0") {
                 availableMap.set(type, (availableMap.get(type) || 0) + 1);
               }
             }
           });
         }
 
-        for (const [type, image] of imageMap) {
+        for (const [type, img] of imageMap) {
           const card = document.createElement("div");
           card.className = "card";
-          card.onclick = () => openModal(type, "", image);
-          card.innerHTML = `<img src="${image}" alt="${type}"><p>${type}</p>`;
+          card.innerHTML = `<img src="${img}" alt="${type}"><p>${type}</p>`;
+          card.onclick = () => openModal(type, "", img);
           grid.appendChild(card);
         }
 
         for (const [type, total] of countMap) {
           const working = workingMap.get(type) || 0;
           const available = availableMap.get(type) || 0;
-          if (type && total > 0 && (working / total) < 0.1) {
-            addNotification("Quantity Alert: " + type + " has less than 10% working components");
+          if (working / total < 0.1) {
+            addNotification(`${type} has less than 10% working`);
           }
-          if (type && available === 0) {
-            addNotification("Quantity Alert: " + type + " has no available items to be borrowed");
+          if (available === 0) {
+            addNotification(`${type} has no available components`);
           }
         }
 
-        grid.style.display = "grid";
-      } catch (error) {
-        console.error("Error loading components:", error);
+      } catch (err) {
+        console.error("Error loading:", err);
       }
     }
 
     window.onload = loadComponents;
-    window.onclick = function(e) {
-      if (e.target === document.getElementById('modal')) closeModal();
-    }
+    window.onclick = (e) => {
+      if (e.target === document.getElementById("modal")) closeModal();
+    };
   </script>
 </body>
 </html>
