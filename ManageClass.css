@@ -32,14 +32,16 @@ h1 {
 .section-header {
   background: white;
   color: #333;
-  padding: 10px 20px;
+  padding: 10px 24px;
   border-radius: 25px;
   font-weight: bold;
+  font-size: 16px;
   text-align: center;
-  width: 140px;        /* Adjust as needed for text length */
-  margin: 0 auto;      /* Center horizontally within the column */
-  margin-bottom: 12px; /* Space between header and card */
+  width: fit-content;
+  margin: 0 auto 14px auto;
+  box-shadow: 0 2px 6px rgba(0, 0, 0, 0.08);
 }
+
 
 /* --------------------
    GRID LAYOUT
@@ -255,3 +257,27 @@ button[type="button"] {
   font-size: 14px;
   cursor: pointer;
 }
+
+/* Make .teams section behave like a column */
+.teams {
+  display: flex;
+  flex-direction: column;
+  overflow: hidden; /* Ensures internal scroll stays inside card */
+}
+
+/* Let team cards scroll if too tall */
+.id-boxes {
+  flex: 1; /* Fills remaining space in the .teams section */
+  overflow-y: auto;
+  padding-right: 5px; /* Optional: avoids clipping scrollbar */
+}
+
+/* Optional: customize scrollbar appearance */
+.id-boxes::-webkit-scrollbar {
+  width: 6px;
+}
+.id-boxes::-webkit-scrollbar-thumb {
+  background-color: #ccc;
+  border-radius: 3px;
+}
+
