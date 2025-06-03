@@ -134,68 +134,59 @@
       bar.appendChild(note);
       bar.style.display = 'block';
     }
-    async function loadComponents() {
-  const grid = document.getElementById("component-grid");
-  const loading = document.getElementById("loading");
+        async function loadComponents() {
+      const grid = document.getElementById("component-grid");
+      const loading = document.getElementById("loading");
 
-  try {
-    const inventoryRef = collection(db, "inventory");
-    const snapshot = await getDocs(inventoryRef);
+      try {
+        const inventorySnapshot = await getDocs(collection(db, "inventory"));
 
-    if (snapshot.empty) {
-      loading.textContent = "No components found.";
-      return;
+        for (const typeDoc of inventorySnapshot.docs) {
+          const type = typeDoc.id;
+          const image = typeDoc.data().image || "https://upload.wikimedia.org/wikipedia/commons/3/38/Arduino_Uno_-_R3.jpg";
+          imageMap.set(type, image);
+
+          const partsRef = collection(db, "inventory", type, "parts");
+          const partsSnapshot = await getDocs(partsRef);
+
+          partsSnapshot.forEach(partDoc => {
+            const { working, team } = partDoc.data();
+            countMap.set(type, (countMap.get(type) || 0) + 1);
+            if (working) {
+              workingMap.set(type, (workingMap.get(type) || 0) + 1);
+              if (team == "0") {
+                availableMap.set(type, (availableMap.get(type) || 0) + 1);
+              }
+            }
+          });
+        }
+
+        for (const [type, image] of imageMap) {
+          const card = document.createElement("div");
+          card.className = "card";
+          card.onclick = () => openModal(type, image);
+          card.innerHTML = `<img src="${image}" alt="${type}"><p>${type}</p>`;
+          grid.appendChild(card);
+        }
+
+        for (const [type, total] of countMap) {
+          const working = workingMap.get(type) || 0;
+          const available = availableMap.get(type) || 0;
+          if (type !== "" && total > 0 && (working / total) < 0.1) {
+            addNotification("Quantity Alert: " + type + " has less than 10% working components");
+          }
+          if (type !== "" && available == 0) {
+            addNotification("Quantity Alert: " + type + " has no available items to be borrowed");
+          }
+        }
+
+        loading.style.display = "none";
+        grid.style.display = "grid";
+      } catch (error) {
+        loading.textContent = "Error loading components.";
+        console.error("Error loading data:", error);
+      }
     }
-
-    loading.style.display = "none";
-    grid.style.display = "grid";
-
-    snapshot.forEach(docSnap => {
-const name = docSnap.id;
-
-const partsRef = collection(db, "inventory", name, "parts");
-
-const data = docSnap.data();
-const imageUrl = data.image || "https://via.placeholder.com/150"; // fallback if missing
-imageMap.set(name, imageUrl);
-
-getDocs(partsRef).then(partsSnapshot => {
-let total = 0;
-let available = 0;
-let working = 0;
-
-partsSnapshot.forEach(partDoc => {
-total++;
-const pdata = partDoc.data();
-if (pdata.working) working++;
-if (pdata.working && pdata.team === "0") available++;
-});
-
-countMap.set(name, total);
-workingMap.set(name, working);
-availableMap.set(name, available);
-
-const tile = document.createElement("div");
-tile.className = "component-tile";
-
-tile.innerHTML = `
-<img src="${imageUrl}" alt="${name}" class="component-img"/>
-<h3>${name}</h3>
-`;
-
-tile.addEventListener("click", () => {
-openModal(name, imageUrl);
-});
-
-grid.appendChild(tile);
-});
-});
-
-  } catch (err) {
-    console.error("Error loading components:", err);
-    loading.textContent = "Error loading components.";
-  }
-}
 
     async function checkOutComponent() {
   const name = document.getElementById('modalTitle').textContent;
