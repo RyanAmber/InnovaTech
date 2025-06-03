@@ -132,6 +132,64 @@
       bar.appendChild(note);
       bar.style.display = 'block';
     }
+    async function loadComponents() {
+  const grid = document.getElementById("component-grid");
+  const loading = document.getElementById("loading");
+
+  try {
+    const inventoryRef = collection(db, "inventory");
+    const snapshot = await getDocs(inventoryRef);
+
+    if (snapshot.empty) {
+      loading.textContent = "No components found.";
+      return;
+    }
+
+    loading.style.display = "none";
+    grid.style.display = "grid";
+
+    snapshot.forEach(docSnap => {
+      const name = docSnap.id;
+
+      const partsRef = collection(db, "inventory", name, "parts");
+      getDocs(partsRef).then(partsSnapshot => {
+        let total = 0;
+        let available = 0;
+        let working = 0;
+
+        partsSnapshot.forEach(partDoc => {
+          total++;
+          const data = partDoc.data();
+          if (data.working) working++;
+          if (data.working && data.team === "0") available++;
+        });
+
+        countMap.set(name, total);
+        workingMap.set(name, working);
+        availableMap.set(name, available);
+
+        const tile = document.createElement("div");
+        tile.className = "component-tile";
+        tile.innerHTML = `
+          <h3>${name}</h3>
+          <p>Total: ${total}</p>
+          <p>Available: ${available}</p>
+        `;
+
+        tile.addEventListener("click", () => {
+          const imageUrl = imageMap.get(name) || "https://via.placeholder.com/150";
+          openModal(name, imageUrl);
+        });
+
+        grid.appendChild(tile);
+      });
+    });
+
+  } catch (err) {
+    console.error("Error loading components:", err);
+    loading.textContent = "Error loading components.";
+  }
+}
 
     async function checkOutComponent() {
   const name = document.getElementById('modalTitle').textContent;
