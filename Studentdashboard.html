@@ -66,7 +66,8 @@
       doc,
       setDoc,
       getDocs,
-      addDoc
+      addDoc,
+      deleteDoc
     } from "https://www.gstatic.com/firebasejs/10.11.0/firebase-firestore.js";
 
     const firebaseConfig = {
@@ -199,7 +200,7 @@ window.returnComponent = async function returnComponent() {
 
     // 2. Remove from group's Items list
     const groupResRef = doc(db, "Groups", userGroup, "Items", checkedOutPart.id);
-    await groupResRef.delete();
+    await deleteDoc(groupResRef);
 
     alert(`Returned one ${name} from ${userGroup}.`);
     closeModal();
