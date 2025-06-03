@@ -38,87 +38,91 @@
       <!-- MAIN CONTENT GRID -->
       <div class="main-content">
         <!-- COLUMN 1: OVERVIEW -->
-        <div class="column">
-          <div class="section-header">Overview</div>
-          <div class="section">
-            <h2>For approval</h2>
-            <ul class="approval-list">
-              <li>
-                <span class="dot green"></span>
-                191966
-              </li>
-              <li>
-                <span class="dot red"></span>
-                spammmm
-              </li>
-              <li>
-                <span class="dot green"></span>
-                192832
-              </li>
-            </ul>
-
-            <h2>Current List</h2>
-            <ul class="current-list" id="current-list">
-              
-            </ul>
+          <div class="column">
+            <div class="section-header">Overview</div>
+            <div class="section">
+              <div class="scroll-content">
+                <h2>For approval</h2>
+                <ul class="approval-list">
+                  <li>
+                    <span class="dot green"></span>
+                    191966
+                  </li>
+                  <li>
+                    <span class="dot red"></span>
+                    spammmm
+                  </li>
+                  <li>
+                    <span class="dot green"></span>
+                    192832
+                  </li>
+                </ul>
+          
+                <h2>Current List</h2>
+                <ul class="current-list" id="current-list">
+                  <!-- Populated via Firebase -->
+                </ul>
+              </div>
+            </div>
           </div>
-        </div>
 
         <!-- COLUMN 2: TEAMS -->
         <div class="column">
           <div class="section-header">Teams</div>
           <div class="section teams">
-            <p class="instruction">Groups and members:</p>
-            <div class="id-boxes" id="id-boxes">
-              <!-- “Add new team” card -->
-              <div class="id-box">
-                <input type="text" placeholder="enter team name" /><br />
-                <input type="text" placeholder="search members..." /><br />
-                <button class="add-btn">add</button>
+            <div class="scroll-content">
+              <p class="instruction">Groups and members:</p>
+              <div class="id-boxes" id="id-boxes">
+                <!-- Firebase will append here -->
+                <!-- Existing team cards already present -->
+                <div class="id-box">
+                  <input type="text" placeholder="enter team name" /><br />
+                  <input type="text" placeholder="search members..." /><br />
+                  <button class="add-btn">add</button>
+                </div>
+        
+                <div class="id-box">
+                  <strong>InnovaTech</strong><br />
+                  Radhana_Mainali<br />
+                  Ryan_Diehl<br />
+                  Conrad_Kim<br />
+                  Suhanee_Patel<br />
+                  <button class="remove-btn">delete</button>
+                </div>
+        
+                <div class="id-box">
+                  <strong>Team X6</strong><br />
+                  Radhana_Mainali<br />
+                  Poorvi_Deshpande<br />
+                  Conrad_Kim<br />
+                  Ethan_Cho<br />
+                  <button class="remove-btn">delete</button>
+                </div>
+        
+                <!-- Placeholder “+” cards -->
+                <div class="id-box plus">+</div>
+                <div class="id-box plus">+</div>
+                <div class="id-box plus">+</div>
+                <div class="id-box plus">+</div>
+                <div class="id-box plus">+</div>
+                <div class="id-box plus">+</div>
+                <div class="id-box plus">+</div>
+                <div class="id-box plus">+</div>
               </div>
-
-              <!-- Existing group: InnovaTech -->
-              <div class="id-box">
-                <strong>InnovaTech</strong><br />
-                Radhana_Mainali<br />
-                Ryan_Diehl<br />
-                Conrad_Kim<br />
-                Suhanee_Patel<br />
-                <button class="remove-btn">delete</button>
-              </div>
-
-              <!-- Existing group: Team X6 -->
-              <div class="id-box">
-                <strong>Team X6</strong><br />
-                Radhana_Mainali<br />
-                Poorvi_Deshpande<br />
-                Conrad_Kim<br />
-                Ethan_Cho<br />
-                <button class="remove-btn">delete</button>
-              </div>
-
-              <!-- Placeholder “+” cards (total should equal 16 cards) -->
-              <div class="id-box plus">+</div>
-              <div class="id-box plus">+</div>
-              <div class="id-box plus">+</div>
-              <div class="id-box plus">+</div>
-              <div class="id-box plus">+</div>
-              <div class="id-box plus">+</div>
-              <div class="id-box plus">+</div>
-              <div class="id-box plus">+</div>
             </div>
           </div>
         </div>
+
 
         <!-- COLUMN 3: FLAGGED -->
         <div class="column">
           <div class="section-header">Flagged</div>
           <div class="section flagged">
-            <p>(Placeholder for flagged users)</p>
+            <div class="scroll-content">
+              <p>(Placeholder for flagged users)</p>
+            </div>
           </div>
         </div>
-      </div>
-    </div>
 
     <!-- Firebase loading script -->
     <script>
