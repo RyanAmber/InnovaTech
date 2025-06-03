@@ -132,60 +132,7 @@
       bar.style.display = 'block';
     }
 
-    async function loadComponents() {
-      const grid = document.getElementById("component-grid");
-      const loading = document.getElementById("loading");
-
-      try {
-        const inventorySnapshot = await getDocs(collection(db, "inventory"));
-
-        for (const typeDoc of inventorySnapshot.docs) {
-          const type = typeDoc.id;
-          const image = typeDoc.data().image || "https://upload.wikimedia.org/wikipedia/commons/3/38/Arduino_Uno_-_R3.jpg";
-          imageMap.set(type, image);
-
-          const partsRef = collection(db, "inventory", type, "parts");
-          const partsSnapshot = await getDocs(partsRef);
-
-          partsSnapshot.forEach(partDoc => {
-            const { working, team } = partDoc.data();
-            countMap.set(type, (countMap.get(type) || 0) + 1);
-            if (working) {
-              workingMap.set(type, (workingMap.get(type) || 0) + 1);
-              if (team == "0") {
-                availableMap.set(type, (availableMap.get(type) || 0) + 1);
-              }
-            }
-          });
-        }
-
-        for (const [type, image] of imageMap) {
-          const card = document.createElement("div");
-          card.className = "card";
-          card.onclick = () => openModal(type, image);
-          card.innerHTML = `<img src="${image}" alt="${type}"><p>${type}</p>`;
-          grid.appendChild(card);
-        }
-
-        for (const [type, total] of countMap) {
-          const working = workingMap.get(type) || 0;
-          const available = availableMap.get(type) || 0;
-          if (type !== "" && total > 0 && (working / total) < 0.1) {
-            addNotification("Quantity Alert: " + type + " has less than 10% working components");
-          }
-          if (type !== "" && available == 0) {
-            addNotification("Quantity Alert: " + type + " has no available items to be borrowed");
-          }
-        }
-
-        loading.style.display = "none";
-        grid.style.display = "grid";
-      } catch (error) {
-        loading.textContent = "Error loading components.";
-        console.error("Error loading data:", error);
-      }
-    }
-    window.checkOutComponent = async function checkOutComponent() {
+    async function checkOutComponent() {
   const name = document.getElementById('modalTitle').textContent;
 
   try {
@@ -203,31 +150,30 @@
     }
 
     const userGroup = localStorage.getItem("group") || "Group 0";
-    const partDocRef = doc(db, "inventory", name, "parts", availablePart.id);
+    const partId = availablePart.id;
 
-    // Step 1: Mark the part as checked out
+    // Step 1: Update inventory to assign to this group
+    const partDocRef = doc(db, "inventory", name, "parts", partId);
     await setDoc(partDocRef, { team: userGroup }, { merge: true });
 
-    // Step 2: Add to the group's Resources subcollection
-    const resourceData = {
+    // Step 2: Add to group's Items list
+    const groupItemRef = doc(db, "Groups", userGroup, "Items", partId);
+    await setDoc(groupItemRef, {
       type: name,
-      image: imageMap.get(name) || "", // imageMap already stores URLs
-      working: true,
-      checkedOutAt: new Date()
-    };
-
-    const groupResRef = doc(db, "Groups", userGroup, "Items", availablePart.id);
-    await setDoc(groupResRef, resourceData);
+      checkedOutAt: new Date().toISOString(),
+      working: true
+    });
 
     alert(`Checked out one ${name} to ${userGroup}.`);
     closeModal();
-    location.reload();
+    location.reload(); // optional UI update
   } catch (err) {
     console.error("Checkout failed:", err);
     closeModal();
     alert("Error checking out component.");
   }
-};
+}
+
 window.returnComponent = async function returnComponent() {
   const name = document.getElementById('modalTitle').textContent;
   const userGroup = localStorage.getItem("group") || "Group 0";
