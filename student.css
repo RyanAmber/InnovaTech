@@ -1,271 +1,273 @@
-    /* Global reset and base styles */
-    * {
-      box-sizing: border-box;
-    }
+/* Global reset and base styles */
+* {
+  box-sizing: border-box;
+}
 
-    body {
-      margin: 0;
-      font-family: 'Segoe UI', sans-serif;
-      display: flex;
-      flex-direction: column;
-      height: 100vh;
-      background: linear-gradient(135deg, #a770ef, #f95794, #ff9a44);
-      color: #222;
-    }
+body {
+  margin: 0;
+  font-family: 'Segoe UI', sans-serif;
+  display: flex;
+  flex-direction: column;
+  height: 100vh;
+  background: linear-gradient(135deg, #a770ef, #f95794, #ff9a44);
+  color: #222;
+}
 
-    /* header */
-    header {
-      padding: 20px;
-      font-size: 2rem;
-      font-weight: bold;
-      color: white;
-    }
+/* header */
+header {
+  padding: 20px;
+  font-size: 2rem;
+  font-weight: bold;
+  color: white;
+}
 
-    /* layout container */
-    .container {
-      flex: 1;
-      display: flex;
-      position: relative;
-      overflow: hidden;
-      padding: 0 20px 20px 20px;
-    }
+/* layout container */
+.container {
+  flex: 1;
+  display: flex;
+  position: relative;
+  overflow: hidden;
+  padding: 0 20px 20px 20px;
+}
 
-    /* left side (component list) */
-    .left {
-      flex: 1;
-      max-width: 50%;
-      padding-right: 20px;
-      display: flex;
-      flex-direction: column;
-      height: calc(100vh - 100px); /* adjusts for header height */
-    } 
+/* left side (component list) */
+.left {
+  flex: 1;
+  max-width: 50%;
+  padding-right: 20px;
+  display: flex;
+  flex-direction: column;
+  height: calc(100vh - 100px);
+}
 
-    /* component grid */
-    .grid {
-      display: grid;
-      grid-template-columns: repeat(auto-fill, minmax(200px, 1fr));
-      gap: 20px;
-      overflow-y: auto;
-      flex-grow: 1;
-      padding-bottom: 20px;
-    }
+/* component grid */
+.grid {
+  display: grid;
+  grid-template-columns: repeat(auto-fill, minmax(200px, 1fr));
+  gap: 20px;
+  overflow-y: auto;
+  flex-grow: 1;
+  padding-bottom: 20px;
+}
 
-    /* individual component card */
-    .card {
-      background-color: white;
-      border-radius: 16px;
-      padding: 12px;
-      box-shadow: 0 4px 10px rgba(0, 0, 0, 0.1);
-      transition: transform 0.2s ease;
-      cursor: pointer;
-      display: flex;
-      flex-direction: column;
-      align-items: center;
-      min-height: 180px;
-    }
+/* individual component card */
+.card {
+  background-color: white;
+  border-radius: 16px;
+  padding: 12px;
+  box-shadow: 0 4px 10px rgba(0, 0, 0, 0.1);
+  transition: transform 0.2s ease;
+  cursor: pointer;
+  display: flex;
+  flex-direction: column;
+  align-items: center;
+  min-height: 180px;
+}
 
-    .card:hover {
-      transform: scale(1.05);
-    }
+.card:hover {
+  transform: scale(1.05);
+}
 
-    .card img {
-      width: 100%;
-      aspect-ratio: 3 / 2;
-      object-fit: contain;
-      border-radius: 8px;
-    }
+.card img {
+  width: 100%;
+  aspect-ratio: 3 / 2;
+  object-fit: contain;
+  border-radius: 8px;
+}
 
-    .card p {
-      margin-top: 10px;
-      font-weight: 500;
-      text-align: center;
-    }
+.card p {
+  margin-top: 10px;
+  font-weight: 500;
+  text-align: center;
+}
 
-    /* right side (notifications) */
-    .right {
-      width: 320px;
-      margin-left: auto;
-      padding-right: 20px;
-      display: flex;
-      flex-direction: column;
-      align-items: flex-end;
-    }
+/* right side (notifications) */
+.right {
+  width: 320px;
+  margin-left: auto;
+  padding-right: 20px;
+  display: flex;
+  flex-direction: column;
+  align-items: flex-end;
+}
 
-    .notifications {
-      background: white;
-      border-radius: 24px;
-      padding: 20px;
-      width: 100%;
-      box-shadow: 0 6px 16px rgba(0,0,0,0.15);
-      margin-right: 20px;
-      max-height: calc(100vh - 60px);
-      overflow-y: auto;
-      display: flex;
-      flex-direction: column;
-      gap: 16px;
-    }
+.notifications {
+  background: white;
+  border-radius: 24px;
+  padding: 20px;
+  width: 100%;
+  box-shadow: 0 6px 16px rgba(0, 0, 0, 0.15);
+  margin-right: 20px;
+  max-height: calc(100vh - 60px);
+  overflow-y: auto;
+  display: flex;
+  flex-direction: column;
+  gap: 16px;
+}
 
-    /* notification card */
-    .notif {
-      background-color: #ff9a44;
-      padding: 15px;
-      border-radius: 20px;
-      display: flex;
-      gap: 15px;
-      align-items: center;
-      transition: transform 0.2s ease-in-out, box-shadow 0.2s ease-in-out;
-      will-change: transform;
-    }
-    
-    .notifications h2 {
-      margin-top: 0;
-      font-size: 1.5rem;
-    }
-    
-    .notif-hover {
-      transform: scale(1.05);
-      box-shadow: 0 6px 16px rgba(0, 0, 0, 0.25);
-    }
+/* notification card */
+.notif {
+  background-color: #ff9a44;
+  padding: 15px;
+  border-radius: 20px;
+  display: flex;
+  gap: 15px;
+  align-items: center;
+  transition: transform 0.2s ease-in-out, box-shadow 0.2s ease-in-out;
+  will-change: transform;
+}
 
-    .notif-time {
-      background-color: white;
-      padding: 6px 12px;
-      border-radius: 12px;
-      font-size: 0.8rem;
-      font-weight: bold;
-      width: 50px;
-      text-align: center;
-      flex-shrink: 0;
-    }
+.notifications h2 {
+  margin-top: 0;
+  font-size: 1.5rem;
+}
 
-    .notif-text {
-      flex: 1;
-      font-size: 0.9rem;
-    }
+.notif-hover {
+  transform: scale(1.05);
+  box-shadow: 0 6px 16px rgba(0, 0, 0, 0.25);
+}
 
-    /* bubbly headings */
-    .bubble-heading {
-      background-color: white;
-      padding: 12px 24px;
-      border-radius: 32px;
-      font-size: 1.2rem;
-      font-weight: 600;
-      display: inline-block;
-      margin-bottom: 20px;
-      box-shadow: 0 4px 10px rgba(0,0,0,0.1);
-    }
+.notif-time {
+  background-color: white;
+  padding: 6px 12px;
+  border-radius: 12px;
+  font-size: 0.8rem;
+  font-weight: bold;
+  width: 50px;
+  text-align: center;
+  flex-shrink: 0;
+}
 
-    /* Modal stuff */
-    .modal {
-      position: fixed;
-      top: 0; left: 0;
-      width: 100vw;
-      height: 100vh;
-      display: none; /* <--- hidden by default */
-      justify-content: center;
-      align-items: center;
-      background: rgba(0, 0, 0, 0.5);
-      z-index: 1000;
-    }
+.notif-text {
+  flex: 1;
+  font-size: 0.9rem;
+}
 
-    .modal-content {
-      background: white;
-      padding: 30px;
-      border-radius: 24px;
-      width: 90%;
-      max-width: 800px;
-      display: flex;
-      flex-direction: row;
-      gap: 30px;
-      position: relative;
-    }
+/* bubbly headings */
+.bubble-heading {
+  background-color: white;
+  padding: 12px 24px;
+  border-radius: 32px;
+  font-size: 1.2rem;
+  font-weight: 600;
+  display: inline-block;
+  margin-bottom: 20px;
+  box-shadow: 0 4px 10px rgba(0, 0, 0, 0.1);
+}
 
-    .modal-left {
-      flex: 1;
-      display: flex;
-      flex-direction: column;
-      gap: 20px;
-    }
+/* Modal stuff */
+.modal {
+  position: fixed;
+  top: 0;
+  left: 0;
+  width: 100vw;
+  height: 100vh;
+  display: none;
+  justify-content: center;
+  align-items: center;
+  background: rgba(0, 0, 0, 0.5);
+  z-index: 1000;
+}
 
-    .modal-right {
-      flex: 1;
-      display: flex;
-      flex-direction: column;
-      justify-content: center;
-      align-items: center;
-      gap: 20px;
-    }
+.modal-content {
+  background: white;
+  padding: 30px;
+  border-radius: 24px;
+  width: 90%;
+  max-width: 800px;
+  display: flex;
+  flex-direction: row;
+  gap: 30px;
+  position: relative;
+}
 
-    .close-btn {
-      position: absolute;
-      top: 20px;
-      right: 30px;
-      font-size: 30px;
-      font-weight: bold;
-      color: #444;
-      cursor: pointer;
-    }
+.modal-left {
+  flex: 1;
+  display: flex;
+  flex-direction: column;
+  gap: 20px;
+}
 
-    .component-name {
-      font-size: 2rem;
-      font-weight: 700;
-      margin-bottom: 10px;
-    }
+.modal-right {
+  flex: 1;
+  display: flex;
+  flex-direction: column;
+  justify-content: center;
+  align-items: center;
+  gap: 20px;
+}
 
-    .overview-box {
-      background-color: #4069ad;
-      color: white;
-      padding: 16px;
-      border-radius: 8px;
-      width: fit-content;
-    }
+.close-btn {
+  position: absolute;
+  top: 20px;
+  right: 30px;
+  font-size: 30px;
+  font-weight: bold;
+  color: #444;
+  cursor: pointer;
+}
 
-    .actions {
-      display: flex;
-      flex-direction: column;
-      gap: 10px;
-    }
+.component-name {
+  font-size: 2rem;
+  font-weight: 700;
+  margin-bottom: 10px;
+}
 
-    .action-btn {
-      padding: 12px 20px;
-      border: none;
-      border-radius: 20px;
-      background-color: #e0e0e0;
-      font-weight: 600;
-      cursor: pointer;
-    }
+.overview-box {
+  background-color: #4069ad;
+  color: white;
+  padding: 16px;
+  border-radius: 8px;
+  width: fit-content;
+}
 
-    .modal-lower {
-      display: flex;
-      justify-content: space-between;
-      align-items: center;
-      gap: 20px;
-      flex-wrap: wrap;
-    }
-  
-    .component-img {
-      max-width: 300px;
-      height: auto;
-      border-radius: 12px;
-    }
-  
-    .status-bar {
-      display: flex;
-      width: 300px;
-      height: 40px;
-      border-radius: 6px;
-      overflow: hidden;
-      font-weight: bold;
-      text-align: center;
-    }
-  
-    .status {
-      display: flex;
-      align-items: center;
-      justify-content: center;
-      color: black;
-    }
-  .add-btn {
+.actions {
+  display: flex;
+  flex-direction: column;
+  gap: 10px;
+}
+
+.action-btn {
+  padding: 12px 20px;
+  border: none;
+  border-radius: 20px;
+  background-color: #e0e0e0;
+  font-weight: 600;
+  cursor: pointer;
+}
+
+.modal-lower {
+  display: flex;
+  justify-content: space-between;
+  align-items: center;
+  gap: 20px;
+  flex-wrap: wrap;
+}
+
+.component-img {
+  max-width: 300px;
+  height: auto;
+  border-radius: 12px;
+}
+
+.status-bar {
+  display: flex;
+  width: 300px;
+  height: 40px;
+  border-radius: 6px;
+  overflow: hidden;
+  font-weight: bold;
+  text-align: center;
+}
+
+.status {
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  color: black;
+}
+
+.add-btn {
   margin-top: 10px;
   padding: 8px 12px;
   background-color: #4CAF50;
@@ -306,7 +308,14 @@
   cursor: pointer;
 }
 
-    .green { background-color: #9be59b; }
-    .yellow { background-color: #fff176; }
-    .red { background-color: #f76e6e; }
-    
+.green {
+  background-color: #9be59b;
+}
+
+.yellow {
+  background-color: #fff176;
+}
+
+.red {
+  background-color: #f76e6e;
+}
