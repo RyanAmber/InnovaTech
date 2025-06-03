@@ -3,7 +3,7 @@
 <head>
   <meta charset="UTF-8" />
   <meta name="viewport" content="width=device-width, initial-scale=1.0">
-  <title>Admin Dashboard</title>
+  <title>Student Dashboard</title>
   <link rel="stylesheet" href="StudentDashboard.css">
 </head>
 <body>
@@ -151,43 +151,47 @@
     grid.style.display = "grid";
 
     snapshot.forEach(docSnap => {
-      const name = docSnap.id;
+const name = docSnap.id;
 
-      const partsRef = collection(db, "inventory", name, "parts");
-      getDocs(partsRef).then(partsSnapshot => {
-        let total = 0;
-        let available = 0;
-        let working = 0;
+const partsRef = collection(db, "inventory", name, "parts");
 
-        partsSnapshot.forEach(partDoc => {
-          total++;
-          const data = partDoc.data();
-          if (data.working) working++;
-          if (data.working && data.team === "0") available++;
-        });
+const data = docSnap.data();
+const imageUrl = data.image || "https://via.placeholder.com/150"; // fallback if missing
+imageMap.set(name, imageUrl);
 
-        countMap.set(name, total);
-        workingMap.set(name, working);
-        availableMap.set(name, available);
+getDocs(partsRef).then(partsSnapshot => {
+let total = 0;
+let available = 0;
+let working = 0;
 
-        const tile = document.createElement("div");
-        const imageUrl=imageMap.get(name);
-        tile.className = "component-tile";
-        tile.innerHTML =`
-          <img src="${imageUrl}" alt="${name}" class="component-img"/>
-          <h3>${name}</h3>
-          <p>Total: ${total}</p>
-          <p>Available: ${available}</p>
-        `;
+partsSnapshot.forEach(partDoc => {
+total++;
+const pdata = partDoc.data();
+if (pdata.working) working++;
+if (pdata.working && pdata.team === "0") available++;
+});
 
-        tile.addEventListener("click", () => {
-          const imageUrl = imageMap.get(name) || "https://via.placeholder.com/150";
-          openModal(name, imageUrl);
-        });
+countMap.set(name, total);
+workingMap.set(name, working);
+availableMap.set(name, available);
 
-        grid.appendChild(tile);
-      });
-    });
+const tile = document.createElement("div");
+tile.className = "component-tile";
+
+tile.innerHTML = `
+<img src="${imageUrl}" alt="${name}" class="component-img"/>
+<h3>${name}</h3>
+<p>Total: ${total}</p>
+<p>Available: ${available}</p>
+`;
+
+tile.addEventListener("click", () => {
+openModal(name, imageUrl);
+});
+
+grid.appendChild(tile);
+});
+});
 
   } catch (err) {
     console.error("Error loading components:", err);
