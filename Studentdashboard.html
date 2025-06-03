@@ -211,6 +211,7 @@
     location.reload(); // optional: refresh state/UI
   } catch (err) {
     console.error("Checkout failed:", err);
+    closeModal();
     alert("Error checking out component.");
   }
 }
