@@ -211,6 +211,18 @@ header {
   font-weight: 700;
   margin-bottom: 10px;
 }
+.component-tile {
+  background: white;
+  padding: 1rem;
+  border-radius: 1rem;
+  box-shadow: 0 0 10px rgba(0,0,0,0.2);
+  cursor: pointer;
+  transition: transform 0.2s;
+}
+
+.component-tile:hover {
+  transform: scale(1.02);
+}
 
 .overview-box {
   background-color: #4069ad;
