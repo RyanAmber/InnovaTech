@@ -123,31 +123,62 @@
 
   <!-- Firebase‐loading script -->
   <script>
-    async function loadGroupsFromFirebase() {
-      const groupContainer = document.getElementById("id-boxes");
-      try {
-        const groupsSnapshot = await db.collection("Groups").get();
-        for (const groupDoc of groupsSnapshot.docs) {
-          const groupName = groupDoc.id;
-          const usersRef = db.collection("Groups").doc(groupName).collection("Users");
-          const usersSnapshot = await usersRef.get();
-          const userList = [];
-          usersSnapshot.forEach(userDoc => userList.push(userDoc.id));
+     async function loadGroupsFromFirebase() {
+    const groupContainer = document.getElementById("id-boxes");
+    const currentListEl = document.getElementById("current-list");
 
-          const box = document.createElement("div");
-          box.className = "id-box";
-          box.innerHTML = `
-            <strong>${groupName}</strong><br>
-            ${userList.join("<br>") || "<em>No users</em>"}<br>
-            <button class="remove-btn">delete</button>
-          `;
-          groupContainer.appendChild(box);
-        }
-      } catch (error) {
-        console.error("Error loading groups from Firebase:", error);
+    const uniqueUsers = new Map(); // To avoid duplicates
+
+    try {
+      const groupsSnapshot = await db.collection("Groups").get();
+
+      for (const groupDoc of groupsSnapshot.docs) {
+        const groupName = groupDoc.id;
+        const usersRef = db.collection("Groups").doc(groupName).collection("Users");
+        const usersSnapshot = await usersRef.get();
+
+        const userList = [];
+
+        usersSnapshot.forEach(userDoc => {
+          const username = userDoc.id;
+          const data = userDoc.data();
+          const role = data.role || "student"; // default role
+          const roleBadge = role === "student" ? `<span class="role-student">[Student]</span>` : "";
+
+          // For team section (middle column)
+          userList.push(`${username} ${roleBadge}`);
+
+          // For current list (left column)
+          if (!uniqueUsers.has(username)) {
+            uniqueUsers.set(username, role);
+          }
+        });
+
+        // Create and append team box
+        const box = document.createElement("div");
+        box.className = "id-box";
+        box.innerHTML = `
+          <strong>${groupName}</strong><br>
+          ${userList.join("<br>") || "<em>No users</em>"}<br>
+          <button class="remove-btn">delete</button>
+        `;
+        groupContainer.appendChild(box);
       }
-    }
 
+      // Populate Current List
+      for (const [username, role] of uniqueUsers.entries()) {
+        const li = document.createElement("li");
+        const roleBadge = role === "student" ? `<span class="role-student">[Student]</span>` : "";
+        li.innerHTML = `${username} ${roleBadge} <button class="remove-btn">remove</button>`;
+        currentListEl.appendChild(li);
+      }
+
+    } catch (error) {
+      console.error("Error loading groups from Firebase:", error);
+    }
+  }
+
+    
     window.onload = () => {
       loadGroupsFromFirebase();
     };

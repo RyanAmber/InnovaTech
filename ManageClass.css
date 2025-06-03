@@ -95,6 +95,14 @@ button[type="button"] {
   font-weight: 600;
   margin: 0 0 12px 0;
 }
+.role-student {
+  background-color: #ff9999;
+  color: white;
+  font-size: 0.7em;
+  padding: 2px 6px;
+  border-radius: 6px;
+  margin-left: 6px;
+}
 
 .approval-list,
 .current-list {
