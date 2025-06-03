@@ -161,12 +161,14 @@ h1 {
 }
 
 .id-boxes {
-  /* Grid that auto‐fills as many 180px‐wide boxes as will fit */
   display: grid;
-  grid-template-columns: repeat(auto-fill, minmax(180px, 1fr));
-  gap: 20px;
+  grid-template-columns: repeat(4, 1fr); /* 4 per row */
+  gap: 16px;
   margin-top: 10px;
   flex: 1;
+  overflow-y: auto;
+  padding-right: 5px;
+  padding-bottom: 10px;
 }
 
 .id-box {
