@@ -39,6 +39,20 @@ header {
       flex-direction: column;
       height: calc(100vh - 100px); /* adjusts for header height */
     } 
+.center {
+  flex: 1;
+  max-width: 30%;
+  padding: 0 15px;
+  display: flex;
+  flex-direction: column;
+  overflow-y: auto;
+}
+
+.center .grid {
+  display: grid;
+  grid-template-columns: repeat(auto-fill, minmax(120px, 1fr));
+  gap: 10px;
+}
 
 /* Component grid */
 .grid {

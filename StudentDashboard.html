@@ -15,7 +15,10 @@
       <div id="loading" style="padding: 10px;">Loading components...</div>
       <div class="grid" id="component-grid" style="display: none;"></div>
     </div>
-
+    <div class="center">
+      <div class="bubble-heading">My Group Items</div>
+      <div class="grid" id="group-inventory"></div>
+    </div>
     <div class="right">
       
 
@@ -265,10 +268,44 @@ window.returnComponent = async function returnComponent() {
     alert("Error returning component.");
   }
 };
+async function loadGroupInventory() {
+  const group = localStorage.getItem("group") || "Group 0";
+  const container = document.getElementById("group-inventory");
+  container.innerHTML = "";
+
+  try {
+    const itemsSnapshot = await getDocs(collection(db, "Groups", group, "Items"));
+
+    if (itemsSnapshot.empty) {
+      container.innerHTML = "<p>No items checked out.</p>";
+      return;
+    }
+
+    itemsSnapshot.forEach(doc => {
+      const data = doc.data();
+      const type = data.type;
+      const image = imageMap.get(type) || "https://via.placeholder.com/100";
+
+      const card = document.createElement("div");
+      card.className = "card";
+      card.onclick = () => openModal(type, image);
+      card.innerHTML = `
+        <img src="${image}" alt="${type}">
+        <p>${type}</p>
+      `;
+      container.appendChild(card);
+    });
+  } catch (error) {
+    console.error("Error loading group inventory:", error);
+    container.innerHTML = "<p>Error loading group items.</p>";
+  }
+}
 
     window.checkOutComponent = checkOutComponent;
     loadComponents();
-
+  loadComponents().then(() => {
+    loadGroupInventory();
+    });
     window.onclick = function(e) {
       const modal = document.getElementById('modal');
       if (e.target === modal) closeModal();
