@@ -223,7 +223,11 @@ header {
 .component-tile:hover {
   transform: scale(1.02);
 }
-
+.component-img {
+      max-width: 300px;
+      height: auto;
+      border-radius: 12px;
+    }
 .overview-box {
   background-color: #4069ad;
   color: white;
@@ -253,12 +257,6 @@ header {
   align-items: center;
   gap: 20px;
   flex-wrap: wrap;
-}
-
-.component-img {
-  max-width: 300px;
-  height: auto;
-  border-radius: 12px;
 }
 
 .status-bar {
