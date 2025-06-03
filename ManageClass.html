@@ -39,34 +39,36 @@
       <div class="main-content">
         
         <!-- COLUMN 1: OVERVIEW -->
-          <div class="column">
-            <div class="section-header">Overview</div>
-            <div class="section">
-              <div class="scroll-content">
-                <h2>For approval</h2>
-                <ul class="approval-list">
-                  <li>
-                    <span class="dot green"></span>
-                    191966
-                  </li>
-                  <li>
-                    <span class="dot red"></span>
-                    spammmm
-                  </li>
-                  <li>
-                    <span class="dot green"></span>
-                    192832
-                  </li>
-                </ul>
-          
-                <h2>Current List</h2>
-                <ul class="current-list" id="current-list">
-                  <!-- Populated via Firebase -->
-                </ul>
-              </div>
+        <div class="column">
+          <div class="section-header">Overview</div>
+          <div class="section">
+            <div class="scroll-content">
+              <h2>For approval</h2>
+              <ul class="approval-list">
+                <li>
+                  191966
+                  <button class="confirm-btn">Confirm</button>
+                  <button class="reject-btn">Reject</button>
+                </li>
+                <li>
+                  spammmm
+                  <button class="confirm-btn">Confirm</button>
+                  <button class="reject-btn">Reject</button>
+                </li>
+                <li>
+                  192832
+                  <button class="confirm-btn">Confirm</button>
+                  <button class="reject-btn">Reject</button>
+                </li>
+              </ul>
+        
+              <h2>Current List</h2>
+              <ul class="current-list" id="current-list">
+                <!-- Populated dynamically via Firebase -->
+              </ul>
             </div>
           </div>
-        
+        </div>
 
         <!-- COLUMN 2: TEAMS -->
         <div class="column">
