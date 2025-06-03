@@ -26,7 +26,7 @@ document.getElementById('signin-form').addEventListener('submit', async function
   if (role === "Teacher") {
     window.location.href = 'TeacherDashboard.html';
   } else if (role === "Student") {
-    window.location.href = 'Studentdashboard.html';
+    window.location.href = 'StudentDashboard.html';
   }
 }
   } catch (error) {
