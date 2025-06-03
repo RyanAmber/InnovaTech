@@ -48,7 +48,7 @@
         <div class="actions">
           <button class="action-btn" onclick="checkOutComponent()">Check out Component</button>
           <button class="action-btn">Mark as damaged or broken</button>
-          <button class="action-btn">Return Component</button>
+          <button class="action-btn" onclick="returnComponent()">Return Component</button>
         </div>
       </div>
       <div class="modal-right">
@@ -185,7 +185,7 @@
         console.error("Error loading data:", error);
       }
     }
-    async function checkOutComponent() {
+    window.checkOutComponent = async function checkOutComponent() {
   const name = document.getElementById('modalTitle').textContent;
 
   try {
@@ -204,17 +204,67 @@
 
     const userGroup = localStorage.getItem("group") || "Group 0";
     const partDocRef = doc(db, "inventory", name, "parts", availablePart.id);
+
+    // Step 1: Mark the part as checked out
     await setDoc(partDocRef, { team: userGroup }, { merge: true });
+
+    // Step 2: Add to the group's Resources subcollection
+    const resourceData = {
+      type: name,
+      image: imageMap.get(name) || "", // imageMap already stores URLs
+      working: true,
+      checkedOutAt: new Date()
+    };
+
+    const groupResRef = doc(db, "Groups", userGroup, "Items", availablePart.id);
+    await setDoc(groupResRef, resourceData);
 
     alert(`Checked out one ${name} to ${userGroup}.`);
     closeModal();
-    location.reload(); // optional: refresh state/UI
+    location.reload();
   } catch (err) {
     console.error("Checkout failed:", err);
     closeModal();
     alert("Error checking out component.");
   }
-}
+};
+window.returnComponent = async function returnComponent() {
+  const name = document.getElementById('modalTitle').textContent;
+  const userGroup = localStorage.getItem("group") || "Group 0";
+
+  try {
+    // Find the part currently checked out by this group
+    const partsRef = collection(db, "inventory", name, "parts");
+    const partsSnapshot = await getDocs(partsRef);
+
+    const checkedOutPart = partsSnapshot.docs.find(doc => {
+      const data = doc.data();
+      return data.working === true && data.team === userGroup;
+    });
+
+    if (!checkedOutPart) {
+      alert("You have no checked out components of this type.");
+      return;
+    }
+
+    // 1. Set team back to "0" (in storage)
+    const partDocRef = doc(db, "inventory", name, "parts", checkedOutPart.id);
+    await setDoc(partDocRef, { team: "0" }, { merge: true });
+
+    // 2. Remove from group's Items list
+    const groupResRef = doc(db, "Groups", userGroup, "Items", checkedOutPart.id);
+    await groupResRef.delete();
+
+    alert(`Returned one ${name} from ${userGroup}.`);
+    closeModal();
+    location.reload();
+  } catch (err) {
+    console.error("Return failed:", err);
+    closeModal();
+    alert("Error returning component.");
+  }
+};
+
     window.checkOutComponent = checkOutComponent;
     loadComponents();
 
