@@ -171,9 +171,10 @@
         availableMap.set(name, available);
 
         const tile = document.createElement("div");
+        const imageUrl=imageMap.get(name);
         tile.className = "component-tile";
         tile.innerHTML =`
-          <img src="${imageUrl}" alt="${name}" class-"comonpent-img"/>
+          <img src="${imageUrl}" alt="${name}" class="component-img"/>
           <h3>${name}</h3>
           <p>Total: ${total}</p>
           <p>Available: ${available}</p>
