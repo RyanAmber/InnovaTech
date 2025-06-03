@@ -5,6 +5,11 @@
   box-sizing: border-box;
 }
 
+html, body {
+  height: 100%;
+  margin: 0;
+}
+
 body {
   margin: 0;
   font-family: 'Segoe UI', sans-serif;
@@ -13,8 +18,10 @@ body {
 }
 
 .container {
-  /* Overall page padding (top and bottom) */
-  padding: 30px;
+   display: flex;
+   flex-direction: column;
+   height: 100%;
+   padding: 30px;
 }
 
 /* Main page title */
@@ -47,26 +54,11 @@ h1 {
    GRID LAYOUT
    -------------------- */
 .main-content {
-  /* Full‐width three‐column grid */
   display: grid;
   grid-template-columns: 1fr 2fr 1fr;
   gap: 25px;
-  /* 
-     Make this grid fill the remainder of the viewport height:
-     100vh minus:
-      • Top padding (30px)
-      • Title margin + title (36px + 20px bottom margin)
-      • Margin‐bottom under <h1> (20px)
-      • Margin‐bottom under .section-header (12px)
-      • Any extra margins you add. 
-     Here, we’ll simply subtract ~120px to cover:
-       30px (container top padding)
-       + 36px (H1 text height)
-       + 20px (H1 bottom margin)
-       + 12px (header bottom margin)
-       + some buffer. 
-  */
-  height: calc(100vh - 120px);
+  flex: 1; /* Use remaining height from .container */
+  overflow: hidden;
 }
 
 /* Each column wrapper */
