@@ -45,6 +45,29 @@
   font-weight: bold;
   font-size: 14px;
 }
+.dashboard {
+  display: flex;
+  gap: 40px;
+  padding: 20px;
+  align-items: flex-start;
+}
+
+/* Optional: controls width of each section */
+.component-area {
+  flex: 2;
+}
+
+.middle-spacer {
+  flex: 0.5; /* adjust to control spacing width */
+}
+
+.notification-area {
+  flex: 1;
+  display: flex;
+  flex-direction: column;
+  gap: 20px;
+}
+
 
   </style>
   <!-- Firebase -->
@@ -69,15 +92,23 @@
   <header class="banner" id="usernameHeader">Welcome, </header>
 
   <div class="dashboard">
+  <div class="component-area">
     <div class="section">
       <h2>Component List</h2>
       <div class="component-list" id="component-grid"></div>
     </div>
+  </div>
+
+  <div class="middle-spacer"></div>
+
+  <div class="notification-area">
     <div class="section">
       <h2>Notifications</h2>
       <div id="notification-bar"></div>
     </div>
   </div>
+</div>
+
 
   <!-- Modal -->
   <div class="modal" id="modal">
