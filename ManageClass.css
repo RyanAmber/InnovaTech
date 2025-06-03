@@ -1,6 +1,6 @@
 /* --------------------
    GLOBAL STYLES
-   -------------------- */
+-------------------- */
 * {
   box-sizing: border-box;
 }
@@ -8,34 +8,51 @@
 html, body {
   height: 100%;
   margin: 0;
-}
-
-body {
-  margin: 0;
   font-family: 'Segoe UI', sans-serif;
   background: linear-gradient(135deg, #6dd5ed, #c44569);
   color: #333;
 }
 
 .container {
-   display: flex;
-   flex-direction: column;
-   height: 100%;
-   padding: 30px;
-}
-
-/* Main page title */
-h1 {
-  color: white;
-  font-size: 36px;
-  margin: 0;
-  margin-bottom: 20px;
+  display: flex;
+  flex-direction: column;
+  height: 100%;
+  padding: 30px;
 }
 
 /* --------------------
-   COLUMN HEADERS
-   -------------------- */
-/* Each column’s white pill‐shaped header */
+   PAGE STRUCTURE
+-------------------- */
+h1 {
+  color: white;
+  font-size: 36px;
+  margin: 0 0 20px 0;
+}
+
+.main-content {
+  display: grid;
+  grid-template-columns: 1fr 2fr 1fr;
+  gap: 25px;
+  flex: 1;
+  overflow: hidden;
+}
+
+.column {
+  display: flex;
+  flex-direction: column;
+}
+
+.section {
+  background: white;
+  border-radius: 20px;
+  padding: 20px;
+  flex: 1;
+  display: flex;
+  flex-direction: column;
+  overflow-y: auto;
+  box-shadow: 0 4px 20px rgba(0, 0, 0, 0.08);
+}
+
 .section-header {
   background: white;
   color: #333;
@@ -49,64 +66,54 @@ h1 {
   box-shadow: 0 2px 6px rgba(0, 0, 0, 0.08);
 }
 
-
 /* --------------------
-   GRID LAYOUT
-   -------------------- */
-.main-content {
-  display: grid;
-  grid-template-columns: 1fr 2fr 1fr;
-  gap: 25px;
-  flex: 1; /* Use remaining height from .container */
-  overflow: hidden;
-}
-
-/* Each column wrapper */
-.column {
+   DASHBOARD BUTTON
+-------------------- */
+.dashboard-button-wrapper {
   display: flex;
-  flex-direction: column;
+  justify-content: flex-end;
+  margin-bottom: 10px;
+}
+
+.dashboard-button-wrapper button,
+button[type="button"] {
+  background-color: #333;
+  color: white;
+  border: none;
+  padding: 8px 16px;
+  border-radius: 8px;
+  font-size: 14px;
+  cursor: pointer;
+  margin-top: 0;
 }
 
 /* --------------------
-   WHITE CARD SECTIONS
-   -------------------- */
-.section {
-  background: white;
-  border-radius: 20px;
-  padding: 20px;
-  /* Make each column fill all available height */
-  flex: 1;
-  display: flex;
-  flex-direction: column;
-  overflow-y: auto;    /* Scroll if content overflows */
-  box-shadow: 0 4px 20px rgba(0, 0, 0, 0.08);
-}
-
-/* --------------------
-   LEFT COLUMN HEADINGS
-   -------------------- */
-/* Ensure “For approval” and “Current List” (both <h2>) look identical */
+   LEFT COLUMN
+-------------------- */
 .section h2 {
   font-size: 20px;
   font-weight: 600;
-  margin-top: 0;
+  margin: 0 0 12px 0;
+}
+
+.approval-list,
+.current-list {
+  list-style: none;
+  padding-left: 0;
+  margin: 0 0 24px 0;
+}
+
+.approval-list li,
+.current-list li {
+  display: flex;
+  align-items: center;
+  justify-content: space-between;
+  font-size: 17px;
   margin-bottom: 12px;
 }
 
-/* --------------------
-   “For approval” LIST STYLES
-   -------------------- */
-.approval-list {
-  list-style: none;
-  padding-left: 0;
-  margin-bottom: 24px;
-}
-
 .approval-list li {
-  display: flex;
-  align-items: center;
-  font-size: 17px;
-  margin-bottom: 10px;
+  justify-content: flex-start;
 }
 
 .dot {
@@ -125,23 +132,6 @@ h1 {
   background-color: #ff4d4d;
 }
 
-/* --------------------
-   “Current List” STYLES
-   -------------------- */
-.current-list {
-  list-style: none;
-  padding-left: 0;
-  margin: 0;
-}
-
-.current-list li {
-  display: flex;
-  align-items: center;
-  justify-content: space-between;
-  font-size: 17px;
-  margin-bottom: 12px;
-}
-
 .current-list .remove-btn {
   background-color: #ff6b6b;
   border: none;
@@ -153,8 +143,16 @@ h1 {
 }
 
 /* --------------------
-   TEAMS (MIDDLE COLUMN)
-   -------------------- */
+   MIDDLE COLUMN (TEAMS)
+-------------------- */
+.teams {
+  display: flex;
+  flex-direction: column;
+  flex: 1;
+  min-height: 0;
+  overflow: hidden;
+}
+
 .instruction {
   margin: 0 0 8px 0;
   font-style: italic;
@@ -162,7 +160,7 @@ h1 {
 
 .id-boxes {
   display: grid;
-  grid-template-columns: repeat(4, 1fr); /* 4 per row */
+  grid-template-columns: repeat(4, 1fr);
   gap: 16px;
   margin-top: 10px;
   flex: 1;
@@ -171,22 +169,30 @@ h1 {
   padding-bottom: 10px;
 }
 
-.id-box {
-   background: #f8f8f8;
-   padding: 12px;
-   border-radius: 15px;
-   font-size: 13px;
-   box-shadow: inset 0 1px 2px rgba(0, 0, 0, 0.05);
-   display: flex;
-   flex-direction: column;
-   gap: 6px;
-   min-height: 120px;
-   height: 140px;
-   width: 100%;
-   justify-content: space-between;
+.id-boxes::-webkit-scrollbar {
+  width: 6px;
 }
 
-/* Input fields inside .id-box */
+.id-boxes::-webkit-scrollbar-thumb {
+  background-color: #ccc;
+  border-radius: 3px;
+}
+
+.id-box {
+  background: #f8f8f8;
+  padding: 12px;
+  border-radius: 15px;
+  font-size: 13px;
+  box-shadow: inset 0 1px 2px rgba(0, 0, 0, 0.05);
+  display: flex;
+  flex-direction: column;
+  gap: 6px;
+  min-height: 120px;
+  height: 140px;
+  width: 100%;
+  justify-content: space-between;
+}
+
 .id-box input {
   padding: 6px 10px;
   border-radius: 12px;
@@ -194,7 +200,6 @@ h1 {
   font-size: 13px;
 }
 
-/* “add” button inside the first id-box */
 .id-box .add-btn {
   background-color: #0ad200;
   color: white;
@@ -207,7 +212,6 @@ h1 {
   margin-top: 8px;
 }
 
-/* “delete” or “remove” buttons inside team cards */
 .id-box .remove-btn {
   background-color: #ff6b6b;
   color: white;
@@ -220,23 +224,6 @@ h1 {
   margin-top: 8px;
 }
 
-.dashboard-button-wrapper {
-  display: flex;
-  justify-content: flex-end;
-  margin-bottom: 10px;
-}
-
-.dashboard-button-wrapper button {
-  background-color: #333;
-  color: white;
-  border: none;
-  padding: 8px 16px;
-  border-radius: 8px;
-  font-size: 14px;
-  cursor: pointer;
-}
-
-/* Placeholder “+” box styling */
 .id-box.plus {
   background: #f0f0f0;
   color: #aaa;
@@ -250,49 +237,9 @@ h1 {
 
 /* --------------------
    RIGHT COLUMN (FLAGGED)
-   -------------------- */
+-------------------- */
 .flagged p {
   margin: 0;
   font-size: 17px;
   font-style: italic;
 }
-
-/* --------------------
-   “Back to Dashboard” BUTTON
-   -------------------- */
-button[type="button"] {
-  margin-top: 20px;
-  background-color: #333;
-  color: white;
-  border: none;
-  padding: 10px 18px;
-  border-radius: 8px;
-  font-size: 14px;
-  cursor: pointer;
-}
-
-/* Make .teams section behave like a column */
-.teams {
-   display: flex;
-   flex-direction: column;
-   flex: 1;
-   min-height: 0;
-   overflow: hidden;
-}
-
-/* Let team cards scroll if too tall */
-.id-boxes {
-  flex: 1; /* Fills remaining space in the .teams section */
-  overflow-y: auto;
-  padding-right: 5px; /* Optional: avoids clipping scrollbar */
-}
-
-/* Optional: customize scrollbar appearance */
-.id-boxes::-webkit-scrollbar {
-  width: 6px;
-}
-.id-boxes::-webkit-scrollbar-thumb {
-  background-color: #ccc;
-  border-radius: 3px;
-}
-
