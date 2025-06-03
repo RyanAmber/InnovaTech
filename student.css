@@ -13,7 +13,7 @@ body {
   color: #222;
 }
 
-/* header */
+/* Header */
 header {
   padding: 20px;
   font-size: 2rem;
@@ -21,7 +21,7 @@ header {
   color: white;
 }
 
-/* layout container */
+/* Layout container */
 .container {
   flex: 1;
   display: flex;
@@ -30,38 +30,39 @@ header {
   padding: 0 20px 20px 20px;
 }
 
-/* left side (component list) */
+/* Left side (component list) */
 .left {
   flex: 1;
   max-width: 50%;
   padding-right: 20px;
   display: flex;
   flex-direction: column;
-  height: calc(100vh - 100px);
+  height: calc(100vh - 100px); /* adjusts for header height */
 }
 
-/* component grid */
+/* Component grid */
 .grid {
   display: grid;
-  grid-template-columns: repeat(auto-fill, minmax(200px, 1fr));
-  gap: 20px;
+  grid-template-columns: repeat(auto-fill, minmax(140px, 1fr));
+  gap: 12px;
   overflow-y: auto;
   flex-grow: 1;
   padding-bottom: 20px;
 }
 
-/* individual component card */
+/* Individual component card */
 .card {
   background-color: white;
   border-radius: 16px;
-  padding: 12px;
+  padding: 8px;
   box-shadow: 0 4px 10px rgba(0, 0, 0, 0.1);
   transition: transform 0.2s ease;
   cursor: pointer;
   display: flex;
   flex-direction: column;
   align-items: center;
-  min-height: 180px;
+  width: 140px;
+  height: 160px;
 }
 
 .card:hover {
@@ -69,20 +70,20 @@ header {
 }
 
 .card img {
-  width: 100%;
-  max-height: 120px; /* Set a reasonable max height */
+  width: 100px;
+  height: 80px;
   object-fit: contain;
   border-radius: 8px;
 }
 
-
 .card p {
-  margin-top: 10px;
+  margin: 8px 0 0;
   font-weight: 500;
   text-align: center;
+  font-size: 0.9rem;
 }
 
-/* right side (notifications) */
+/* Right side (notifications) */
 .right {
   width: 320px;
   margin-left: auto;
@@ -97,7 +98,7 @@ header {
   border-radius: 24px;
   padding: 20px;
   width: 100%;
-  box-shadow: 0 6px 16px rgba(0, 0, 0, 0.15);
+  box-shadow: 0 6px 16px rgba(0,0,0,0.15);
   margin-right: 20px;
   max-height: calc(100vh - 60px);
   overflow-y: auto;
@@ -106,7 +107,11 @@ header {
   gap: 16px;
 }
 
-/* notification card */
+.notifications h2 {
+  margin-top: 0;
+  font-size: 1.5rem;
+}
+
 .notif {
   background-color: #ff9a44;
   padding: 15px;
@@ -116,11 +121,6 @@ header {
   align-items: center;
   transition: transform 0.2s ease-in-out, box-shadow 0.2s ease-in-out;
   will-change: transform;
-}
-
-.notifications h2 {
-  margin-top: 0;
-  font-size: 1.5rem;
 }
 
 .notif-hover {
@@ -144,7 +144,7 @@ header {
   font-size: 0.9rem;
 }
 
-/* bubbly headings */
+/* Bubbly headings */
 .bubble-heading {
   background-color: white;
   padding: 12px 24px;
@@ -153,14 +153,13 @@ header {
   font-weight: 600;
   display: inline-block;
   margin-bottom: 20px;
-  box-shadow: 0 4px 10px rgba(0, 0, 0, 0.1);
+  box-shadow: 0 4px 10px rgba(0,0,0,0.1);
 }
 
-/* Modal stuff */
+/* Modal styles */
 .modal {
   position: fixed;
-  top: 0;
-  left: 0;
+  top: 0; left: 0;
   width: 100vw;
   height: 100vh;
   display: none;
@@ -309,14 +308,6 @@ header {
   cursor: pointer;
 }
 
-.green {
-  background-color: #9be59b;
-}
-
-.yellow {
-  background-color: #fff176;
-}
-
-.red {
-  background-color: #f76e6e;
-}
+.green { background-color: #9be59b; }
+.yellow { background-color: #fff176; }
+.red { background-color: #f76e6e; }
