@@ -94,58 +94,6 @@
     const countMap = new Map();
     const imageMap = new Map();
 
-    function toggleAddForm() {
-      const form = document.getElementById("addForm");
-      form.style.display = form.style.display === "none" ? "block" : "none";
-    }
-
-    document.getElementById("toggleAddBtn").addEventListener("click", toggleAddForm);
-
-    async function addComponent() {
-      const type = document.getElementById("newType").value.trim();
-      const image = document.getElementById("newImage").value.trim() || "https://upload.wikimedia.org/wikipedia/commons/3/38/Arduino_Uno_-_R3.jpg";
-      const working = document.getElementById("newWorking").checked;
-      const team = document.getElementById("newGroup").value.trim();
-
-      if (!type) {
-        alert("Component type is required.");
-        return;
-      }
-      if (!team) {
-        alert("Component team is required.");
-        return;
-      }
-      try {
-        // Sets the image for the type in inventory/[type] doc so that all items of that type will use one image
-        await setDoc(doc(db, "inventory", type), { image }, { merge: true });
-
-        // Adds a new part in inventory/[type]/parts/
-        const partsRef = collection(db, "inventory", type, "parts");
-        await addDoc(partsRef, {
-          working,
-          team
-        });
-
-        alert("Component added successfully!");
-        document.getElementById("addForm").reset();
-        document.getElementById("addForm").style.display = "none";
-
-        // Clears and reloads
-        document.getElementById("component-grid").innerHTML = "";
-        countMap.clear();
-        workingMap.clear();
-        availableMap.clear();
-        loadComponents();
-      } catch (error) {
-        console.error("Error adding component:", error);
-        alert("Failed to add component.");
-      }
-    }
-    document.getElementById("addForm").addEventListener("submit", async (e) => {
-      e.preventDefault();
-      await addComponent();
-    });
-
     function openModal(name, imageUrl) {
       const total = countMap.get(name) || 0;
       const working = workingMap.get(name) || 0;
