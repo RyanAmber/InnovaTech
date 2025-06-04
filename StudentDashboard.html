@@ -285,8 +285,7 @@ document.getElementById("component-grid").innerHTML = "";
 countMap.clear();
 workingMap.clear();
 availableMap.clear();
-await loadComponents();
-await loadGroupInventory();
+location.reload();
 } catch (err) {
 console.error("Specific return failed:", err);
 alert("Error returning this item.");
