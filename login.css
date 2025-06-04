@@ -2,7 +2,7 @@ body {
   margin: 0;
   font-family: 'Segoe UI', sans-serif;
   height: 100vh;
-  background: linear-gradient(135deg, #ff4e50, #f9d423);
+  background: linear-gradient(135deg, #ff4e50, #f9c023);
   display: flex;
   justify-content: center;
   align-items: center;
@@ -79,5 +79,5 @@ button.secondary {
 }
 
 .signup-link a:hover {
-  color: #dcdcdc;
+  color: #2244cc;
 }
