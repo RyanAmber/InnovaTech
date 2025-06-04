@@ -333,7 +333,31 @@
   border-radius: 5px;
   cursor: pointer;
 }
-    .green { background-color: #9be59b; }
-    .yellow { background-color: #fff176; }
-    .red { background-color: #f76e6e; }
+
+/* "+" Card Style */
+.plus-card {
+  justify-content: center;
+  font-size: 2rem;
+  color: #4069ad;
+  font-weight: bold;
+  transition: transform 0.2s ease, box-shadow 0.2s ease;
+}
+.plus-card:hover {
+  transform: scale(1.05);
+  box-shadow: 0 6px 12px rgba(0, 0, 0, 0.15);
+}
+
+/* Modal size override for small form */
+.modal-content.small {
+  max-width: 400px;
+  width: 90%;
+  flex-direction: column;
+}
+.modal-content.small h2 {
+  margin-top: 0;
+}
+
+.green { background-color: #9be59b; }
+.yellow { background-color: #fff176; }
+.red { background-color: #f76e6e; }
     
