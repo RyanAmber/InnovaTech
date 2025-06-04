@@ -65,3 +65,19 @@ button.secondary {
   font-weight: bold;
   font-size: 0.9rem;
 }
+
+.signup-link {
+  margin-top: 20px;
+  font-size: 0.95rem;
+  color: white;
+}
+
+.signup-link a {
+  color: #ffffff;
+  text-decoration: underline;
+  font-weight: bold;
+}
+
+.signup-link a:hover {
+  color: #dcdcdc;
+}
