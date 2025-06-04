@@ -1,4 +1,4 @@
-<!DOCTYPE html>
+<!DOCTYPE html> 
 <html lang="en">
   <head>
     <meta charset="UTF-8" />
@@ -50,22 +50,8 @@
           <div class="section">
             <div class="scroll-content">
               <h2>For approval</h2>
-              <ul class="approval-list">
-                <li>
-                  191966
-                  <button class="confirm-btn">Confirm</button>
-                  <button class="reject-btn">Reject</button>
-                </li>
-                <li>
-                  spammmm
-                  <button class="confirm-btn">Confirm</button>
-                  <button class="reject-btn">Reject</button>
-                </li>
-                <li>
-                  192832
-                  <button class="confirm-btn">Confirm</button>
-                  <button class="reject-btn">Reject</button>
-                </li>
+              <ul class="approval-list" id="approval-list">
+                <!-- Unconfirmed users will load here dynamically -->
               </ul>
               <h2>Current List</h2>
               <ul class="current-list" id="current-list"></ul>
@@ -102,10 +88,83 @@
     </div>
 
     <script>
+      async function loadUnconfirmedUsers() {
+        const approvalList = document.getElementById("approval-list");
+        approvalList.innerHTML = "<li>Loading unconfirmed users...</li>";
+
+        try {
+          const querySnapshot = await db.collection("users")
+            .where("group", "==", "Unconfirmed Users")
+            .get();
+
+          approvalList.innerHTML = ""; // Clear loading message
+
+          if (querySnapshot.empty) {
+            approvalList.innerHTML = "<li>No unconfirmed users found.</li>";
+            return;
+          }
+
+          querySnapshot.forEach(doc => {
+            const username = doc.id;
+
+            const li = document.createElement("li");
+            li.textContent = username + " ";
+
+            const confirmBtn = document.createElement("button");
+            confirmBtn.textContent = "Confirm";
+            confirmBtn.className = "confirm-btn";
+            confirmBtn.addEventListener("click", () => handleConfirm(username));
+
+            const rejectBtn = document.createElement("button");
+            rejectBtn.textContent = "Reject";
+            rejectBtn.className = "reject-btn";
+            rejectBtn.addEventListener("click", () => handleReject(username));
+
+            li.appendChild(confirmBtn);
+            li.appendChild(rejectBtn);
+
+            approvalList.appendChild(li);
+          });
+        } catch (error) {
+          approvalList.innerHTML = "<li>Error loading unconfirmed users.</li>";
+          console.error("Error loading unconfirmed users:", error);
+        }
+      }
+
+      async function handleConfirm(username) {
+        try {
+          await db.collection("users").doc(username).update({ group: "Student" });
+          alert(username + " has been confirmed!");
+          loadUnconfirmedUsers();  // refresh list
+          loadGroupsFromFirebase(); // update current list and teams
+        } catch (error) {
+          alert("Error confirming user: " + error.message);
+        }
+      }
+
+      async function handleReject(username) {
+        if (!confirm(`Are you sure you want to reject ${username}?`)) return;
+
+        try {
+          await db.collection("users").doc(username).delete();
+          alert(username + " has been rejected and removed.");
+          loadUnconfirmedUsers();  // refresh list
+          loadGroupsFromFirebase(); // update current list and teams
+        } catch (error) {
+          alert("Error rejecting user: " + error.message);
+        }
+      }
+
       async function loadGroupsFromFirebase() {
         const groupContainer = document.getElementById("id-boxes");
         const currentListEl = document.getElementById("current-list");
         const uniqueUsers = new Map();
+
+        // Clear existing boxes except the first input box
+        while (groupContainer.children.length > 1) {
+          groupContainer.removeChild(groupContainer.lastChild);
+        }
+        currentListEl.innerHTML = "";
 
         try {
           const groupsSnapshot = await db.collection("Groups").get();
@@ -149,6 +208,7 @@
       }
 
       window.onload = () => {
+        loadUnconfirmedUsers();
         loadGroupsFromFirebase();
       };
     </script>
