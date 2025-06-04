@@ -104,6 +104,11 @@ header {
   box-shadow: 0 2px 4px rgba(0, 0, 0, 0.06);
   font-family: 'Segoe UI', sans-serif;
   max-height: 90px;
+  transition: transform 0.2s ease;
+}
+
+.group-card:hover {
+  transform: scale(1.03);
 }
 
 .group-card img {
@@ -185,8 +190,13 @@ header {
   font-size: 0.9rem;
   line-height: 1.4;
   margin-bottom: 16px;
+  transition: transform 0.2s ease, box-shadow 0.2s ease;
 }
 
+.notif:hover {
+  transform: scale(1.03);
+  box-shadow: 0 6px 16px rgba(0, 0, 0, 0.1);
+}
 
 .notif-time {
   background-color: white;
