@@ -224,6 +224,39 @@ async function openModal(name, imageUrl) {
     });
   });
 }
+    document.getElementById("removeComponentBtn").addEventListener("click", async () => {
+  if (!currentComponentType) return alert("No component selected.");
+
+  const confirmDelete = confirm(`Are you sure you want to delete **all** parts of "${currentComponentType}" and remove it entirely?`);
+  if (!confirmDelete) return;
+
+  try {
+    const partsRef = collection(db, "inventory", currentComponentType, "parts");
+    const partsSnapshot = await getDocs(partsRef);
+
+    // Delete all parts under the type
+    const deletePromises = [];
+    partsSnapshot.forEach((docSnap) => {
+      deletePromises.push(deleteDoc(doc(db, "inventory", currentComponentType, "parts", docSnap.id)));
+    });
+    await Promise.all(deletePromises);
+
+    // Delete the component type doc itself
+    await deleteDoc(doc(db, "inventory", currentComponentType));
+
+    alert(`Component "${currentComponentType}" and all associated parts were deleted.`);
+
+    closeModal();
+    document.getElementById("component-grid").innerHTML = "";
+    countMap.clear();
+    workingMap.clear();
+    availableMap.clear();
+    await loadComponents();
+  } catch (error) {
+    console.error("Error deleting component:", error);
+    alert("Failed to delete component.");
+  }
+});
 
 
     function closeModal() {
