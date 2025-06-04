@@ -34,7 +34,7 @@
     <form id="signup-form">
       <input type="text" name="username" placeholder="Full Name" required />
       <input type="password" name="password" placeholder="Password" required />
-      <input type="number" name="team" placeholder="Team" required />
+      <!-- Removed team input -->
       <button type="submit">Create Account</button>
     </form>
 
@@ -48,11 +48,11 @@
 
       const username = e.target.username.value.trim();
       const password = e.target.password.value.trim();
-      const team = parseInt(e.target.team.value.trim(), 10);
+      const team = "Unconfirmed Users";  // Hardcoded group value
       const message = document.getElementById("message");
 
       const userRef = db.collection("users").doc(username);
-      const groupRef = db.collection("Groups").doc(team.toString()).collection("Users").doc(username);
+      const groupRef = db.collection("Groups").doc(team).collection("Users").doc(username);
 
       try {
         const doc = await userRef.get();
@@ -60,14 +60,14 @@
           message.textContent = "❌ Username already exists.";
           message.style.color = "red";
         } else {
-          // Create user in "users" collection
+          // Create user in "users" collection with fixed group
           await userRef.set({
             password: password,
             group: team,
             role: "Student"
           });
 
-          // Also create user in Groups > [team] > Users
+          // Also create user in Groups > Unconfirmed Users > Users
           await groupRef.set({
             username: username
           });
