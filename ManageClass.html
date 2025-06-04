@@ -1,141 +1,122 @@
-<!DOCTYPE html>
-<html lang="en">
-  <head>
-    <meta charset="UTF-8" />
-    <meta name="viewport" content="width=device-width, initial-scale=1" />
-    <title>Manage Classroom</title>
-    <link rel="stylesheet" href="ManageClass.css" />
+<script>
+  const groupContainer = document.getElementById("id-boxes");
+  const currentListEl = document.getElementById("current-list");
+  const uniqueUsers = new Map();
 
-    <!-- Firebase SDK -->
-    <script src="https://www.gstatic.com/firebasejs/10.11.0/firebase-app-compat.js"></script>
-    <script src="https://www.gstatic.com/firebasejs/10.11.0/firebase-firestore-compat.js"></script>
-    <script>
-      const firebaseConfig = {
-        apiKey: "AIzaSyDq7FI-N984HO2M7Q0l25WEoiTBqZvZfHs",
-        authDomain: "innovatech-86917.firebaseapp.com",
-        projectId: "innovatech-86917",
-        storageBucket: "innovatech-86917.appspot.com",
-        messagingSenderId: "222788972248",
-        appId: "1:222788972248:web:d0d5b8968f24b9c00671ad",
-        measurementId: "G-GTX1QPXJ2R"
-      };
-      firebase.initializeApp(firebaseConfig);
-      const db = firebase.firestore();
-    </script>
-  </head>
+  async function loadGroupsFromFirebase() {
+    groupContainer.innerHTML = ""; // clear before reload
+    currentListEl.innerHTML = "";
+    uniqueUsers.clear();
 
-  <body>
-    <div class="container">
-      <div class="dashboard-button-wrapper">
-        <button type="button" onclick="location.href='TeacherDashboard.html'">
-          Back to Dashboard
-        </button>
-      </div>
+    try {
+      const groupsSnapshot = await db.collection("Groups").get();
 
-      <h1>Manage Classroom</h1>
+      for (const groupDoc of groupsSnapshot.docs) {
+        const groupName = groupDoc.id;
+        const usersRef = db.collection("Groups").doc(groupName).collection("Users");
+        const usersSnapshot = await usersRef.get();
 
-      <div class="main-content">
-        <!-- Column 1: Overview -->
-        <div class="column">
-          <div class="section-header">Overview</div>
-          <div class="section">
-            <div class="scroll-content">
-              <h2>For approval</h2>
-              <ul class="approval-list">
-                <li>
-                  191966
-                  <button class="confirm-btn">Confirm</button>
-                  <button class="reject-btn">Reject</button>
-                </li>
-                <li>
-                  spammmm
-                  <button class="confirm-btn">Confirm</button>
-                  <button class="reject-btn">Reject</button>
-                </li>
-                <li>
-                  192832
-                  <button class="confirm-btn">Confirm</button>
-                  <button class="reject-btn">Reject</button>
-                </li>
-              </ul>
+        const userList = [];
+        usersSnapshot.forEach((userDoc) => {
+          const username = userDoc.id;
+          const data = userDoc.data();
+          const role = data.role || "student";
+          userList.push(`<div>${username} <span class="role-student">[${role}]</span></div>`);
+          if (!uniqueUsers.has(username)) uniqueUsers.set(username, role);
+        });
 
-              <h2>Current List</h2>
-              <ul class="current-list" id="current-list"></ul>
-            </div>
-          </div>
-        </div>
-
-        <!-- Column 2: Teams -->
-        <div class="column">
-          <div class="section-header">Teams</div>
-          <div class="section teams">
-            <div class="scroll-content">
-              <div class="id-boxes" id="id-boxes">
-                <div class="id-box">
-                  <input type="text" placeholder="enter team name" /><br />
-                  <input type="text" placeholder="search members..." /><br />
-                  <button class="add-btn">add</button>
-                </div>
-              </div>
-            </div>
-          </div>
-        </div>
-
-        <!-- Column 3: Flagged -->
-        <div class="column">
-          <div class="section-header">Flagged</div>
-          <div class="section flagged">
-            <div class="scroll-content">
-              <p>(Placeholder for flagged users)</p>
-            </div>
-          </div>
-        </div>
-      </div>
-    </div>
-
-    <script>
-      async function loadGroupsFromFirebase() {
-        const groupContainer = document.getElementById("id-boxes");
-        const currentListEl = document.getElementById("current-list");
-        const uniqueUsers = new Map();
-
-        try {
-          const groupsSnapshot = await db.collection("Groups").get();
-
-          for (const groupDoc of groupsSnapshot.docs) {
-            const groupName = groupDoc.id;
-            const usersRef = db.collection("Groups").doc(groupName).collection("Users");
-            const usersSnapshot = await usersRef.get();
-
-            const userList = [];
-            usersSnapshot.forEach((userDoc) => {
-              const username = userDoc.id;
-              const data = userDoc.data();
-              const role = data.role || "student";
-              const badge = `<span class="role-student">[Student]</span>`;
-              userList.push(`<div>${username} ${badge}</div>`);
-              if (!uniqueUsers.has(username)) uniqueUsers.set(username, role);
-            });
-
-            const box = document.createElement("div");
-            box.className = "id-box";
-            box.innerHTML = `<strong>${groupName}</strong>${userList.join("")}<button class="remove-btn">delete</button>`;
-            groupContainer.appendChild(box);
-          }
-
-          for (const [username, role] of uniqueUsers.entries()) {
-            const li = document.createElement("li");
-            li.innerHTML = `${username} <span class="role-student">[Student]</span> <button class="remove-btn">remove</button>`;
-            currentListEl.appendChild(li);
-          }
-        } catch (error) {
-          console.error("Error loading groups from Firebase:", error);
-        }
+        const box = document.createElement("div");
+        box.className = "id-box";
+        box.innerHTML = `
+          <strong>${groupName}</strong>
+          ${userList.join("")}
+          <button class="remove-btn" onclick="deleteGroup('${groupName}')">Delete Group</button>
+        `;
+        groupContainer.appendChild(box);
       }
 
-      window.onload = () => {
+      for (const [username, role] of uniqueUsers.entries()) {
+        const li = document.createElement("li");
+        li.innerHTML = `
+          ${username} <span class="role-student">[${role}]</span>
+          <button class="remove-btn" onclick="removeUserFromAllGroups('${username}')">Remove</button>
+        `;
+        currentListEl.appendChild(li);
+      }
+    } catch (error) {
+      console.error("Error loading groups from Firebase:", error);
+    }
+  }
+
+  async function deleteGroup(groupName) {
+    const confirmDelete = confirm(`Are you sure you want to delete group: ${groupName}?`);
+    if (!confirmDelete) return;
+
+    try {
+      const usersSnapshot = await db.collection("Groups").doc(groupName).collection("Users").get();
+      const batch = db.batch();
+
+      usersSnapshot.forEach(doc => {
+        batch.delete(doc.ref);
+      });
+
+      await batch.commit();
+      await db.collection("Groups").doc(groupName).delete();
+
+      alert(`Group "${groupName}" deleted`);
+      loadGroupsFromFirebase();
+    } catch (err) {
+      console.error("Failed to delete group:", err);
+      alert("Error deleting group.");
+    }
+  }
+
+  async function removeUserFromAllGroups(username) {
+    try {
+      const groupsSnapshot = await db.collection("Groups").get();
+      const batch = db.batch();
+
+      for (const groupDoc of groupsSnapshot.docs) {
+        const userRef = db.collection("Groups").doc(groupDoc.id).collection("Users").doc(username);
+        const userDoc = await userRef.get();
+        if (userDoc.exists) batch.delete(userRef);
+      }
+
+      await batch.commit();
+      alert(`Removed "${username}" from all groups.`);
+      loadGroupsFromFirebase();
+    } catch (err) {
+      console.error("Failed to remove user:", err);
+      alert("Error removing user.");
+    }
+  }
+
+  // Adding users
+  document.addEventListener("click", async (e) => {
+    if (e.target.classList.contains("add-btn")) {
+      const box = e.target.closest(".id-box");
+      const inputs = box.querySelectorAll("input");
+      const groupName = inputs[0].value.trim();
+      const username = inputs[1].value.trim();
+
+      if (!groupName || !username) {
+        alert("Enter both team name and username.");
+        return;
+      }
+
+      try {
+        const userRef = db.collection("Groups").doc(groupName).collection("Users").doc(username);
+        await userRef.set({ role: "student" });
+        alert(`Added ${username} to ${groupName}`);
         loadGroupsFromFirebase();
-      };
-    </script>
-  </body>
-</html>
+      } catch (err) {
+        console.error("Failed to add user:", err);
+        alert("Error adding user.");
+      }
+    }
+  });
+
+  window.onload = () => {
+    loadGroupsFromFirebase();
+  };
+</script>
