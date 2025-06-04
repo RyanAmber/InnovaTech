@@ -1,3 +1,4 @@
+<!-- ✅ FINAL CLEANED-UP ManageClass.html -->
 <!DOCTYPE html>
 <html lang="en">
   <head>
@@ -23,10 +24,9 @@
       const db = firebase.firestore();
     </script>
   </head>
-
   <body>
     <div class="container">
-      <!-- Dashboard button in top-right corner -->
+      <!-- Top-right dashboard button -->
       <div class="dashboard-button-wrapper">
         <button type="button" onclick="location.href='TeacherDashboard.html'">
           Back to Dashboard
@@ -35,10 +35,8 @@
 
       <h1>Manage Classroom</h1>
 
-      <!-- MAIN CONTENT GRID --> 
       <div class="main-content">
-        
-        <!-- COLUMN 1: OVERVIEW -->
+        <!-- COLUMN 1: Overview -->
         <div class="column">
           <div class="section-header">Overview</div>
           <div class="section">
@@ -61,63 +59,30 @@
                   <button class="reject-btn">Reject</button>
                 </li>
               </ul>
-        
               <h2>Current List</h2>
-              <ul class="current-list" id="current-list">
-                <!-- Populated dynamically via Firebase -->
-              </ul>
+              <ul class="current-list" id="current-list"></ul>
             </div>
           </div>
         </div>
 
-        <!-- COLUMN 2: TEAMS -->
+        <!-- COLUMN 2: Teams -->
         <div class="column">
           <div class="section-header">Teams</div>
           <div class="section teams">
             <div class="scroll-content">
               <p class="instruction">Groups and members:</p>
               <div class="id-boxes" id="id-boxes">
-                <!-- Firebase will append here -->
-                <!-- Existing team cards already present -->
                 <div class="id-box">
-                  <input type="text" placeholder="enter team name" /><br />
-                  <input type="text" placeholder="search members..." /><br />
+                  <input type="text" placeholder="enter team name" />
+                  <input type="text" placeholder="search members..." />
                   <button class="add-btn">add</button>
                 </div>
-        
-                <div class="id-box">
-                  <strong>InnovaTech</strong><br />
-                  Radhana_Mainali<br />
-                  Ryan_Diehl<br />
-                  Conrad_Kim<br />
-                  Suhanee_Patel<br />
-                  <button class="remove-btn">delete</button>
-                </div>
-        
-                <div class="id-box">
-                  <strong>Team X6</strong><br />
-                  Radhana_Mainali<br />
-                  Poorvi_Deshpande<br />
-                  Conrad_Kim<br />
-                  Ethan_Cho<br />
-                  <button class="remove-btn">delete</button>
-                </div>
-        
-                <!-- Placeholder “+” cards -->
-                <div class="id-box plus">+</div>
-                <div class="id-box plus">+</div>
-                <div class="id-box plus">+</div>
-                <div class="id-box plus">+</div>
-                <div class="id-box plus">+</div>
-                <div class="id-box plus">+</div>
-                <div class="id-box plus">+</div>
-                <div class="id-box plus">+</div>
               </div>
             </div>
           </div>
         </div>
 
-        <!-- COLUMN 3: FLAGGED -->
+        <!-- COLUMN 3: Flagged -->
         <div class="column">
           <div class="section-header">Flagged</div>
           <div class="section flagged">
@@ -126,67 +91,56 @@
             </div>
           </div>
         </div>
+      </div>
+    </div>
 
-    <!-- Firebase loading script -->
+    <!-- Firebase dynamic group loading -->
     <script>
-       async function loadGroupsFromFirebase() {
-      const groupContainer = document.getElementById("id-boxes");
-    const currentListEl = document.getElementById("current-list");
+      async function loadGroupsFromFirebase() {
+        const groupContainer = document.getElementById("id-boxes");
+        const currentListEl = document.getElementById("current-list");
+        const uniqueUsers = new Map();
 
-    const uniqueUsers = new Map(); // To avoid duplicates
+        try {
+          const groupsSnapshot = await db.collection("Groups").get();
 
-      try {
-        const groupsSnapshot = await db.collection("Groups").get();
+          for (const groupDoc of groupsSnapshot.docs) {
+            const groupName = groupDoc.id;
+            const usersRef = db.collection("Groups").doc(groupName).collection("Users");
+            const usersSnapshot = await usersRef.get();
 
-        for (const groupDoc of groupsSnapshot.docs) {
-          const groupName = groupDoc.id;
-          const usersRef = db
-              .collection("Groups")
-              .doc(groupName)
-              .collection("Users");
-          const usersSnapshot = await usersRef.get();
+            const userList = [];
+            usersSnapshot.forEach((userDoc) => {
+              const username = userDoc.id;
+              const data = userDoc.data();
+              const role = data.role || "student";
+              const roleBadge = role === "student" ? `<span class='role-student'>[Student]</span>` : "";
+              userList.push(`<div>${username} ${roleBadge}</div>`);
+              if (!uniqueUsers.has(username)) {
+                uniqueUsers.set(username, role);
+              }
+            });
 
-
-          const userList = [];
-  
-        usersSnapshot.forEach((userDoc) => {
-          const username = userDoc.id;
-          const data = userDoc.data();
-          const role = data.role || "student"; // default role
-          const roleBadge = role === "student" ? `<span class="role-student">[Student]</span>` : "";
-
-          // For team section (middle column)
-          userList.push(`${username} ${roleBadge}`);
-
-          // For current list (left column)
-          if (!uniqueUsers.has(username)) {
-            uniqueUsers.set(username, role);
+            const box = document.createElement("div");
+            box.className = "id-box";
+            box.innerHTML = `
+              <strong>${groupName}</strong>
+              ${userList.join("")}<br>
+              <button class="remove-btn">delete</button>
+            `;
+            groupContainer.appendChild(box);
           }
-        });
 
-        // Create and append team box
-          const box = document.createElement("div");
-          box.className = "id-box";
-          box.innerHTML = `
-            <strong>${groupName}</strong><br>
-            ${userList.join("<br>") || "<em>No users</em>"}<br>
-            <button class="remove-btn">delete</button>
-          `;
-          groupContainer.appendChild(box);
+          for (const [username, role] of uniqueUsers.entries()) {
+            const li = document.createElement("li");
+            const roleBadge = role === "student" ? `<span class='role-student'>[Student]</span>` : "";
+            li.innerHTML = `${username} ${roleBadge} <button class='remove-btn'>remove</button>`;
+            currentListEl.appendChild(li);
+          }
+        } catch (error) {
+          console.error("Error loading groups from Firebase:", error);
         }
-
-      // Populate Current List
-      for (const [username, role] of uniqueUsers.entries()) {
-        const li = document.createElement("li");
-        const roleBadge = role === "student" ? `<span class="role-student">[Student]</span>` : "";
-        li.innerHTML = `${username} ${roleBadge} <button class="remove-btn">remove</button>`;
-        currentListEl.appendChild(li);
       }
-
-      } catch (error) {
-        console.error("Error loading groups from Firebase:", error);
-      }
-    }
 
       window.onload = () => {
         loadGroupsFromFirebase();
