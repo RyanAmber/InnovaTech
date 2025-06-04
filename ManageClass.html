@@ -93,7 +93,7 @@
 
         try {
           const querySnapshot = await db.collection("users")
-            .where("role", "==", "Unconfirmed Users")
+            .where("role", "==", "Unconfirmed")
             .get();
 
           approvalList.innerHTML = ""; // Clear loading message
