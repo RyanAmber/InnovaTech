@@ -41,7 +41,7 @@
         <div class="section-header">Teams</div>
         <div class="section">
           <div class="card-container" id="teamContainer">
-            <div class="id-box plus" onclick="showForm(this)">+</div>
+            <div class="id-box plus" onclick="showForm(this, event)">+</div>
           </div>
         </div>
       </div>
@@ -57,14 +57,16 @@
   </div>
 
   <script>
-    function showForm(card) {
-      card.classList.remove('plus');
-      card.innerHTML = `
-        <input type="text" placeholder="Team name" class="team-name" /><br/>
-        <input type="text" placeholder="Members (comma-separated)" class="team-members" /><br/>
-        <button class="add-btn" onclick="addTeam(this)">Add</button>
-      `;
-    }
+    function showForm(card, event) {
+  if (event) event.stopPropagation();
+  card.classList.remove('plus');
+  card.innerHTML = `
+    <input type="text" placeholder="Team name" class="team-name" /><br/>
+    <input type="text" placeholder="Members (comma-separated)" class="team-members" /><br/>
+    <button class="add-btn" onclick="addTeam(this)">Add</button>
+  `;
+}
+
 
     function addTeam(button) {
       const box = button.parentElement;
