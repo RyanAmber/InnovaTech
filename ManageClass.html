@@ -41,7 +41,6 @@
         <div class="section-header">Teams</div>
         <div class="section">
           <div class="card-container" id="teamContainer">
-            <!-- Placeholder card to add new teams -->
             <div class="id-box plus" onclick="showForm(this)">+</div>
           </div>
         </div>
@@ -61,19 +60,30 @@
     function showForm(card) {
       card.classList.remove('plus');
       card.innerHTML = `
-        <input type="text" placeholder="Team name" class="team-name" />
-        <input type="text" placeholder="Members" class="team-members" />
-        <button class="add-btn" onclick="addTeam(this)">add</button>
+        <input type="text" placeholder="Team name" class="team-name" /><br/>
+        <input type="text" placeholder="Members (comma-separated)" class="team-members" /><br/>
+        <button class="add-btn" onclick="addTeam(this)">Add</button>
       `;
     }
 
     function addTeam(button) {
       const box = button.parentElement;
-      const teamName = box.querySelector('.team-name').value.trim() || 'New Team';
+      const teamName = box.querySelector('.team-name').value.trim() || 'Untitled Team';
+      const membersInput = box.querySelector('.team-members').value.trim();
+      const members = membersInput
+        ? membersInput.split(',').map(name => name.trim()).filter(Boolean)
+        : [];
+
+      let membersHTML = '<ul>';
+      members.forEach(member => {
+        membersHTML += `<li>${member}</li>`;
+      });
+      membersHTML += '</ul>';
 
       box.innerHTML = `
         <strong>${teamName}</strong>
-        <p>placeholder</p>
+        ${membersHTML}
+        <button class="remove-btn" onclick="removeTeam(this)">Remove</button>
       `;
 
       const container = document.getElementById("teamContainer");
@@ -84,6 +94,11 @@
         showForm(this);
       };
       container.appendChild(newCard);
+    }
+
+    function removeTeam(button) {
+      const card = button.parentElement;
+      card.remove();
     }
   </script>
 </body>
