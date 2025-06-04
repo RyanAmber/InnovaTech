@@ -116,11 +116,10 @@
         statusBar.innerHTML = `<div class="status yellow" style="width: 100%">100%</div>`;
       } else {
         statusBar.innerHTML = `
-          <div class="status green" style="width: ${greenPercent}%">${greenPercent}%</div>
-          <div class="status red" style="width: ${redPercent}%">${redPercent > 0 ? redPercent + '%' : ''}</div>
-        `;
-      }
-    }
+    <div class="status green" style="width: ${greenPercent}%">${greenPercent}%</div>
+    <div class="status red" style="width: ${redPercent}%">${redPercent > 0 ? redPercent + '%' : ''}</div>
+  `;
+}
 
     function closeModal() {
       document.getElementById('modal').style.display = 'none';
