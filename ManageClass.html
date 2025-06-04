@@ -92,9 +92,9 @@
       const newCard = document.createElement("div");
       newCard.className = "id-box plus";
       newCard.textContent = "+";
-      newCard.onclick = function () {
-        showForm(this);
-      };
+      newCard.onclick = function (event) {
+  showForm(this, event);
+};
       container.appendChild(newCard);
     }
 
