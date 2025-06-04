@@ -174,14 +174,18 @@ header {
 }
 
 .notif {
-  background-color: #ff9a44;
-  padding: 14px 16px;
+  background-color: #f0f0f0;
+  padding: 15px 18px;
   border-radius: 20px;
   display: flex;
   gap: 15px;
   align-items: center;
-  font-size: 14px;
+  box-shadow: 0 2px 6px rgba(0, 0, 0, 0.05);
+  font-size: 0.9rem;
+  line-height: 1.4;
+  margin-bottom: 16px;
 }
+
 
 .notif-time {
   background-color: white;
