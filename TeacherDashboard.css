@@ -390,6 +390,37 @@
   margin-top: 0;
 }
 
+/* Fonts for modal buttons */
+.actions button,
+.inline-add-form button {
+  font-family: 'Roboto Mono', 'Lato', sans-serif;
+}
+
+/* Scrollable parts list without expanding modal */
+.scrollable-parts {
+  max-height: 300px;
+  overflow-y: auto;
+  padding-right: 8px;
+  margin-top: 10px;
+}
+
+/* Style for individual part entries */
+.part-entry {
+  background: #f1f1f1;
+  padding: 10px 15px;
+  border-radius: 10px;
+  margin-bottom: 10px;
+  display: flex;
+  justify-content: space-between;
+  font-family: 'Roboto Mono', monospace;
+  font-size: 0.9rem;
+}
+
+/* Remove the top-right modal close button */
+.modal .close-btn {
+  display: none;
+}
+
 .green { background-color: #9be59b; }
 .yellow { background-color: #fff176; }
 .red { background-color: #f76e6e; }
