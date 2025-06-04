@@ -268,6 +268,30 @@ window.returnComponent = async function returnComponent() {
     alert("Error returning component.");
   }
 };
+window.returnSpecificComponent = async function(type, partId) {
+const group = localStorage.getItem("group") || "Group 0";
+
+try {
+// 1. Set part back to "0"
+const partRef = doc(db, "inventory", type, "parts", partId);
+await setDoc(partRef, { team: "0" }, { merge: true });
+
+// 2. Remove from group Items
+const groupRef = doc(db, "Groups", group, "Items", partId);
+await deleteDoc(groupRef);
+
+alert(`Returned ${type} (${partId}) to storage.`);
+document.getElementById("component-grid").innerHTML = "";
+countMap.clear();
+workingMap.clear();
+availableMap.clear();
+await loadComponents();
+await loadGroupInventory();
+} catch (err) {
+console.error("Specific return failed:", err);
+alert("Error returning this item.");
+}
+};
 async function loadGroupInventory() {
   const group = localStorage.getItem("group") || "Group 0";
   const container = document.getElementById("group-inventory");
@@ -298,7 +322,7 @@ async function loadGroupInventory() {
         </div>
         <div class="group-buttons">
           <button class="damage-btn">mark as damaged</button>
-          <button class="return-btn" onclick="returnComponent()">return</button>
+          <button class="return-btn" onclick="returnSpecificComponent('${type}','${doc.id}')">return</button>
         </div>
       `;
 
