@@ -296,6 +296,12 @@ header {
   box-shadow: 0 4px 10px rgba(0,0,0,0.1);
 }
 
+.center .grid {
+  display: flex;
+  flex-direction: column;
+  gap: 12px;
+}
+
 /* Utility colors */
 .green { background-color: #9be59b; }
 .yellow { background-color: #fff176; }
