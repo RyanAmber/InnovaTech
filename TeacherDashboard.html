@@ -88,7 +88,7 @@
     const db = getFirestore(app);
 
     const username = localStorage.getItem("username") || "Student";
-    if (username === "Student") {
+    if (username !== "Teacher") {
       window.location.href = 'index.html';
     }
     document.getElementById("usernameHeader").textContent = `Welcome, ${username}`;
@@ -151,7 +151,6 @@
       await addComponent();
     });
 let currentComponentType = null; // Global variable
-import { getDocs, deleteDoc, doc, collection } from "https://www.gstatic.com/firebasejs/10.11.0/firebase-firestore.js";
 
 async function openModal(name, imageUrl) {
   currentComponentType = name;
