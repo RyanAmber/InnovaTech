@@ -35,7 +35,7 @@ h1 {
    grid-template-columns: 1fr 2fr 1fr;
    gap: 25px;
    height: calc(100vh- 160px);
-   padding-bottom: 20px;
+   padding-bottom: 30px;
 }
 
 .column {
