@@ -78,7 +78,7 @@
   approvalList.innerHTML = "";
 
   // Loads and render users by role
-  const usersSnap = await db.collection("Users").get();
+  const usersSnap = await db.collection("users").get();
   usersSnap.forEach(doc => {
     const username = doc.id;
     const role = doc.data().role;
@@ -210,19 +210,37 @@ async function approveUser(username) {
   }
 }
 
-async function removeUser(username) {
-  const confirmed = confirm(`Remove user ${username}?`);
+async function removeTeam(button) {
+  const card = button.parentElement;
+  const groupName = card.querySelector("strong")?.innerText;
+
+  if (!groupName) {
+    alert("Error: Group name not found.");
+    return;
+  }
+
+  const confirmed = confirm(`Are you sure you want to delete the group "${groupName}"?`);
   if (!confirmed) return;
 
   try {
-    await db.collection("Users").doc(username).delete();
-    alert(`${username} removed.`);
-    loadGroupsFromFirebase(); // Refresh the lists
+    const groupRef = db.collection("Groups").doc(groupName);
+
+    // Delete all users in the group subcollection
+    const usersSnap = await groupRef.collection("Users").get();
+    const deletePromises = usersSnap.docs.map(doc => doc.ref.delete());
+    await Promise.all(deletePromises);
+
+    // Delete the group doc
+    await groupRef.delete();
+
+    card.remove();
+    alert(`Group "${groupName}" has been deleted.`);
   } catch (error) {
-    console.error("Error removing user:", error);
-    alert("Could not remove user.");
+    console.error("Error deleting group:", error);
+    alert("Failed to delete group. Please try again.");
   }
 }
+
 
 
 
