@@ -3,8 +3,8 @@
 <head>
   <meta charset="UTF-8" />
   <meta name="viewport" content="width=device-width, initial-scale=1.0">
-  <title>Admin Dashboard</title>
-  <link rel="stylesheet" href="TeacherDashboard.css">
+  <title>Teacher Dashboard</title>
+  <link rel="stylesheet" href="TeacherDashboard.css" />
 </head>
 <body>
   <header id="usernameHeader">Welcome, </header>
@@ -25,18 +25,11 @@
       <div class="notifications-wrapper">
         <div class="bubble-heading">Notifications</div>
         <div class="notifications" id="notification-bar"></div>
-
-        <form id="addForm" class="add-form" style="display: none;">
-          <input type="text" id="newType" placeholder="Component type" required />
-          <input type="text" id="newImage" placeholder="Image URL (optional)" />
-          <label><input type="checkbox" id="newWorking" checked /> Working</label>
-          <input type="text" id="newGroup" placeholder="Group (Set to 0 if in storage)" required />
-          <button type="submit">Submit</button>
-        </form>
       </div>
     </div>
   </div>
 
+  <!-- Modal to show component details -->
   <div class="modal" id="modal">
     <div class="modal-content">
       <span class="close-btn" onclick="closeModal()">&times;</span>
@@ -50,7 +43,6 @@
         </div>
         <h3>Actions</h3>
         <div class="actions">
-          <button id="toggleAddBtn" class="add-btn"> Add Component</button>
           <button id="removeComponentBtn" class="action-btn">Remove Component</button>
         </div>
         <h3>Individual Parts</h3>
@@ -59,6 +51,23 @@
       <div class="modal-right">
         <img id="modalImage" class="component-img" src="" alt="Component Image">
         <div class="status-bar"></div>
+      </div>
+    </div>
+  </div>
+
+  <!-- Modal to add a new component type -->
+  <div class="modal" id="addTypeModal">
+    <div class="modal-content">
+      <span class="close-btn" onclick="closeAddTypeModal()">&times;</span>
+      <div class="modal-left">
+        <h2>Add New Component Type</h2>
+        <form id="addForm" class="add-form">
+          <input type="text" id="newType" placeholder="Component type" required />
+          <input type="text" id="newImage" placeholder="Image URL (optional)" />
+          <label><input type="checkbox" id="newWorking" checked /> Working</label>
+          <input type="text" id="newGroup" placeholder="Group (Set to 0 if in storage)" required />
+          <button type="submit">Submit</button>
+        </form>
       </div>
     </div>
   </div>
@@ -84,10 +93,12 @@
       appId: "1:222788972248:web:d0d5b8968f24b9c00671ad",
       measurementId: "G-GTX1QPXJ2R"
     };
+
     const app = initializeApp(firebaseConfig);
     const db = getFirestore(app);
+
     const username = localStorage.getItem("username") || "Student";
-    if (username == "Student"||username=="Unregistered") {
+    if (username === "Student" || username === "Unregistered") {
       window.location.href = 'index.html';
     }
     document.getElementById("usernameHeader").textContent = `Welcome, ${username}`;
@@ -97,184 +108,133 @@
     const availableMap = new Map();
     const countMap = new Map();
     const imageMap = new Map();
+    let currentComponentType = null;
 
-    function toggleAddForm() {
-      const form = document.getElementById("addForm");
-      form.style.display = form.style.display === "none" ? "block" : "none";
+    function closeModal() {
+      document.getElementById("modal").style.display = "none";
     }
 
-    document.getElementById("toggleAddBtn").addEventListener("click", toggleAddForm);
+    function closeAddTypeModal() {
+      document.getElementById("addTypeModal").style.display = "none";
+    }
 
-    async function addComponent() {
+    function addNotification(message) {
+      const bar = document.getElementById("notification-bar");
+      const note = document.createElement("div");
+      note.className = "notif";
+      note.textContent = message;
+      bar.appendChild(note);
+    }
+
+    document.getElementById("addForm").addEventListener("submit", async function (e) {
+      e.preventDefault();
       const type = document.getElementById("newType").value.trim();
       const image = document.getElementById("newImage").value.trim() || "https://upload.wikimedia.org/wikipedia/commons/3/38/Arduino_Uno_-_R3.jpg";
       const working = document.getElementById("newWorking").checked;
       const team = document.getElementById("newGroup").value.trim();
 
-      if (!type) {
-        alert("Component type is required.");
-        return;
-      }
-      if (!team) {
-        alert("Component team is required.");
-        return;
-      }
+      if (!type || !team) return alert("Type and group are required.");
+
       try {
-        // Sets the image for the type in inventory/[type] doc so that all items of that type will use one image
         await setDoc(doc(db, "inventory", type), { image }, { merge: true });
-
-        // Adds a new part in inventory/[type]/parts/
         const partsRef = collection(db, "inventory", type, "parts");
-        await addDoc(partsRef, {
-          working,
-          team
-        });
+        await addDoc(partsRef, { working, team });
 
-        alert("Component added successfully!");
+        alert("Component type added.");
+        closeAddTypeModal();
         document.getElementById("addForm").reset();
-        document.getElementById("addForm").style.display = "none";
-
-        // Clears and reloads
-        document.getElementById("component-grid").innerHTML = "";
-        countMap.clear();
-        workingMap.clear();
-        availableMap.clear();
-        loadComponents();
-      } catch (error) {
-        console.error("Error adding component:", error);
-        alert("Failed to add component.");
-      }
-    }
-    document.getElementById("addForm").addEventListener("submit", async (e) => {
-      e.preventDefault();
-      await addComponent();
-    });
-let currentComponentType = null; // Global variable
-
-async function openModal(name, imageUrl) {
-  currentComponentType = name;
-
-  const total = countMap.get(name) || 0;
-  const working = workingMap.get(name) || 0;
-  const available = availableMap.get(name) || 0;
-
-  document.getElementById('modal').style.display = 'flex';
-  document.getElementById('modalTitle').textContent = name;
-  document.getElementById('modalImage').src = imageUrl;
-  document.getElementById('totalCount').textContent = total;
-  document.getElementById('AvailableCount').textContent = available;
-  document.getElementById('WorkingCount').textContent = working;
-        const greenPercent = total > 0 ? Math.round((working / total) * 100) : 0;
-      const redPercent = 100 - greenPercent;
-      const statusBar = document.querySelector('.status-bar');
-
-      if (total === 0) {
-  statusBar.innerHTML = `<div class="status yellow" style="width: 100%">100%</div>`;
-} else {
-  statusBar.innerHTML = `
-    <div class="status green" style="width: ${greenPercent}%">${greenPercent}%</div>
-    <div class="status red" style="width: ${redPercent}%">${redPercent > 0 ? redPercent + '%' : ''}</div>
-  `;
-}
-
-
-  // Load and show individual parts
-  const partsContainer = document.getElementById('partsList');
-  partsContainer.innerHTML = "Loading parts...";
-
-  const partsRef = collection(db, "inventory", name, "parts");
-  const partsSnapshot = await getDocs(partsRef);
-
-  if (partsSnapshot.empty) {
-    partsContainer.innerHTML = "<p>No parts found.</p>";
-    return;
-  }
-
-  partsContainer.innerHTML = "";
-  partsSnapshot.forEach(partDoc => {
-    const data = partDoc.data();
-    const div = document.createElement("div");
-    div.className = "part-entry";
-    div.innerHTML = `
-      <p>Team: ${data.team} | Working: ${data.working ? '✅' : '❌'}</p>
-      <button data-id="${partDoc.id}" class="remove-part-btn">Remove</button>
-    `;
-    partsContainer.appendChild(div);
-  });
-
-  // Attach delete listeners
-  partsContainer.querySelectorAll(".remove-part-btn").forEach(button => {
-    button.addEventListener("click", async () => {
-      const partId = button.getAttribute("data-id");
-      const confirmDelete = confirm("Delete this specific part?");
-      if (!confirmDelete) return;
-
-      try {
-        await deleteDoc(doc(db, "inventory", name, "parts", partId));
-        alert("Part removed.");
-        closeModal();
         document.getElementById("component-grid").innerHTML = "";
         countMap.clear();
         workingMap.clear();
         availableMap.clear();
         loadComponents();
       } catch (err) {
-        console.error("Error deleting part:", err);
-        alert("Failed to delete part.");
+        console.error("Add error:", err);
+        alert("Failed to add component.");
       }
     });
-  });
-}
+
+    async function openModal(name, imageUrl) {
+      currentComponentType = name;
+      const total = countMap.get(name) || 0;
+      const working = workingMap.get(name) || 0;
+      const available = availableMap.get(name) || 0;
+
+      document.getElementById("modal").style.display = "flex";
+      document.getElementById("modalTitle").textContent = name;
+      document.getElementById("modalImage").src = imageUrl;
+      document.getElementById("totalCount").textContent = total;
+      document.getElementById("AvailableCount").textContent = available;
+      document.getElementById("WorkingCount").textContent = working;
+
+      const greenPercent = total > 0 ? Math.round((working / total) * 100) : 0;
+      const redPercent = 100 - greenPercent;
+      const statusBar = document.querySelector('.status-bar');
+      if (total === 0) {
+        statusBar.innerHTML = `<div class="status yellow" style="width: 100%">100%</div>`;
+      } else {
+        statusBar.innerHTML = `
+          <div class="status green" style="width: ${greenPercent}%">${greenPercent}%</div>
+          <div class="status red" style="width: ${redPercent}%">${redPercent > 0 ? redPercent + '%' : ''}</div>
+        `;
+      }
+
+      const partsContainer = document.getElementById("partsList");
+      partsContainer.innerHTML = "Loading parts...";
+      const partsRef = collection(db, "inventory", name, "parts");
+      const partsSnapshot = await getDocs(partsRef);
+      partsContainer.innerHTML = "";
+      if (partsSnapshot.empty) {
+        partsContainer.innerHTML = "<p>No parts found.</p>";
+        return;
+      }
+
+      partsSnapshot.forEach(partDoc => {
+        const data = partDoc.data();
+        const div = document.createElement("div");
+        div.className = "part-entry";
+        div.innerHTML = `
+          <p>Team: ${data.team} | Working: ${data.working ? '✅' : '❌'}</p>
+          <button data-id="${partDoc.id}" class="remove-part-btn">Remove</button>
+        `;
+        partsContainer.appendChild(div);
+      });
+
+      partsContainer.querySelectorAll(".remove-part-btn").forEach(button => {
+        button.addEventListener("click", async () => {
+          const partId = button.getAttribute("data-id");
+          const confirmDelete = confirm("Delete this part?");
+          if (!confirmDelete) return;
+          await deleteDoc(doc(db, "inventory", name, "parts", partId));
+          alert("Deleted.");
+          closeModal();
+          loadComponents();
+        });
+      });
+    }
+
     document.getElementById("removeComponentBtn").addEventListener("click", async () => {
-  if (!currentComponentType) return alert("No component selected.");
+      if (!currentComponentType) return;
+      const confirmDelete = confirm(`Delete ALL parts of ${currentComponentType}?`);
+      if (!confirmDelete) return;
 
-  const confirmDelete = confirm(`Are you sure you want to delete **all** parts of "${currentComponentType}" and remove it entirely?`);
-  if (!confirmDelete) return;
+      const partsRef = collection(db, "inventory", currentComponentType, "parts");
+      const partsSnapshot = await getDocs(partsRef);
+      const deletePromises = partsSnapshot.docs.map(docSnap =>
+        deleteDoc(doc(db, "inventory", currentComponentType, "parts", docSnap.id))
+      );
+      await Promise.all(deletePromises);
+      await deleteDoc(doc(db, "inventory", currentComponentType));
 
-  try {
-    const partsRef = collection(db, "inventory", currentComponentType, "parts");
-    const partsSnapshot = await getDocs(partsRef);
-
-    // Delete all parts under the type
-    const deletePromises = [];
-    partsSnapshot.forEach((docSnap) => {
-      deletePromises.push(deleteDoc(doc(db, "inventory", currentComponentType, "parts", docSnap.id)));
+      alert(`Deleted ${currentComponentType}`);
+      closeModal();
+      loadComponents();
     });
-    await Promise.all(deletePromises);
-
-    await deleteDoc(doc(db, "inventory", currentComponentType));
-
-    alert(`Component "${currentComponentType}" and all associated parts were deleted.`);
-
-    closeModal();
-    document.getElementById("component-grid").innerHTML = "";
-    countMap.clear();
-    workingMap.clear();
-    availableMap.clear();
-    await loadComponents();
-  } catch (error) {
-    console.error("Error deleting component:", error);
-    alert("Failed to delete component.");
-  }
-});
-
-
-    function closeModal() {
-      document.getElementById('modal').style.display = 'none';
-    }
-
-    function addNotification(message) {
-      const bar = document.getElementById('notification-bar');
-      const note = document.createElement('div');
-      note.className = 'notif';
-      note.textContent = message;
-      bar.appendChild(note);
-      bar.style.display = 'block';
-    }
 
     async function loadComponents() {
       const grid = document.getElementById("component-grid");
       const loading = document.getElementById("loading");
+      grid.innerHTML = "";
 
       try {
         const inventorySnapshot = await getDocs(collection(db, "inventory"));
@@ -307,30 +267,32 @@ async function openModal(name, imageUrl) {
           grid.appendChild(card);
         }
 
-        for (const [type, total] of countMap) {
-          const working = workingMap.get(type) || 0;
-          const available = availableMap.get(type) || 0;
-          if (type !== "" && total > 0 && (working / total) < 0.1) {
-            addNotification("Quantity Alert: " + type + " has less than 10% working components");
-          }
-          if (type !== "" && available == 0) {
-            addNotification("Quantity Alert: " + type + " has no available items to be borrowed");
-          }
-        }
+        // Add "+" card at the end
+        const addCard = document.createElement("div");
+        addCard.className = "card";
+        addCard.style.justifyContent = "center";
+        addCard.style.fontSize = "4rem";
+        addCard.textContent = "+";
+        addCard.onclick = () => {
+          document.getElementById("addTypeModal").style.display = "flex";
+        };
+        grid.appendChild(addCard);
 
         loading.style.display = "none";
         grid.style.display = "grid";
-      } catch (error) {
-        loading.textContent = "Error loading components.";
-        console.error("Error loading data:", error);
+      } catch (err) {
+        console.error("Error loading components:", err);
+        loading.textContent = "Error loading data.";
       }
     }
 
     loadComponents();
 
-    window.onclick = function(e) {
-      const modal = document.getElementById('modal');
+    window.onclick = function (e) {
+      const modal = document.getElementById("modal");
+      const addModal = document.getElementById("addTypeModal");
       if (e.target === modal) closeModal();
+      if (e.target === addModal) closeAddTypeModal();
     };
   </script>
 </body>
