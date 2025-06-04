@@ -3,10 +3,10 @@
 <head>
   <meta charset="UTF-8" />
   <meta name="viewport" content="width=device-width, initial-scale=1.0"/>
-  <title>Sign In</title>
-  <link rel="stylesheet" href="style.css" />
+  <title>Log In</title>
+  <link rel="stylesheet" href="login.css" />
 
-  <!-- Firebase App and Firestore (Compat SDK) -->
+  <!-- Firebase App and Firestore -->
   <script src="https://www.gstatic.com/firebasejs/9.22.0/firebase-app-compat.js"></script>
   <script src="https://www.gstatic.com/firebasejs/9.22.0/firebase-firestore-compat.js"></script>
 
@@ -26,27 +26,26 @@
   </script>
 </head>
 <body>
-  <div class="signin-container">
-    <h2>Log In</h2>
+  <div class="login-container">
+    <h1>log in</h1>
 
     <form id="signin-form">
-      <input type="text" name="username" placeholder="First_Last name" required />
-      <input type="password" name="password" placeholder="Password" required />
-      <button type="submit">Log In</button>
+      <input type="text" name="username" placeholder="first_last name" required />
+      <input type="password" name="password" placeholder="password" required />
+      <button type="submit">log in</button>
     </form>
 
-    <p id="message"></p>
-    <button type="button" onclick="location.href='sign-up.html'">Sign Up</button>
+    <p class="message" id="message"></p>
+
+    <button class="secondary" onclick="location.href='sign-up.html'">sign up</button>
   </div>
 
   <script>
     document.getElementById("signin-form").addEventListener("submit", function (e) {
       e.preventDefault();
-
       const username = e.target.username.value.trim();
       const password = e.target.password.value.trim();
       const message = document.getElementById("message");
-
       const userRef = db.collection("users").doc(username);
 
       userRef.get().then((doc) => {
@@ -56,19 +55,18 @@
         } else {
           const data = doc.data();
           if (data.password == password) {
-            message.textContent = `✅ Welcome ${username}! Role: ${data.role}, Group: ${data.group}`;
+            message.textContent = `✅ Welcome ${username}!`;
             message.style.color = "green";
             localStorage.setItem("username", username);
-            localStorage.setItem('role', data.role);
-            localStorage.setItem('group', data.group);
-            if (data.role=="Student"){
-              location.href='StudentDashboard.html';
-            }else if(data.role=="Teacher"){
-              location.href='TeacherDashboard.html';
+            localStorage.setItem("role", data.role);
+            localStorage.setItem("group", data.group);
+            if (data.role === "Student") {
+              location.href = "StudentDashboard.html";
+            } else if (data.role === "Teacher") {
+              location.href = "TeacherDashboard.html";
             }
-
           } else {
-            message.textContent = "❌ Incorrect password:"+data.password;
+            message.textContent = "❌ Incorrect password.";
             message.style.color = "red";
           }
         }
