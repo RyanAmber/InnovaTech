@@ -166,7 +166,6 @@ async function openModal(name, imageUrl) {
   document.getElementById('totalCount').textContent = total;
   document.getElementById('AvailableCount').textContent = available;
   document.getElementById('WorkingCount').textContent = working;
-
         const greenPercent = total > 0 ? Math.round((working / total) * 100) : 0;
       const redPercent = 100 - greenPercent;
       const statusBar = document.querySelector('.status-bar');
