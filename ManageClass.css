@@ -51,7 +51,6 @@ h1 {
   flex-direction: column;
   overflow: hidden;
   box-shadow: 0 4px 20px rgba(0, 0, 0, 0.08);
-  position: relative;
 }
 
 .scroll-content {
@@ -194,14 +193,15 @@ button[type="button"] {
 }
 
 .id-boxes {
-  display: grid;
-  grid-template-columns: repeat(4, 1fr);
-  gap: 16px;
-  margin-top: 10px;
-  flex: 1;
-  overflow-y: auto;
-  padding-right: 5px;
-  padding-bottom: 10px;
+   display: grid;
+   grid-template-columns: repeat(4, 1fr);
+   gap: 16px;
+   margin-top: 10px;
+   flex: 1;
+   overflow-y: auto;
+   padding-right: 5px;
+   padding-bottom: 10px;
+   align-items: stretch;
 }
 
 .id-boxes::-webkit-scrollbar {
@@ -222,7 +222,6 @@ button[type="button"] {
   display: flex;
   flex-direction: column;
   gap: 6px;
-  min-height: 120px;
   height: 140px;
   width: 100%;
   justify-content: space-between;
