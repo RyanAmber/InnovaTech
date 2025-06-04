@@ -199,6 +199,31 @@
     alert("Failed to delete group. Please try again.");
   }
 }
+async function approveUser(username) {
+  try {
+    await db.collection("Users").doc(username).update({ role: "student" });
+    alert(`${username} approved.`);
+    loadGroupsFromFirebase(); // Refresh the lists
+  } catch (error) {
+    console.error("Error approving user:", error);
+    alert("Could not approve user.");
+  }
+}
+
+async function removeUser(username) {
+  const confirmed = confirm(`Remove user ${username}?`);
+  if (!confirmed) return;
+
+  try {
+    await db.collection("Users").doc(username).delete();
+    alert(`${username} removed.`);
+    loadGroupsFromFirebase(); // Refresh the lists
+  } catch (error) {
+    console.error("Error removing user:", error);
+    alert("Could not remove user.");
+  }
+}
+
 
 
     window.onload = () => {
