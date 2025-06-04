@@ -13,13 +13,12 @@ body {
   color: #222;
 }
 
-/* Header */
-header,
-.bubble-heading,
-.component-name {
-  font-family: 'IBM Plex Sans', sans-serif;
+header {
+  padding: 20px;
+  font-size: 2.4rem;
   font-weight: 600;
-  letter-spacing: 0.2px;
+  color: white;
+  font-family: 'IBM Plex Sans', sans-serif;
 }
 
 /* Layout container */
@@ -300,8 +299,9 @@ header,
   background-color: white;
   padding: 12px 24px;
   border-radius: 32px;
-  font-size: 1.2rem;
+  font-size: 1.3rem;
   font-weight: 600;
+  font-family: 'IBM Plex Sans', sans-serif;
   display: inline-block;
   margin-bottom: 20px;
   box-shadow: 0 4px 10px rgba(0,0,0,0.1);
