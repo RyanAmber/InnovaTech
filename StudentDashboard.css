@@ -18,7 +18,7 @@ header {
   font-size: 2.4rem;
   font-weight: 600;
   color: white;
-  font-family: 'IBM Plex Sans', sans-serif;
+  font-family: "Segoe UI", "Helvetica Neue", "Lato", sans-serif;
 }
 
 /* Layout container */
@@ -301,7 +301,7 @@ header {
   border-radius: 32px;
   font-size: 1.3rem;
   font-weight: 600;
-  font-family: 'IBM Plex Sans', sans-serif;
+  font-family: "Segoe UI", "Helvetica Neue", "Lato", sans-serif;
   display: inline-block;
   margin-bottom: 20px;
   box-shadow: 0 4px 10px rgba(0,0,0,0.1);
