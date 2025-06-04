@@ -218,14 +218,3 @@ h1 {
   font-size: 17px;
   font-style: italic;
 }
-
-body::before {
-  content: "LIVE";
-  position: fixed;
-  top: 0;
-  left: 0;
-  background: yellow;
-  padding: 2px 6px;
-  font-weight: bold;
-  z-index: 9999;
-}
