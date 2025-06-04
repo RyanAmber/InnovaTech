@@ -32,31 +32,25 @@
   <!-- Modal to show component details -->
   <div class="modal" id="modal">
     <div class="modal-content">
-      <span class="close-btn" onclick="closeModal()">&times;</span>
       <div class="modal-left">
-        <h2 id="modalTitle" class="component-name">Component_Name</h2>
-        <h3>Component Overview</h3>
-        <div class="overview-box">
-          <p>Number logged in: <span id="totalCount">X</span></p>
-          <p>Number Available: <span id="AvailableCount">X</span></p>
-          <p>Number Working: <span id="WorkingCount">X</span></p>
-        </div>
-        <h3>Actions</h3>
         <div class="actions">
           <button id="addSingleComponentBtn" class="add-btn">Add Single Component</button>
           <button id="removeComponentBtn" class="remove-btn">Remove Component</button>
         </div>
+  
         <div id="inlineAddForm" class="inline-add-form" style="display: none;">
-        <h4>Add Single Component</h4>
-         <input type="text" id="inlineAddTeam" placeholder="Team (e.g., 0 for storage)" />
+          <h4>Add Single Component</h4>
+          <input type="text" id="inlineAddTeam" placeholder="Team (e.g., 0 for storage)" />
           <label style="display: block; margin-top: 5px;">
             <input type="checkbox" id="inlineAddWorking" checked /> Working
           </label>
           <button id="inlineAddSubmitBtn" class="add-btn" style="margin-top: 8px;">Add Component</button>
         </div>
+  
         <h3>Individual Parts</h3>
-        <div id="partsList" class="parts-list"></div>
+        <div id="partsList" class="parts-list scrollable-parts"></div>
       </div>
+  
       <div class="modal-right">
         <img id="modalImage" class="component-img" src="" alt="Component Image">
         <div class="status-bar"></div>
