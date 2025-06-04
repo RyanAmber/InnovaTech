@@ -1,4 +1,4 @@
-<!DOCTYPE html> 
+<!DOCTYPE html>
 <html lang="en">
   <head>
     <meta charset="UTF-8" />
@@ -22,51 +22,58 @@
       firebase.initializeApp(firebaseConfig);
       const db = firebase.firestore();
     </script>
-    <style>
-      html, body {
-        margin: 0;
-        padding: 0;
-        height: 100vh;
-        overflow: hidden;
-      }
-    </style>
   </head>
+
   <body>
-    <div class="container" style="height: calc(100vh - 40px);">
-      <!-- Top-right dashboard button -->
+    <div class="container">
       <div class="dashboard-button-wrapper">
         <button type="button" onclick="location.href='TeacherDashboard.html'">
           Back to Dashboard
         </button>
       </div>
 
-      <h1 style="margin-top: 0;">Manage Classroom</h1>
+      <h1>Manage Classroom</h1>
 
-      <div class="main-content" style="height: 100%;">
-        
-        <!-- COLUMN 1: Overview -->
+      <div class="main-content">
+        <!-- Column 1: Overview -->
         <div class="column">
           <div class="section-header">Overview</div>
           <div class="section">
             <div class="scroll-content">
               <h2>For approval</h2>
-              <ul class="approval-list" id="approval-list">
+              <ul class="approval-list">
+                <li>
+                  191966
+                  <button class="confirm-btn">Confirm</button>
+                  <button class="reject-btn">Reject</button>
+                </li>
+                <li>
+                  spammmm
+                  <button class="confirm-btn">Confirm</button>
+                  <button class="reject-btn">Reject</button>
+                </li>
+                <li>
+                  192832
+                  <button class="confirm-btn">Confirm</button>
+                  <button class="reject-btn">Reject</button>
+                </li>
               </ul>
+
               <h2>Current List</h2>
               <ul class="current-list" id="current-list"></ul>
             </div>
           </div>
         </div>
 
-        <!-- COLUMN 2: Teams -->
+        <!-- Column 2: Teams -->
         <div class="column">
           <div class="section-header">Teams</div>
           <div class="section teams">
             <div class="scroll-content">
               <div class="id-boxes" id="id-boxes">
                 <div class="id-box">
-                  <input type="text" placeholder="enter team name" />
-                  <input type="text" placeholder="search members..." />
+                  <input type="text" placeholder="enter team name" /><br />
+                  <input type="text" placeholder="search members..." /><br />
                   <button class="add-btn">add</button>
                 </div>
               </div>
@@ -74,7 +81,7 @@
           </div>
         </div>
 
-        <!-- COLUMN 3: Flagged -->
+        <!-- Column 3: Flagged -->
         <div class="column">
           <div class="section-header">Flagged</div>
           <div class="section flagged">
@@ -87,83 +94,10 @@
     </div>
 
     <script>
-      async function loadUnconfirmedUsers() {
-        const approvalList = document.getElementById("approval-list");
-        approvalList.innerHTML = "<li>Loading unconfirmed users...</li>";
-
-        try {
-          const querySnapshot = await db.collection("users")
-            .where("role", "==", "Unconfirmed")
-            .get();
-
-          approvalList.innerHTML = ""; // Clear loading message
-
-          if (querySnapshot.empty) {
-            approvalList.innerHTML = "<li>No unconfirmed users found.</li>";
-            return;
-          }
-
-          querySnapshot.forEach(doc => {
-            const username = doc.id;
-
-            const li = document.createElement("li");
-            li.textContent = username + " ";
-
-            const confirmBtn = document.createElement("button");
-            confirmBtn.textContent = "Confirm";
-            confirmBtn.className = "confirm-btn";
-            confirmBtn.addEventListener("click", () => handleConfirm(username));
-
-            const rejectBtn = document.createElement("button");
-            rejectBtn.textContent = "Reject";
-            rejectBtn.className = "reject-btn";
-            rejectBtn.addEventListener("click", () => handleReject(username));
-
-            li.appendChild(confirmBtn);
-            li.appendChild(rejectBtn);
-
-            approvalList.appendChild(li);
-          });
-        } catch (error) {
-          approvalList.innerHTML = "<li>Error loading unconfirmed users.</li>";
-          console.error("Error loading unconfirmed users:", error);
-        }
-      }
-
-      async function handleConfirm(username) {
-        try {
-          await db.collection("users").doc(username).update({ role: "Student" });
-          alert(username + " has been confirmed!");
-          loadUnconfirmedUsers();  // refresh list
-          loadGroupsFromFirebase(); // update current list and teams
-        } catch (error) {
-          alert("Error confirming user: " + error.message);
-        }
-      }
-
-      async function handleReject(username) {
-        if (!confirm(`Are you sure you want to reject ${username}?`)) return;
-
-        try {
-          await db.collection("users").doc(username).delete();
-          alert(username + " has been rejected and removed.");
-          loadUnconfirmedUsers();  // refresh list
-          loadGroupsFromFirebase(); // update current list and teams
-        } catch (error) {
-          alert("Error rejecting user: " + error.message);
-        }
-      }
-
       async function loadGroupsFromFirebase() {
         const groupContainer = document.getElementById("id-boxes");
         const currentListEl = document.getElementById("current-list");
         const uniqueUsers = new Map();
-
-        // Clear existing boxes except the first input box
-        while (groupContainer.children.length > 1) {
-          groupContainer.removeChild(groupContainer.lastChild);
-        }
-        currentListEl.innerHTML = "";
 
         try {
           const groupsSnapshot = await db.collection("Groups").get();
@@ -178,27 +112,20 @@
               const username = userDoc.id;
               const data = userDoc.data();
               const role = data.role || "student";
-              const roleBadge = role === "student" ? `<span class='role-student'>[Student]</span>` : "";
-              userList.push(`<div>${username} ${roleBadge}</div>`);
-              if (!uniqueUsers.has(username)) {
-                uniqueUsers.set(username, role);
-              }
+              const badge = `<span class="role-student">[Student]</span>`;
+              userList.push(`<div>${username} ${badge}</div>`);
+              if (!uniqueUsers.has(username)) uniqueUsers.set(username, role);
             });
 
             const box = document.createElement("div");
             box.className = "id-box";
-            box.innerHTML = `
-              <strong>${groupName}</strong>
-              ${userList.join("")}<br>
-              <button class="remove-btn">delete</button>
-            `;
+            box.innerHTML = `<strong>${groupName}</strong>${userList.join("")}<button class="remove-btn">delete</button>`;
             groupContainer.appendChild(box);
           }
 
           for (const [username, role] of uniqueUsers.entries()) {
             const li = document.createElement("li");
-            const roleBadge = role === "student" ? `<span class='role-student'>[Student]</span>` : "";
-            li.innerHTML = `${username} ${roleBadge} <button class='remove-btn'>remove</button>`;
+            li.innerHTML = `${username} <span class="role-student">[Student]</span> <button class="remove-btn">remove</button>`;
             currentListEl.appendChild(li);
           }
         } catch (error) {
@@ -207,7 +134,6 @@
       }
 
       window.onload = () => {
-        loadUnconfirmedUsers();
         loadGroupsFromFirebase();
       };
     </script>
