@@ -51,7 +51,6 @@
             <div class="scroll-content">
               <h2>For approval</h2>
               <ul class="approval-list" id="approval-list">
-                <!-- Unconfirmed users will load here dynamically -->
               </ul>
               <h2>Current List</h2>
               <ul class="current-list" id="current-list"></ul>
@@ -133,7 +132,7 @@
 
       async function handleConfirm(username) {
         try {
-          await db.collection("users").doc(username).update({ group: "Student" });
+          await db.collection("users").doc(username).update({ role: "Student" });
           alert(username + " has been confirmed!");
           loadUnconfirmedUsers();  // refresh list
           loadGroupsFromFirebase(); // update current list and teams
