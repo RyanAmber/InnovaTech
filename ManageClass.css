@@ -6,18 +6,18 @@
 }
 
 html, body {
-  height: 100%;
-  margin: 0;
-  font-family: 'Segoe UI', sans-serif;
-  background: linear-gradient(135deg, #6dd5ed, #c44569);
-  color: #333;
+   height: 100%;
+   margin: 0;
+   font-family: 'Segoe UI', sans-serif;
+   background: linear-gradient(135deg, #61c9bd, #70a4db, #9470db);
+   color: #222;
 }
 
 .container {
    display: flex;
    flex-direction: column;
-   height: 100vh;
    padding: 30px;
+   height: 100vh;
    box-sizing: border-box;
 }
 
@@ -25,17 +25,19 @@ html, body {
    PAGE STRUCTURE
 -------------------- */
 h1 {
-  color: white;
-  font-size: 36px;
-  margin: 0 0 10px 0;
+   color: white;
+   font-size: 36px;
+   margin: 0;
+   margin-bottom: 20px;
 }
 
 .main-content {
    display: grid;
    grid-template-columns: 1fr 2fr 1fr;
    gap: 25px;
-   height: calc(100vh- 160px);
-   padding-bottom: 30px;
+   flex: 1;
+   height: calc(100vh- 130px);
+   overflow: hidden;
 }
 
 .column {
@@ -46,14 +48,15 @@ h1 {
 }
 
 .section {
-  background: white;
-  border-radius: 20px;
-  padding: 20px;
-  flex: 1;
-  display: flex;
-  flex-direction: column;
-  overflow: hidden;
-  box-shadow: 0 4px 20px rgba(0, 0, 0, 0.08);
+   background: white;
+   border-radius: 20px;
+   padding: 20px;
+   flex: 1;
+   display: flex;
+   flex-direction: column;
+   overflow: hidden;
+   box-shadow: 0 4px 20px rgba(0, 0, 0, 0.08);
+   padding-bottom: 30px;
 }
 
 .scroll-content {
@@ -81,7 +84,7 @@ h1 {
 .dashboard-button-wrapper {
   display: flex;
   justify-content: flex-end;
-  margin-bottom: 5px;
+  margin-bottom: 0;
 }
 
 .dashboard-button-wrapper button,
