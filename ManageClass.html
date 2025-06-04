@@ -41,6 +41,7 @@
         <div class="section-header">Teams</div>
         <div class="section">
           <div class="card-container" id="teamContainer">
+            <!-- Placeholder card to add new teams -->
             <div class="id-box plus" onclick="showForm(this)">+</div>
           </div>
         </div>
@@ -61,7 +62,7 @@
       card.classList.remove('plus');
       card.innerHTML = `
         <input type="text" placeholder="Team name" class="team-name" />
-        <input type="text" placeholder="Members" />
+        <input type="text" placeholder="Members" class="team-members" />
         <button class="add-btn" onclick="addTeam(this)">add</button>
       `;
     }
@@ -78,8 +79,10 @@
       const container = document.getElementById("teamContainer");
       const newCard = document.createElement("div");
       newCard.className = "id-box plus";
-      newCard.innerText = "+";
-      newCard.onclick = function() { showForm(this); };
+      newCard.textContent = "+";
+      newCard.onclick = function () {
+        showForm(this);
+      };
       container.appendChild(newCard);
     }
   </script>
