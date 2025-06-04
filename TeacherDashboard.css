@@ -11,7 +11,9 @@
       color: #222;
       background: linear-gradient(0deg, #ffffff, #659deb);
     }
-
+    body.modal-open {
+      overflow: hidden;
+    }
     /* header */
     header {
       padding: 20px;
