@@ -295,23 +295,16 @@ window.markAsDamaged = async function(type, partId) {
 const group = localStorage.getItem("group") || "Group 0";
 
 try {
-// 1. Set 'working' to false in the inventory
 const partRef = doc(db, "inventory", type, "parts", partId);
 await setDoc(partRef, { working: false }, { merge: true });
 
-// 2. Optionally remove from group inventory
-const groupRef = doc(db, "Groups", group, "Items", partId);
-await deleteDoc(groupRef);
-
 alert(`Marked ${type} (${partId}) as damaged.`);
 
-// 3. Refresh UI
 document.getElementById("component-grid").innerHTML = "";
 countMap.clear();
 workingMap.clear();
 availableMap.clear();
-await loadComponents();
-await loadGroupInventory();
+location.reload();
 } catch (err) {
 console.error("Error marking item as damaged:", err);
 alert("Failed to mark as damaged.");
