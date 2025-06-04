@@ -9,7 +9,7 @@
       flex-direction: column;
       height: 100vh;
       color: #222;
-      background: linear-gradient(135deg, #61c9bd, #70a4db, #9470db);
+      background: linear-gradient(0deg, #ffffff, #659deb);
     }
 
     /* header */
@@ -129,12 +129,12 @@
       overflow-y: auto;
       display: flex;
       flex-direction: column;
-      gap: 16px;
+      gap: 20px;
     }
 
     /* notification card */
     .notif {
-      background-color: #9470db;
+      background-color: #f8f8f8;
       padding: 12px;
       border-radius: 20px;
       display: flex;
