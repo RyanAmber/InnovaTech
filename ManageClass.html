@@ -5,7 +5,25 @@
   <meta name="viewport" content="width=device-width, initial-scale=1" />
   <title>Manage Classroom</title>
   <link rel="stylesheet" href="ManageClass.css" />
+
+  <!-- Firebase SDK -->
+  <script src="https://www.gstatic.com/firebasejs/10.11.0/firebase-app-compat.js"></script>
+  <script src="https://www.gstatic.com/firebasejs/10.11.0/firebase-firestore-compat.js"></script>
+  <script>
+    const firebaseConfig = {
+      apiKey: "AIzaSyDq7FI-N984HO2M7Q0l25WEoiTBqZvZfHs",
+      authDomain: "innovatech-86917.firebaseapp.com",
+      projectId: "innovatech-86917",
+      storageBucket: "innovatech-86917.appspot.com",
+      messagingSenderId: "222788972248",
+      appId: "1:222788972248:web:d0d5b8968f24b9c00671ad",
+      measurementId: "G-GTX1QPXJ2R"
+    };
+    firebase.initializeApp(firebaseConfig);
+    const db = firebase.firestore();
+  </script>
 </head>
+
 <body>
   <div class="container">
     <div class="dashboard-button-wrapper">
@@ -22,17 +40,10 @@
         <div class="section-header">Overview</div>
         <div class="section">
           <h2>For approval</h2>
-          <ul class="approval-list">
-            <li>191966 <button class="confirm-btn">Confirm</button><button class="reject-btn">Reject</button></li>
-            <li>spammmm <button class="confirm-btn">Confirm</button><button class="reject-btn">Reject</button></li>
-            <li>192832 <button class="confirm-btn">Confirm</button><button class="reject-btn">Reject</button></li>
-          </ul>
+          <ul class="approval-list" id="approval-list"></ul>
 
           <h2>Current List</h2>
-          <ul class="current-list" id="current-list">
-            <li>Number4 <button class="remove-btn">remove</button></li>
-            <li>Ryan_Diehl <button class="remove-btn">remove</button></li>
-          </ul>
+          <ul class="current-list" id="current-list"></ul>
         </div>
       </div>
 
@@ -57,18 +68,54 @@
   </div>
 
   <script>
+    async function loadGroupsFromFirebase() {
+      const teamContainer = document.getElementById("teamContainer");
+      const currentList = document.getElementById("current-list");
+      const approvalList = document.getElementById("approval-list");
+      const uniqueUsers = new Set();
+
+      const snapshot = await db.collection("Groups").get();
+
+      snapshot.forEach(async (groupDoc) => {
+        const groupName = groupDoc.id;
+        const usersRef = db.collection("Groups").doc(groupName).collection("Users");
+        const usersSnap = await usersRef.get();
+
+        let membersHTML = "<ul>";
+        usersSnap.forEach(userDoc => {
+          const username = userDoc.id;
+          membersHTML += `<li>${username}</li>`;
+          if (!uniqueUsers.has(username)) {
+            uniqueUsers.add(username);
+            const li = document.createElement("li");
+            li.innerHTML = `${username} <button class="remove-btn">remove</button>`;
+            currentList.appendChild(li);
+          }
+        });
+        membersHTML += "</ul>";
+
+        const box = document.createElement("div");
+        box.className = "id-box";
+        box.innerHTML = `
+          <strong>${groupName}</strong>
+          ${membersHTML}
+          <button class="remove-btn" onclick="removeTeam(this)">Remove</button>
+        `;
+        teamContainer.insertBefore(box, teamContainer.lastElementChild);
+      });
+    }
+
     function showForm(card, event) {
-  if (event) event.stopPropagation();
-  card.classList.remove('plus');
-  card.innerHTML = `
-    <input type="text" placeholder="Team name" class="team-name" /><br/>
-    <input type="text" placeholder="Members (comma-separated)" class="team-members" /><br/>
-    <button class="add-btn" onclick="addTeam(this)">Add</button>
-  `;
-}
+      if (event) event.stopPropagation();
+      card.classList.remove('plus');
+      card.innerHTML = `
+        <input type="text" placeholder="Team name" class="team-name" autofocus /><br/>
+        <input type="text" placeholder="Members (comma-separated)" class="team-members" /><br/>
+        <button class="add-btn" onclick="addTeam(this)">Add</button>
+      `;
+    }
 
-
-    function addTeam(button) {
+    async function addTeam(button) {
       const box = button.parentElement;
       const teamName = box.querySelector('.team-name').value.trim() || 'Untitled Team';
       const membersInput = box.querySelector('.team-members').value.trim();
@@ -76,6 +123,18 @@
         ? membersInput.split(',').map(name => name.trim()).filter(Boolean)
         : [];
 
+      // Save to Firebase
+      try {
+        const groupRef = db.collection("Groups").doc(teamName);
+        const usersRef = groupRef.collection("Users");
+        for (const username of members) {
+          await usersRef.doc(username).set({ role: "student" });
+        }
+      } catch (error) {
+        console.error("Error adding team to Firestore:", error);
+      }
+
+      // Update UI
       let membersHTML = '<ul>';
       members.forEach(member => {
         membersHTML += `<li>${member}</li>`;
@@ -93,15 +152,20 @@
       newCard.className = "id-box plus";
       newCard.textContent = "+";
       newCard.onclick = function (event) {
-  showForm(this, event);
-};
+        showForm(this, event);
+      };
       container.appendChild(newCard);
     }
 
     function removeTeam(button) {
       const card = button.parentElement;
       card.remove();
+      // Optionally also delete from Firebase here
     }
+
+    window.onload = () => {
+      loadGroupsFromFirebase();
+    };
   </script>
 </body>
 </html>
