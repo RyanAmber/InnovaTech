@@ -241,7 +241,6 @@ async function openModal(name, imageUrl) {
     });
     await Promise.all(deletePromises);
 
-    // Delete the component type doc itself
     await deleteDoc(doc(db, "inventory", currentComponentType));
 
     alert(`Component "${currentComponentType}" and all associated parts were deleted.`);
