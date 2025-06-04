@@ -69,41 +69,57 @@
 
   <script>
     async function loadGroupsFromFirebase() {
-      const teamContainer = document.getElementById("teamContainer");
-      const currentList = document.getElementById("current-list");
-      const approvalList = document.getElementById("approval-list");
-      const uniqueUsers = new Set();
+  const teamContainer = document.getElementById("teamContainer");
+  const currentList = document.getElementById("current-list");
+  const approvalList = document.getElementById("approval-list");
 
-      const snapshot = await db.collection("Groups").get();
+  // Clears old content
+  currentList.innerHTML = "";
+  approvalList.innerHTML = "";
 
-      snapshot.forEach(async (groupDoc) => {
-        const groupName = groupDoc.id;
-        const usersRef = db.collection("Groups").doc(groupName).collection("Users");
-        const usersSnap = await usersRef.get();
+  // Loads and render users by role
+  const usersSnap = await db.collection("Users").get();
+  usersSnap.forEach(doc => {
+    const username = doc.id;
+    const role = doc.data().role;
 
-        let membersHTML = "<ul>";
-        usersSnap.forEach(userDoc => {
-          const username = userDoc.id;
-          membersHTML += `<li>${username}</li>`;
-          if (!uniqueUsers.has(username)) {
-            uniqueUsers.add(username);
-            const li = document.createElement("li");
-            li.innerHTML = `${username} <button class="remove-btn">remove</button>`;
-            currentList.appendChild(li);
-          }
-        });
-        membersHTML += "</ul>";
+    const li = document.createElement("li");
+    li.textContent = username;
 
-        const box = document.createElement("div");
-        box.className = "id-box";
-        box.innerHTML = `
-          <strong>${groupName}</strong>
-          ${membersHTML}
-          <button class="remove-btn" onclick="removeTeam(this)">Remove</button>
-        `;
-        teamContainer.insertBefore(box, teamContainer.lastElementChild);
-      });
+    if (role == "Unconfirmed") {
+      li.innerHTML += ` <button class="approve-btn" onclick="approveUser('${username}')">approve</button>`;
+      approvalList.appendChild(li);
+    } else {
+      li.innerHTML += ` <button class="remove-btn" onclick="removeUser('${username}')">remove</button>`;
+      currentList.appendChild(li);
     }
+  });
+
+  // Loads groups into the Teams section
+  const snapshot = await db.collection("Groups").get();
+  snapshot.forEach(async (groupDoc) => {
+    const groupName = groupDoc.id;
+    const usersRef = db.collection("Groups").doc(groupName).collection("Users");
+    const usersSnap = await usersRef.get();
+
+    let membersHTML = "<ul>";
+    usersSnap.forEach(userDoc => {
+      const username = userDoc.id;
+      membersHTML += `<li>${username}</li>`;
+    });
+    membersHTML += "</ul>";
+
+    const box = document.createElement("div");
+    box.className = "id-box";
+    box.innerHTML = `
+      <strong>${groupName}</strong>
+      ${membersHTML}
+      <button class="remove-btn" onclick="removeTeam(this)">Remove</button>
+    `;
+    teamContainer.insertBefore(box, teamContainer.lastElementChild);
+  });
+}
+
 
     function showForm(card, event) {
       if (event) event.stopPropagation();
@@ -157,11 +173,33 @@
       container.appendChild(newCard);
     }
 
-    function removeTeam(button) {
-      const card = button.parentElement;
-      card.remove();
-      // Optionally also delete from Firebase here
-    }
+    async function removeTeam(button) {
+  const card = button.parentElement;
+  const groupName = card.querySelector("strong")?.innerText;
+
+  if (!groupName) {
+    alert("Error: Group name not found.");
+    return;
+  }
+
+  const confirmed = confirm(`Are you sure you want to delete the group "${groupName}"?`);
+  if (!confirmed) return;
+
+  try {
+    const groupRef = db.collection("Groups").doc(groupName);
+
+    // Delete the group document itself
+    await groupRef.delete();
+
+    // Remove from UI
+    card.remove();
+    alert(`Group "${groupName}" has been deleted.`);
+  } catch (error) {
+    console.error("Error deleting group:", error);
+    alert("Failed to delete group. Please try again.");
+  }
+}
+
 
     window.onload = () => {
       loadGroupsFromFirebase();
