@@ -1,0 +1,60 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+  <meta charset="UTF-8" />
+  <meta name="viewport" content="width=device-width, initial-scale=1.0" />
+  <title>Component Classroom</title>
+  <style>
+    body {
+      margin: 0;
+      height: 100vh;
+      background-color: #f6efdf;
+      font-family: 'Segoe UI', sans-serif;
+      display: flex;
+      align-items: center;
+      justify-content: center;
+      flex-direction: column;
+    }
+
+    .title {
+      background: linear-gradient(to right, #ff3c3c, #ff9444);
+      color: white;
+      font-size: 2rem;
+      font-weight: 600;
+      padding: 20px 40px;
+      border-radius: 25px;
+      margin-bottom: 30px;
+      box-shadow: 0 4px 10px rgba(0,0,0,0.1);
+    }
+
+    .button-row {
+      display: flex;
+      gap: 20px;
+    }
+
+    .button {
+      background-color: #3b61a5;
+      color: white;
+      font-weight: 600;
+      font-size: 1rem;
+      padding: 12px 30px;
+      border: none;
+      border-radius: 25px;
+      cursor: pointer;
+      text-decoration: none;
+      transition: background-color 0.2s ease;
+    }
+
+    .button:hover {
+      background-color: #2e4d8c;
+    }
+  </style>
+</head>
+<body>
+  <div class="title">Component Classroom</div>
+  <div class="button-row">
+    <a href="login.html" class="button">Login</a>
+    <a href="sign-up.html" class="button">Sign Up</a>
+  </div>
+</body>
+</html>
