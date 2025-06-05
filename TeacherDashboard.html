@@ -244,9 +244,10 @@
         const div = document.createElement("div");
         div.className = "part-entry";
         div.innerHTML = `
-          <p>Team: ${data.team}  Working: ${data.working ? '✅' : '❌'}</p>
-          <button data-id="${partDoc.id}" class="remove-part-btn">Remove</button>
-        `;
+  <p><strong>ID:</strong> ${partDoc.id}</p>
+  <p>Team: ${data.team} | Working: ${data.working ? '✅' : '❌'}</p>
+  <button data-id="${partDoc.id}" class="remove-part-btn">Remove</button>
+`;
         partsContainer.appendChild(div);
       });
 
