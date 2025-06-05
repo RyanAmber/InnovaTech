@@ -5,7 +5,7 @@
 
 body {
   margin: 0;
-  font-family: 'Roboto Mono', monospace;
+  font-family: 'Courier New', Courier, monospace;
   display: flex;
   flex-direction: column;
   height: 100vh;
@@ -18,7 +18,7 @@ header {
   font-size: 2.4rem;
   font-weight: 600;
   color: white;
-  font-family: "Segoe UI", "Helvetica Neue", "Lato", sans-serif;
+  font-family: 'Segoe UI', sans-serif;
 }
 
 /* Layout container */
@@ -92,7 +92,6 @@ header {
   overflow-y: auto;
 }
 
-/* Fixed dimensions for group cards */
 .group-card {
   display: flex;
   background-color: #f1f1f1;
@@ -145,14 +144,44 @@ header {
   white-space: nowrap;
 }
 
+/* Glowy action buttons */
+.action-btn,
+.return-btn,
+.damage-btn {
+  font-family: 'Courier New', Courier, monospace;
+  text-transform: lowercase;
+  font-size: 13px;
+  font-weight: 500;
+  padding: 10px 18px;
+  border-radius: 999px;
+  border: 2px solid transparent;
+  cursor: pointer;
+  transition: all 0.2s ease;
+  box-shadow: none;
+}
+
+.action-btn,
 .return-btn {
   background-color: #4c8bf5;
+  border: 2px solid #3a6bdc;
   color: white;
+}
+
+.action-btn:hover,
+.return-btn:hover {
+  background-color: #3a6bdc;
+  box-shadow: 0 0 8px rgba(76, 139, 245, 0.6);
 }
 
 .damage-btn {
   background-color: #999;
+  border: 2px solid #555;
   color: white;
+}
+
+.damage-btn:hover {
+  background-color: #777;
+  box-shadow: 0 0 8px rgba(153, 153, 153, 0.6);
 }
 
 /* Right (Notifications) */
@@ -176,7 +205,8 @@ header {
   overflow-y: auto;
   display: flex;
   flex-direction: column;
-  gap: 20px;  /* ← spacing between notifications */
+  gap: 20px;
+  font-family: 'Segoe UI', sans-serif;
 }
 
 .notif {
@@ -191,6 +221,7 @@ header {
   line-height: 1.4;
   margin-bottom: 16px;
   transition: transform 0.2s ease, box-shadow 0.2s ease;
+  font-family: 'Segoe UI', sans-serif;
 }
 
 .notif:hover {
@@ -212,6 +243,7 @@ header {
 .notif-text {
   flex: 1;
   font-size: 0.9rem;
+  font-family: 'Segoe UI', sans-serif;
 }
 
 /* Modal styles */
@@ -278,39 +310,22 @@ header {
   padding: 16px;
   border-radius: 8px;
   width: fit-content;
+  margin-bottom: 20px;
+  font-family: 'Courier New', Courier, monospace;
 }
 
-.actions {
-  display: flex;
-  flex-direction: column;
-  gap: 10px;
-}
-
-.action-btn {
-  padding: 12px 20px;
-  border: none;
-  border-radius: 20px;
-  background-color: #e0e0e0;
-  font-weight: 600;
-  cursor: pointer;
-}
-
+/* Subheadings */
 .bubble-heading {
   background-color: white;
   padding: 12px 24px;
   border-radius: 32px;
   font-size: 1.3rem;
   font-weight: 600;
-  font-family: "Segoe UI", "Helvetica Neue", "Lato", sans-serif;
+  font-family: 'Courier New', Courier, monospace;
+  color: #235dd4;
   display: inline-block;
   margin-bottom: 20px;
   box-shadow: 0 4px 10px rgba(0,0,0,0.1);
-}
-
-.center .grid {
-  display: flex;
-  flex-direction: column;
-  gap: 12px;
 }
 
 /* Adjust spacing in modal */
@@ -318,33 +333,14 @@ header {
   margin-bottom: 10px;
 }
 
-.overview-box {
-  background-color: #4069ad;
-  color: white;
-  padding: 16px;
-  border-radius: 8px;
-  margin-bottom: 20px;
-  font-family: 'Roboto Mono', monospace;
-}
-
-/* Actions section styling */
+/* Actions container */
 .actions {
   display: flex;
   flex-direction: column;
   gap: 10px;
 }
 
-.action-btn {
-  padding: 12px 20px;
-  border: none;
-  border-radius: 20px;
-  background-color: #e0e0e0;
-  font-weight: 600;
-  cursor: pointer;
-  font-family: 'Lato', sans-serif;
-}
-
-/* Styled status bar for percent */
+/* Status bar */
 .status-bar {
   display: flex;
   width: 300px;
@@ -361,7 +357,7 @@ header {
   align-items: center;
   justify-content: center;
   color: black;
-  font-family: 'Roboto Mono', monospace;
+  font-family: 'Courier New', Courier, monospace;
 }
 
 .green {
@@ -375,9 +371,3 @@ header {
 .yellow {
   background-color: #fff176;
 }
-
-
-/* Utility colors */
-.green { background-color: #9be59b; }
-.yellow { background-color: #fff176; }
-.red { background-color: #f76e6e; }
