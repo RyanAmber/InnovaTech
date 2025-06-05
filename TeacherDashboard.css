@@ -1,3 +1,4 @@
+/* Base & Layout */
 * {
   box-sizing: border-box;
 }
@@ -15,7 +16,6 @@ header {
   font-weight: bold;
   color: #1a237e;
   background-color: transparent;
-  font-family: 'Courier New', Courier, monospace;
 }
 
 .container {
@@ -40,7 +40,7 @@ header {
   gap: 20px;
 }
 
-/* Subheadings */
+/* Bubble Headings */
 .bubble-heading {
   font-size: 1.5rem;
   font-weight: 600;
@@ -48,7 +48,6 @@ header {
   padding: 10px 20px;
   border-radius: 30px;
   margin-bottom: 20px;
-  font-family: 'Courier New', Courier, monospace;
   color: #235dd4;
   box-shadow: 0 2px 6px rgba(0,0,0,0.1);
 }
@@ -87,7 +86,6 @@ header {
 .card p {
   font-weight: 500;
   margin-top: 10px;
-  font-family: 'Courier New', Courier, monospace;
 }
 
 /* Notifications Panel */
@@ -112,7 +110,6 @@ header {
   background-color: #f0f0f0;
   border-radius: 12px;
   margin-bottom: 10px;
-  font-family: 'Segoe UI', sans-serif;
 }
 
 /* Styled Navigation Button */
@@ -186,7 +183,7 @@ header {
   object-fit: contain;
 }
 
-
+/* Status Bars */
 .status-bar {
   display: flex;
   width: 100%;
@@ -195,7 +192,6 @@ header {
   overflow: hidden;
   text-align: center;
   font-weight: bold;
-  font-family: 'Courier New', Courier, monospace;
 }
 
 .status {
@@ -265,9 +261,50 @@ header {
   background-color: #eeeeee;
   border-radius: 12px;
   padding: 10px;
-  font-family: 'Courier New', Courier, monospace;
   display: flex;
   flex-direction: column;
   gap: 6px;
   box-shadow: 0 2px 6px rgba(0,0,0,0.1);
+}
+
+/* ===== NEW STYLES BELOW ===== */
+
+/* Sticky Section with Navigation Bar */
+.sticky-bar {
+  position: sticky;
+  top: 0;
+  background-color: #ffffffdd;
+  backdrop-filter: blur(6px);
+  z-index: 100;
+  padding: 12px 20px;
+  border-radius: 12px;
+  box-shadow: 0 4px 10px rgba(0,0,0,0.1);
+  margin-bottom: 10px;
+  display: flex;
+  justify-content: space-between;
+  align-items: center;
+}
+
+/* Student List */
+.student-list {
+  display: flex;
+  flex-direction: column;
+  gap: 10px;
+  padding-right: 8px;
+  overflow-y: auto;
+  max-height: calc(100vh - 150px);
+}
+
+.student-item {
+  padding: 10px 16px;
+  border-radius: 12px;
+  background-color: #e3f2fd;
+  font-family: 'Courier New', Courier, monospace;
+  box-shadow: 0 1px 4px rgba(0,0,0,0.1);
+  cursor: pointer;
+  transition: background 0.2s;
+}
+
+.student-item:hover {
+  background-color: #bbdefb;
 }
