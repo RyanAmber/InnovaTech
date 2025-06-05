@@ -105,7 +105,7 @@
   const snapshot = await db.collection("Groups").get();
   snapshot.forEach(async (groupDoc) => {
     const groupName = groupDoc.id;
-    const usersRef = db.collection("Groups").doc(groupName).collection("Users");
+    const usersRef = db.collection("Groups").doc(groupName).collection("users");
     const usersSnap = await usersRef.get();
 
     let membersHTML = "<ul>";
@@ -164,7 +164,7 @@
       await usersRef.doc(username).set({ role: "Student" });
 
       // Update the user document with their group
-      await db.collection("Users").doc(username).update({
+      await db.collection("users").doc(username).update({
         group: teamName,
         role: "Student" // Optional: assign role here too
       });
@@ -202,35 +202,9 @@
   }
 }
 
-    async function removeTeam(button) {
-  const card = button.parentElement;
-  const groupName = card.querySelector("strong")?.innerText;
-
-  if (!groupName) {
-    alert("Error: Group name not found.");
-    return;
-  }
-
-  const confirmed = confirm(`Are you sure you want to delete the group "${groupName}"?`);
-  if (!confirmed) return;
-
-  try {
-    const groupRef = db.collection("Groups").doc(groupName);
-
-    // Delete the group document itself
-    await groupRef.delete();
-
-    // Remove from UI
-    card.remove();
-    alert(`Group "${groupName}" has been deleted.`);
-  } catch (error) {
-    console.error("Error deleting group:", error);
-    alert("Failed to delete group. Please try again.");
-  }
-}
 async function approveUser(username) {
   try {
-    await db.collection("Users").doc(username).update({ role: "student" });
+    await db.collection("users").doc(username).update({ role: "Student" });
     alert(`${username} approved.`);
     loadGroupsFromFirebase(); // Refresh the lists
   } catch (error) {
@@ -244,7 +218,7 @@ async function rejectUser(username) {
   if (!confirmed) return;
 
   try {
-    await db.collection("Users").doc(username).delete();
+    await db.collection("users").doc(username).delete();
     alert(`${username} rejected and removed.`);
     loadGroupsFromFirebase(); // Refresh the UI
   } catch (error) {
@@ -269,7 +243,7 @@ async function removeTeam(button) {
     const groupRef = db.collection("Groups").doc(groupName);
 
     // Delete all users in the group subcollection
-    const usersSnap = await groupRef.collection("Users").get();
+    const usersSnap = await groupRef.collection("users").get();
     const deletePromises = usersSnap.docs.map(doc => doc.ref.delete());
     await Promise.all(deletePromises);
 
