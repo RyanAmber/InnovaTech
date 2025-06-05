@@ -73,60 +73,86 @@
       const currentList = document.getElementById("current-list");
       const approvalList = document.getElementById("approval-list");
 
+      // Clear existing content
       currentList.innerHTML = "";
       approvalList.innerHTML = "";
       teamContainer.innerHTML = "";
 
-      const usersSnap = await db.collection("users").get();
-      usersSnap.forEach(doc => {
-        const username = doc.id;
-        const role = doc.data().role;
+      try {
+        // Load users
+        const usersSnap = await db.collection("users").get();
+        console.log(`Found ${usersSnap.docs.length} users`); // Debug log
+        
+        usersSnap.forEach(doc => {
+          const username = doc.id;
+          const role = doc.data().role;
 
-        const li = document.createElement("li");
-        li.textContent = username;
+          const li = document.createElement("li");
+          li.textContent = username;
 
-        if (role === "Unconfirmed") {
-          li.innerHTML += `
-            <div style="display: flex; gap: 8px;">
-              <button class="approve-btn" onclick="approveUser('${username}')">approve</button>
-              <button class="reject-btn" onclick="rejectUser('${username}')">reject</button>
-            </div>`;
-          approvalList.appendChild(li);
-        } else {
-          li.innerHTML += ` <button class="remove-btn" onclick="removeUser('${username}')">remove</button>`;
-          currentList.appendChild(li);
-        }
-      });
-
-      const groupDocs = await db.collection("Groups").listDocuments();
-      for (const groupDocRef of groupDocs) {
-        const groupName = groupDocRef.id;
-        const usersSnap = await groupDocRef.collection("Users").get();
-
-        let membersHTML = "<ul>";
-        usersSnap.forEach(userDoc => {
-          membersHTML += `<li>${userDoc.id}</li>`;
+          if (role === "Unconfirmed") {
+            li.innerHTML += `
+              <div style="display: flex; gap: 8px;">
+                <button class="approve-btn" onclick="approveUser('${username}')">approve</button>
+                <button class="reject-btn" onclick="rejectUser('${username}')">reject</button>
+              </div>`;
+            approvalList.appendChild(li);
+          } else {
+            li.innerHTML += ` <button class="remove-btn" onclick="removeUser('${username}')">remove</button>`;
+            currentList.appendChild(li);
+          }
         });
-        membersHTML += "</ul>";
 
-        const box = document.createElement("div");
-        box.className = "id-box";
-        box.innerHTML = `
-          <strong>${groupName}</strong>
-          ${membersHTML}
-          <button class="remove-btn" onclick="removeTeam(this)">Remove</button>
-        `;
+        // Load groups using .get() instead of .listDocuments()
+        const groupsSnapshot = await db.collection("Groups").get();
+        console.log(`Found ${groupsSnapshot.docs.length} groups`); // Debug log
+        
+        for (const groupDoc of groupsSnapshot.docs) {
+          const groupName = groupDoc.id;
+          const usersSnap = await groupDoc.ref.collection("Users").get();
+          console.log(`Group ${groupName} has ${usersSnap.docs.length} users`); // Debug log
 
-        teamContainer.appendChild(box);
+          let membersHTML = "<ul>";
+          usersSnap.forEach(userDoc => {
+            membersHTML += `<li>${userDoc.id}</li>`;
+          });
+          membersHTML += "</ul>";
+
+          const box = document.createElement("div");
+          box.className = "id-box";
+          box.innerHTML = `
+            <strong>${groupName}</strong>
+            ${membersHTML}
+            <button class="remove-btn" onclick="removeTeam(this)">Remove</button>
+          `;
+
+          teamContainer.appendChild(box);
+        }
+
+        // Add the plus card for creating new teams
+        const plusCard = document.createElement("div");
+        plusCard.className = "id-box plus";
+        plusCard.textContent = "+";
+        plusCard.onclick = function (event) {
+          showForm(this, event);
+        };
+        teamContainer.appendChild(plusCard);
+
+        console.log("Groups loaded successfully"); // Debug log
+
+      } catch (error) {
+        console.error("Error loading groups from Firebase:", error);
+        alert("Failed to load classroom data. Check console for details.");
+        
+        // Still add the plus card even if loading fails
+        const plusCard = document.createElement("div");
+        plusCard.className = "id-box plus";
+        plusCard.textContent = "+";
+        plusCard.onclick = function (event) {
+          showForm(this, event);
+        };
+        teamContainer.appendChild(plusCard);
       }
-
-      const plusCard = document.createElement("div");
-      plusCard.className = "id-box plus";
-      plusCard.textContent = "+";
-      plusCard.onclick = function (event) {
-        showForm(this, event);
-      };
-      teamContainer.appendChild(plusCard);
     }
 
     function showForm(card, event) {
@@ -157,6 +183,13 @@
         const groupRef = db.collection("Groups").doc(teamName);
         const usersRef = groupRef.collection("Users");
 
+        // Create the group document with groupName field
+        await groupRef.set({
+          groupName: teamName,
+          createdAt: firebase.firestore.FieldValue.serverTimestamp()
+        });
+
+        // Add members to the group
         for (const username of members) {
           await usersRef.doc(username).set({ role: "Student" });
           await db.collection("users").doc(username).update({
@@ -164,6 +197,9 @@
             role: "Student"
           });
         }
+
+        console.log(`Team ${teamName} created with ${members.length} members`); // Debug log
+
       } catch (error) {
         console.error("Error adding team to Firestore:", error);
         alert("Error adding team. Please check if users exist.");
@@ -254,6 +290,7 @@
 
         card.remove();
         alert(`Group "${groupName}" has been deleted.`);
+        console.log(`Group "${groupName}" deleted successfully`); // Debug log
       } catch (error) {
         console.error("Error deleting group:", error);
         alert("Failed to delete group. Please try again.");
