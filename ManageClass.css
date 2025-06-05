@@ -30,6 +30,62 @@ body {
   margin: 0;
 }
 
+button,
+.remove-btn,
+.add-btn,
+.approve-btn,
+.confirm-btn,
+.reject-btn {
+  font-family: 'Roboto Mono', 'Lato', sans-serif;
+  text-transform: lowercase;
+  border-radius: 999px; /* pill shape */
+  padding: 6px 14px;
+  font-size: 13px;
+  font-weight: 500;
+  cursor: pointer;
+  transition: all 0.2s ease;
+  outline: none;
+}
+
+/* Approve (green) buttons */
+.approve-btn,
+.confirm-btn {
+  background-color: #0ad200;
+  border: 2px solid #088f00;
+  color: white;
+}
+
+.approve-btn:hover,
+.confirm-btn:hover {
+  background-color: #0bcf00e0;
+  box-shadow: 0 0 6px rgba(11, 207, 0, 0.4);
+}
+
+/* Remove (red) buttons */
+.remove-btn,
+.reject-btn {
+  background-color: #ff6b6b;
+  border: 2px solid #c0392b;
+  color: white;
+}
+
+.remove-btn:hover,
+.reject-btn:hover {
+  background-color: #ff4d4d;
+  box-shadow: 0 0 6px rgba(255, 77, 77, 0.4);
+}
+
+/* Add button */
+.add-btn {
+  background-color: #0ad200;
+  border: 2px solid #088f00;
+  color: white;
+}
+
+.add-btn:hover {
+  background-color: #0bcf00e0;
+  box-shadow: 0 0 6px rgba(11, 207, 0, 0.4);
+}
 
 
 
