@@ -131,7 +131,8 @@
         }
 
         document.getElementById("usernameHeader").textContent = `Welcome, ${username}`;
-        document.title = `${username}'s Dashboard`;
+document.title = `${username}'s Dashboard`;
+await loadComponents();
       } catch (err) {
         console.error("Role check error:", err);
         alert("Failed to validate user.");
@@ -140,6 +141,90 @@
     }
 
     verifyUserRole();
+    async function loadComponents() {
+  const loadingDiv = document.getElementById("loading");
+  const grid = document.getElementById("component-grid");
+  grid.innerHTML = "";
+
+  try {
+    const querySnapshot = await getDocs(collection(db, "inventory"));
+    if (querySnapshot.empty) {
+      loadingDiv.textContent = "No components found.";
+      return;
+    }
+
+    loadingDiv.style.display = "none";
+    grid.style.display = "grid";
+
+    for (const docSnap of querySnapshot.docs) {
+      const type = docSnap.id;
+      const image = docSnap.data().image || "";
+      imageMap.set(type, image);
+
+      const partsSnap = await getDocs(collection(db, "inventory", type, "parts"));
+      let total = 0, working = 0, available = 0;
+
+      partsSnap.forEach(part => {
+        const data = part.data();
+        total++;
+        if (data.working) working++;
+        if (data.team === "0") available++;
+      });
+
+      countMap.set(type, total);
+      workingMap.set(type, working);
+      availableMap.set(type, available);
+
+      const card = document.createElement("div");
+      card.className = "component-card";
+      card.innerHTML = `
+        <img src="${image}" alt="${type}" class="component-thumb" />
+        <h3>${type}</h3>
+        <p>Total: ${total}</p>
+        <p>Available: ${available}</p>
+        <p>Working: ${working}</p>
+      `;
+      card.addEventListener("click", () => openModal(type));
+      grid.appendChild(card);
+    }
+  } catch (err) {
+    console.error("Failed to load components:", err);
+    loadingDiv.textContent = "Error loading components.";
+  }
+}
+
+function openModal(type) {
+  currentComponentType = type;
+  const modal = document.getElementById("modal");
+  const modalTitle = document.getElementById("modalTitle");
+  const modalImage = document.getElementById("modalImage");
+  const totalCount = document.getElementById("totalCount");
+  const availableCount = document.getElementById("availableCount");
+  const workingCount = document.getElementById("workingCount");
+  const partsList = document.getElementById("partsList");
+
+  modalTitle.textContent = type;
+  modalImage.src = imageMap.get(type) || "";
+  totalCount.textContent = countMap.get(type);
+  availableCount.textContent = availableMap.get(type);
+  workingCount.textContent = workingMap.get(type);
+  partsList.innerHTML = "";
+
+  const partsRef = collection(db, "inventory", type, "parts");
+  getDocs(partsRef).then(snapshot => {
+    snapshot.forEach(doc => {
+      const partData = doc.data();
+      const entry = document.createElement("div");
+      entry.className = "part-entry";
+      entry.innerHTML = `
+        <strong>${doc.id}</strong> — Team: ${partData.team} — ${partData.working ? "✅ Working" : "❌ Broken"}
+      `;
+      partsList.appendChild(entry);
+    });
+  });
+
+  modal.style.display = "block";
+}
 
     function closeModal() {
       document.getElementById("modal").style.display = "none";
