@@ -4,7 +4,7 @@
 
 body {
   margin: 0;
-  font-family: 'Roboto Mono', 'Lato', sans-serif;
+  font-family: 'Courier New', Courier, monospace;
   background: linear-gradient(to bottom right, #e3f2fd, #90caf9);
   color: #222;
 }
@@ -15,7 +15,7 @@ header {
   font-weight: bold;
   color: white;
   background-color: #1a237e;
-  font-family: 'Roboto Mono', monospace;
+  font-family: 'Courier New', Courier, monospace;
 }
 
 .container {
@@ -40,6 +40,7 @@ header {
   gap: 20px;
 }
 
+/* Subheadings */
 .bubble-heading {
   font-size: 1.5rem;
   font-weight: 600;
@@ -47,10 +48,12 @@ header {
   padding: 10px 20px;
   border-radius: 30px;
   margin-bottom: 20px;
-  font-family: 'Lato', sans-serif;
+  font-family: 'Courier New', Courier, monospace;
+  color: #235dd4;
   box-shadow: 0 2px 6px rgba(0,0,0,0.1);
 }
 
+/* Component Grid */
 .grid {
   display: grid;
   grid-template-columns: repeat(auto-fill, minmax(180px, 1fr));
@@ -82,10 +85,10 @@ header {
 .card p {
   font-weight: 500;
   margin-top: 10px;
-  font-family: 'Roboto Mono', monospace;
+  font-family: 'Courier New', Courier, monospace;
 }
 
-/* Notification Panel */
+/* Notifications Panel */
 .notifications-wrapper {
   flex-grow: 1;
   display: flex;
@@ -99,6 +102,7 @@ header {
   height: 100%;
   overflow-y: auto;
   box-shadow: 0 6px 12px rgba(0, 0, 0, 0.2);
+  font-family: 'Segoe UI', sans-serif;
 }
 
 .notif {
@@ -106,7 +110,7 @@ header {
   background-color: #f0f0f0;
   border-radius: 12px;
   margin-bottom: 10px;
-  font-family: 'Roboto Mono', monospace;
+  font-family: 'Segoe UI', sans-serif;
 }
 
 /* Modal */
@@ -167,7 +171,7 @@ header {
   overflow: hidden;
   text-align: center;
   font-weight: bold;
-  font-family: 'Roboto Mono', monospace;
+  font-family: 'Courier New', Courier, monospace;
 }
 
 .status {
@@ -182,22 +186,32 @@ header {
 .red { background-color: #ef9a9a; }
 .yellow { background-color: #fff59d; }
 
-.actions {
-  display: flex;
-  gap: 10px;
-}
-
-.add-btn, .remove-btn {
-  padding: 8px 12px;
+/* Glowy Buttons */
+.add-btn,
+.remove-btn,
+.remove-part-btn {
+  font-family: 'Courier New', Courier, monospace;
+  text-transform: lowercase;
+  font-size: 13px;
+  font-weight: 500;
+  padding: 10px 18px;
+  border-radius: 999px;
+  border: 2px solid #1a237e;
+  cursor: pointer;
+  transition: all 0.2s ease;
   background-color: #1e88e5;
   color: white;
-  border: none;
-  border-radius: 6px;
-  font-family: 'Roboto Mono', monospace;
-  cursor: pointer;
-  font-weight: bold;
+  box-shadow: none;
 }
 
+.add-btn:hover,
+.remove-btn:hover,
+.remove-part-btn:hover {
+  background-color: #1565c0;
+  box-shadow: 0 0 8px rgba(30, 136, 229, 0.6);
+}
+
+/* Inline Add Form */
 .inline-add-form {
   margin-top: 10px;
   padding: 10px;
@@ -227,19 +241,9 @@ header {
   background-color: #eeeeee;
   border-radius: 12px;
   padding: 10px;
-  font-family: 'Roboto Mono', monospace;
+  font-family: 'Courier New', Courier, monospace;
   display: flex;
   flex-direction: column;
   gap: 6px;
   box-shadow: 0 2px 6px rgba(0,0,0,0.1);
-}
-
-.remove-part-btn {
-  background-color: #d32f2f;
-  color: white;
-  border: none;
-  padding: 6px 12px;
-  border-radius: 6px;
-  cursor: pointer;
-  font-family: 'Roboto Mono', monospace;
 }
