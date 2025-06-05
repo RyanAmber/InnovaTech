@@ -236,6 +236,19 @@ async function rejectUser(username) {
     alert("Failed to reject user.");
   }
 }
+async function removeUser(username) {
+  const confirmed = confirm(`Are you sure you want to remove user "${username}"?`);
+  if (!confirmed) return;
+
+  try {
+    await db.collection("users").doc(username).delete();
+    alert(`User "${username}" has been removed.`);
+    loadGroupsFromFirebase(); // Refresh the list
+  } catch (error) {
+    console.error("Error removing user:", error);
+    alert("Failed to remove user. Please try again.");
+  }
+}
 
 async function removeTeam(button) {
   const card = button.parentElement;
