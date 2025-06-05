@@ -88,7 +88,11 @@
     li.textContent = username;
 
     if (role == "Unconfirmed") {
-      li.innerHTML += ` <button class="approve-btn" onclick="approveUser('${username}')">approve</button>`;
+      li.innerHTML += `
+        <div style="display: flex; gap: 8px;">
+          <button class="approve-btn" onclick="approveUser('${username}')">approve</button>
+          <button class="reject-btn" onclick="rejectUser('${username}')">reject</button>
+        </div>`;
       approvalList.appendChild(li);
     } else {
       li.innerHTML += ` <button class="remove-btn" onclick="removeUser('${username}')">remove</button>`;
