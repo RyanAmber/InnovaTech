@@ -141,7 +141,7 @@
 }
 
 
-    async function addTeam(button) {
+   async function addTeam(button) {
   const box = button.parentElement;
   const teamName = box.querySelector('.team-name').value.trim() || 'Untitled Team';
   const membersInput = box.querySelector('.team-members').value.trim();
@@ -152,11 +152,20 @@
   try {
     const groupRef = db.collection("Groups").doc(teamName);
     const usersRef = groupRef.collection("Users");
+
     for (const username of members) {
-      await usersRef.doc(username).set({ role: "student" });
+      // Add user to the group subcollection
+      await usersRef.doc(username).set({ role: "Student" });
+
+      // Update the user document with their group
+      await db.collection("Users").doc(username).update({
+        group: teamName,
+        role: "Student" // Optional: assign role here too
+      });
     }
   } catch (error) {
     console.error("Error adding team to Firestore:", error);
+    alert("Error adding team. Please check if users exist.");
     return;
   }
 
@@ -173,7 +182,7 @@
     <button class="remove-btn" onclick="removeTeam(this)">Remove</button>
   `;
 
-  // Add a new "+" box only if there isn't already one
+  // Add a new "+" box if not already present
   const container = document.getElementById("teamContainer");
   const hasPlusBox = container.querySelector(".id-box.plus");
   if (!hasPlusBox) {
