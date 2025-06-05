@@ -157,7 +157,7 @@
 
   try {
     const groupRef = db.collection("Groups").doc(teamName);
-    const usersRef = groupRef.collection("users");
+    const usersRef = groupRef.collection("Users");
 
     for (const username of members) {
       // Add user to the group subcollection
