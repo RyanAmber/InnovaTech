@@ -75,38 +75,56 @@
     </div>
   </div>
 
-  <script type="module">
-    import { initializeApp } from "https://www.gstatic.com/firebasejs/10.11.0/firebase-app.js";
-    import {
-      getFirestore,
-      collection,
-      doc,
-      setDoc,
-      getDocs,
-      addDoc,
-      deleteDoc
-    } from "https://www.gstatic.com/firebasejs/10.11.0/firebase-firestore.js";
+<script type="module">
+  import { initializeApp } from "https://www.gstatic.com/firebasejs/10.11.0/firebase-app.js";
+  import {
+    getFirestore,
+    collection,
+    doc,
+    setDoc,
+    getDocs,
+    getDoc,
+    addDoc,
+    deleteDoc
+  } from "https://www.gstatic.com/firebasejs/10.11.0/firebase-firestore.js";
 
-    const firebaseConfig = {
-      apiKey: "AIzaSyDq7FI-N984HO2M7Q0l25WEoiTBqZvZfHs",
-      authDomain: "innovatech-86917.firebaseapp.com",
-      projectId: "innovatech-86917",
-      storageBucket: "innovatech-86917.appspot.com",
-      messagingSenderId: "222788972248",
-      appId: "1:222788972248:web:d0d5b8968f24b9c00671ad",
-      measurementId: "G-GTX1QPXJ2R"
-    };
+  const firebaseConfig = {
+    apiKey: "AIzaSyDq7FI-N984HO2M7Q0l25WEoiTBqZvZfHs",
+    authDomain: "innovatech-86917.firebaseapp.com",
+    projectId: "innovatech-86917",
+    storageBucket: "innovatech-86917.appspot.com",
+    messagingSenderId: "222788972248",
+    appId: "1:222788972248:web:d0d5b8968f24b9c00671ad",
+    measurementId: "G-GTX1QPXJ2R"
+  };
 
-    const app = initializeApp(firebaseConfig);
-    const db = getFirestore(app);
+  const app = initializeApp(firebaseConfig);
+  const db = getFirestore(app);
 
-    const username = localStorage.getItem("username") || "Student";
-    if (role !== "Teacher") {
-    alert("Access denied: Teacher role required.");
-    window.location.href = 'index.html';
+  const username = localStorage.getItem("username");
+  const group = localStorage.getItem("group");
+
+  if (!username || !group) {
+    alert("Missing login info.");
+    window.location.href = "index.html";
+  } else {
+    // ✅ Check role from Firestore
+    const userRef = doc(db, "Groups", group, "Users", username);
+    const userSnap = await getDoc(userRef);
+    if (!userSnap.exists()) {
+      alert("User not found.");
+      window.location.href = "index.html";
+    } else {
+      const role = (userSnap.data().role || "").toLowerCase();
+      if (role !== "teacher") {
+        alert("Access denied: Teacher role required.");
+        window.location.href = "index.html";
+      }
+    }
   }
-    document.getElementById("usernameHeader").textContent = `Welcome, ${username}`;
-    document.title = `${username}'s Dashboard`;
+
+  document.getElementById("usernameHeader").textContent = `Welcome, ${username}`;
+  document.title = `${username}'s Dashboard`;
 
     const workingMap = new Map();
     const availableMap = new Map();
