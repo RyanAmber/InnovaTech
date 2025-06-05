@@ -48,9 +48,13 @@
         </div>
 
         <div id="inlineAddForm" class="inline-add-form" style="display: none;">
-          <h4>Add Single Component</h4>
+          <h4>Add Single Component (to Storage)</h4>
+          <label style="display: block; margin-top: 5px;">
+            <input type="checkbox" id="inlineAddWorking" checked /> Working
+          </label>
           <button id="inlineAddSubmitBtn" class="add-btn" style="margin-top: 8px;">Add Component</button>
         </div>
+
 
         <h3>Individual Parts</h3>
         <div id="partsList" class="parts-list scrollable-parts"></div>
@@ -183,9 +187,10 @@
     });
 
     document.getElementById("inlineAddSubmitBtn").addEventListener("click", async () => {
-      const team = document.getElementById("inlineAddTeam").value.trim();
-      const working = document.getElementById("inlineAddWorking").checked;
-      if (!currentComponentType || !team) return alert("Team is required and component must be selected.");
+      const team = "0";  // always storage
+    const working = document.getElementById("inlineAddWorking").checked;
+      if (!currentComponentType) return alert("Select a component type first.");
+
 
       try {
         const partsRef = collection(db, "inventory", currentComponentType, "parts");
