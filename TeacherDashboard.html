@@ -116,7 +116,7 @@
       window.location.href = "index.html";
     } else {
       const role = (userSnap.data().role || "").toLowerCase();
-      if (role !== "Teacher") {
+      if (role != "Teacher") {
         alert("Access denied: Teacher role required.");
         window.location.href = "index.html";
       }
