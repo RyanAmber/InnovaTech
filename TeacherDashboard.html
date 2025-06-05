@@ -181,9 +181,6 @@
           card.innerHTML = `
             <img src="${image}" alt="${type}" class="component-thumb" />
             <h3>${type}</h3>
-            <p>Total: ${total}</p>
-            <p>Available: ${available}</p>
-            <p>Working: ${working}</p>
           `;
           card.addEventListener("click", () => openModal(type));
           grid.appendChild(card);
@@ -326,6 +323,12 @@
         console.error("Delete error:", err);
         alert("Failed to delete component.");
       }
+    });
+
+    // Add button to show inline add form
+    document.getElementById("addSingleComponentBtn").addEventListener("click", () => {
+      const form = document.getElementById("inlineAddForm");
+      form.style.display = form.style.display === "none" ? "block" : "none";
     });
   </script>
 </body>
