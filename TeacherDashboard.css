@@ -65,6 +65,8 @@ header {
   background: white;
   border-radius: 16px;
   padding: 12px;
+  width: 100%;
+  max-height: 120px;
   box-shadow: 0 4px 12px rgba(0, 0, 0, 0.15);
   cursor: pointer;
   transition: transform 0.2s ease;
@@ -178,10 +180,12 @@ header {
 .component-img {
   width: 100%;
   max-width: 300px;
+  max-height: 200px;
   height: auto;
   border-radius: 12px;
   object-fit: contain;
 }
+
 
 .status-bar {
   display: flex;
