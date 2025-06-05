@@ -29,15 +29,20 @@
     </div>
   </div>
 
-  <!-- Modal to show component details -->
+  <!-- Component Modal -->
   <div class="modal" id="modal">
     <div class="modal-content">
       <div class="modal-left">
+        <h2 id="modalTitle">Component</h2>
+        <p>Total: <span id="totalCount">0</span></p>
+        <p>Available: <span id="availableCount">0</span></p>
+        <p>Working: <span id="workingCount">0</span></p>
+
         <div class="actions">
           <button id="addSingleComponentBtn" class="add-btn">Add Single Component</button>
           <button id="removeComponentBtn" class="remove-btn">Remove Component</button>
         </div>
-  
+
         <div id="inlineAddForm" class="inline-add-form" style="display: none;">
           <h4>Add Single Component</h4>
           <input type="text" id="inlineAddTeam" placeholder="Team (e.g., 0 for storage)" />
@@ -46,11 +51,11 @@
           </label>
           <button id="inlineAddSubmitBtn" class="add-btn" style="margin-top: 8px;">Add Component</button>
         </div>
-  
+
         <h3>Individual Parts</h3>
         <div id="partsList" class="parts-list scrollable-parts"></div>
       </div>
-  
+
       <div class="modal-right">
         <img id="modalImage" class="component-img" src="" alt="Component Image">
         <div class="status-bar"></div>
@@ -58,7 +63,7 @@
     </div>
   </div>
 
-  <!-- Modal to add a new component type -->
+  <!-- Add Type Modal -->
   <div class="modal" id="addTypeModal">
     <div class="modal-content">
       <span class="close-btn" onclick="closeAddTypeModal()">&times;</span>
@@ -75,61 +80,66 @@
     </div>
   </div>
 
-<script type="module">
-  import { initializeApp } from "https://www.gstatic.com/firebasejs/10.11.0/firebase-app.js";
-  import {
-    getFirestore,
-    collection,
-    doc,
-    setDoc,
-    getDocs,
-    getDoc,
-    addDoc,
-    deleteDoc
-  } from "https://www.gstatic.com/firebasejs/10.11.0/firebase-firestore.js";
+  <!-- FIREBASE + LOGIC -->
+  <script type="module">
+    import { initializeApp } from "https://www.gstatic.com/firebasejs/10.11.0/firebase-app.js";
+    import {
+      getFirestore, collection, doc, setDoc, getDocs, getDoc, addDoc, deleteDoc
+    } from "https://www.gstatic.com/firebasejs/10.11.0/firebase-firestore.js";
 
-  const firebaseConfig = {
-    apiKey: "AIzaSyDq7FI-N984HO2M7Q0l25WEoiTBqZvZfHs",
-    authDomain: "innovatech-86917.firebaseapp.com",
-    projectId: "innovatech-86917",
-    storageBucket: "innovatech-86917.appspot.com",
-    messagingSenderId: "222788972248",
-    appId: "1:222788972248:web:d0d5b8968f24b9c00671ad",
-    measurementId: "G-GTX1QPXJ2R"
-  };
+    const firebaseConfig = {
+      apiKey: "AIzaSyDq7FI-N984HO2M7Q0l25WEoiTBqZvZfHs",
+      authDomain: "innovatech-86917.firebaseapp.com",
+      projectId: "innovatech-86917",
+      storageBucket: "innovatech-86917.appspot.com",
+      messagingSenderId: "222788972248",
+      appId: "1:222788972248:web:d0d5b8968f24b9c00671ad",
+      measurementId: "G-GTX1QPXJ2R"
+    };
 
-  const app = initializeApp(firebaseConfig);
-  const db = getFirestore(app);
+    const app = initializeApp(firebaseConfig);
+    const db = getFirestore(app);
 
-  const username = localStorage.getItem("username");
-
-if (!username) {
-  alert("Missing login info.");
-  window.location.href = "index.html";
-} else {
-  const userRef = doc(db, "users", username);  // ✅ NEW PATH
-  const userSnap = await getDoc(userRef);
-  if (!userSnap.exists()) {
-    alert("User not found.");
-    //window.location.href = "index.html";
-  } else {
-    const role = (userSnap.data().role || "").toLowerCase();
-    if (role !== "Teacher") {
-      alert("Access denied: Teacher role required.");
-      window.location.href = "index.html";
-    }
-  }
-}
-
-
-  document.getElementById("usernameHeader").textContent = `Welcome, ${username}`;
-  document.title = `${username}'s Dashboard`;
-
+    let currentComponentType = null;
     const workingMap = new Map();
     const availableMap = new Map();
     const countMap = new Map();
     const imageMap = new Map();
-    let currentComponentType = null;
+
+    async function verifyUserRole() {
+      const username = localStorage.getItem("username");
+      if (!username) {
+        alert("Missing login info.");
+        window.location.href = "index.html";
+        return;
+      }
+
+      try {
+        const userRef = doc(db, "users", username);
+        const userSnap = await getDoc(userRef);
+        if (!userSnap.exists()) {
+          alert("User not found.");
+          window.location.href = "index.html";
+          return;
+        }
+
+        const role = (userSnap.data().role || "").toLowerCase();
+        if (role !== "teacher") {
+          alert("Access denied: Teacher role required.");
+          window.location.href = "index.html";
+          return;
+        }
+
+        document.getElementById("usernameHeader").textContent = `Welcome, ${username}`;
+        document.title = `${username}'s Dashboard`;
+      } catch (err) {
+        console.error("Role check error:", err);
+        alert("Failed to validate user.");
+        window.location.href = "index.html";
+      }
+    }
+
+    verifyUserRole();
 
     function closeModal() {
       document.getElementById("modal").style.display = "none";
@@ -153,7 +163,6 @@ if (!username) {
       const image = document.getElementById("newImage").value.trim() || "https://upload.wikimedia.org/wikipedia/commons/3/38/Arduino_Uno_-_R3.jpg";
       const working = document.getElementById("newWorking").checked;
       const team = document.getElementById("newGroup").value.trim();
-
       if (!type || !team) return alert("Type and group are required.");
 
       try {
@@ -165,76 +174,54 @@ if (!username) {
         closeAddTypeModal();
         document.getElementById("addForm").reset();
         document.getElementById("component-grid").innerHTML = "";
-        countMap.clear();
-        workingMap.clear();
-        availableMap.clear();
+        countMap.clear(); workingMap.clear(); availableMap.clear();
         loadComponents();
       } catch (err) {
         console.error("Add error:", err);
         alert("Failed to add component.");
       }
     });
-document.getElementById("inlineAddSubmitBtn").addEventListener("click", async () => {
-  const team = document.getElementById("inlineAddTeam").value.trim();
-  const working = document.getElementById("inlineAddWorking").checked;
 
-  if (!currentComponentType) {
-    alert("No component selected.");
-    return;
-  }
+    document.getElementById("inlineAddSubmitBtn").addEventListener("click", async () => {
+      const team = document.getElementById("inlineAddTeam").value.trim();
+      const working = document.getElementById("inlineAddWorking").checked;
+      if (!currentComponentType || !team) return alert("Team is required and component must be selected.");
 
-  if (!team) {
-    alert("Team is required.");
-    return;
-  }
-
-  try {
-    const partsRef = collection(db, "inventory", currentComponentType, "parts");
-    await addDoc(partsRef, {
-      working,
-      team
+      try {
+        const partsRef = collection(db, "inventory", currentComponentType, "parts");
+        await addDoc(partsRef, { working, team });
+        alert("Component added.");
+        closeModal();
+        document.getElementById("component-grid").innerHTML = "";
+        countMap.clear(); workingMap.clear(); availableMap.clear();
+        await loadComponents();
+      } catch (error) {
+        console.error("Error adding component:", error);
+        alert("Failed to add component.");
+      }
     });
-
-    alert("Component added successfully.");
-    closeModal();
-
-    // Refresh UI
-    document.getElementById("component-grid").innerHTML = "";
-    countMap.clear();
-    workingMap.clear();
-    availableMap.clear();
-    await loadComponents();
-  } catch (error) {
-    console.error("Error adding component:", error);
-    alert("Failed to add component.");
-  }
-});
-
 
     async function openModal(name, imageUrl) {
       currentComponentType = name;
+      document.getElementById("modal").style.display = "flex";
+      document.getElementById("modalTitle").textContent = name;
+      document.getElementById("modalImage").src = imageUrl;
+
       const total = countMap.get(name) || 0;
       const working = workingMap.get(name) || 0;
       const available = availableMap.get(name) || 0;
 
-      document.getElementById("modal").style.display = "flex";
-      document.getElementById("modalTitle").textContent = name;
-      document.getElementById("modalImage").src = imageUrl;
       document.getElementById("totalCount").textContent = total;
-      document.getElementById("AvailableCount").textContent = available;
-      document.getElementById("WorkingCount").textContent = working;
+      document.getElementById("availableCount").textContent = available;
+      document.getElementById("workingCount").textContent = working;
 
       const greenPercent = total > 0 ? Math.round((working / total) * 100) : 0;
       const redPercent = 100 - greenPercent;
-      const statusBar = document.querySelector('.status-bar');
-      if (total === 0) {
-        statusBar.innerHTML = `<div class="status yellow" style="width: 100%">100%</div>`;
-      } else {
-        statusBar.innerHTML = `
-          <div class="status green" style="width: ${greenPercent}%">${greenPercent}%</div>
-          <div class="status red" style="width: ${redPercent}%">${redPercent > 0 ? redPercent + '%' : ''}</div>
-        `;
-      }
+      const statusBar = document.querySelector(".status-bar");
+      statusBar.innerHTML = total === 0
+        ? `<div class="status yellow" style="width: 100%">100%</div>`
+        : `<div class="status green" style="width: ${greenPercent}%">${greenPercent}%</div>
+           <div class="status red" style="width: ${redPercent}%">${redPercent ? redPercent + "%" : ""}</div>`;
 
       const partsContainer = document.getElementById("partsList");
       partsContainer.innerHTML = "Loading parts...";
@@ -260,8 +247,7 @@ document.getElementById("inlineAddSubmitBtn").addEventListener("click", async ()
       partsContainer.querySelectorAll(".remove-part-btn").forEach(button => {
         button.addEventListener("click", async () => {
           const partId = button.getAttribute("data-id");
-          const confirmDelete = confirm("Delete this part?");
-          if (!confirmDelete) return;
+          if (!confirm("Delete this part?")) return;
           await deleteDoc(doc(db, "inventory", name, "parts", partId));
           alert("Deleted.");
           closeModal();
@@ -269,22 +255,21 @@ document.getElementById("inlineAddSubmitBtn").addEventListener("click", async ()
         });
       });
     }
+
     document.getElementById("addSingleComponentBtn").addEventListener("click", () => {
-  const form = document.getElementById("inlineAddForm");
-  form.style.display = form.style.display === "block" ? "none" : "block";
-});
+      const form = document.getElementById("inlineAddForm");
+      form.style.display = form.style.display === "block" ? "none" : "block";
+    });
 
     document.getElementById("removeComponentBtn").addEventListener("click", async () => {
       if (!currentComponentType) return;
-      const confirmDelete = confirm(`Delete ALL parts of ${currentComponentType}?`);
-      if (!confirmDelete) return;
+      if (!confirm(`Delete ALL parts of ${currentComponentType}?`)) return;
 
       const partsRef = collection(db, "inventory", currentComponentType, "parts");
       const partsSnapshot = await getDocs(partsRef);
-      const deletePromises = partsSnapshot.docs.map(docSnap =>
+      await Promise.all(partsSnapshot.docs.map(docSnap =>
         deleteDoc(doc(db, "inventory", currentComponentType, "parts", docSnap.id))
-      );
-      await Promise.all(deletePromises);
+      ));
       await deleteDoc(doc(db, "inventory", currentComponentType));
 
       alert(`Deleted ${currentComponentType}`);
@@ -307,13 +292,12 @@ document.getElementById("inlineAddSubmitBtn").addEventListener("click", async ()
 
           const partsRef = collection(db, "inventory", type, "parts");
           const partsSnapshot = await getDocs(partsRef);
-
           partsSnapshot.forEach(partDoc => {
             const { working, team } = partDoc.data();
             countMap.set(type, (countMap.get(type) || 0) + 1);
             if (working) {
               workingMap.set(type, (workingMap.get(type) || 0) + 1);
-              if (team == "0") {
+              if (team === "0") {
                 availableMap.set(type, (availableMap.get(type) || 0) + 1);
               }
             }
@@ -328,7 +312,6 @@ document.getElementById("inlineAddSubmitBtn").addEventListener("click", async ()
           grid.appendChild(card);
         }
 
-        // Add "+" card at the end
         const addCard = document.createElement("div");
         addCard.className = "card";
         addCard.style.justifyContent = "center";
@@ -350,10 +333,10 @@ document.getElementById("inlineAddSubmitBtn").addEventListener("click", async ()
     loadComponents();
 
     window.onclick = function (e) {
-      const modal = document.getElementById("modal");
-      const addModal = document.getElementById("addTypeModal");
-      if (e.target === modal) closeModal();
-      if (e.target === addModal) closeAddTypeModal();
+      if (e.target.classList.contains("modal")) {
+        closeModal();
+        closeAddTypeModal();
+      }
     };
   </script>
 </body>
