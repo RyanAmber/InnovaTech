@@ -101,9 +101,10 @@
     const db = getFirestore(app);
 
     const username = localStorage.getItem("username") || "Student";
-    if (username === "Student" || username === "Unregistered") {
-      window.location.href = 'index.html';
-    }
+    if (role !== "Teacher") {
+    alert("Access denied: Teacher role required.");
+    window.location.href = 'index.html';
+  }
     document.getElementById("usernameHeader").textContent = `Welcome, ${username}`;
     document.title = `${username}'s Dashboard`;
 
