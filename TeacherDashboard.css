@@ -88,6 +88,33 @@ header {
   margin-top: 10px;
 }
 
+/* Component Card - Updated for better image sizing */
+.component-card {
+  background: white;
+  border-radius: 16px;
+  padding: 12px;
+  width: 100%;
+  max-height: 120px;
+  box-shadow: 0 4px 12px rgba(0, 0, 0, 0.15);
+  cursor: pointer;
+  transition: transform 0.2s ease;
+  text-align: center;
+}
+
+.component-card:hover {
+  transform: scale(1.05);
+}
+
+/* Fix for component thumbnail images in the grid */
+.component-thumb {
+  width: 100%;
+  max-width: 150px;
+  height: 120px;
+  object-fit: cover;
+  border-radius: 8px;
+  margin-bottom: 10px;
+}
+
 /* Notifications Panel */
 .notifications-wrapper {
   flex-grow: 1;
@@ -167,6 +194,8 @@ header {
 
 .modal-right {
   flex: 1;
+  max-width: 350px;
+  padding: 20px;
   display: flex;
   flex-direction: column;
   align-items: center;
@@ -174,13 +203,14 @@ header {
   gap: 20px;
 }
 
+/* Fix for component images in the modal */
 .component-img {
   width: 100%;
   max-width: 300px;
-  max-height: 200px;
-  height: auto;
-  border-radius: 12px;
-  object-fit: contain;
+  height: 250px;
+  object-fit: cover;
+  border-radius: 8px;
+  margin-bottom: 10px;
 }
 
 /* Status Bars */
