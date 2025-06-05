@@ -6,7 +6,6 @@
   <title>Manage Classroom</title>
   <link rel="stylesheet" href="ManageClass.css" />
   <link href="https://fonts.googleapis.com/css2?family=Lato&family=Roboto+Mono&display=swap" rel="stylesheet" />
-
   <script src="https://www.gstatic.com/firebasejs/10.11.0/firebase-app-compat.js"></script>
   <script src="https://www.gstatic.com/firebasejs/10.11.0/firebase-firestore-compat.js"></script>
   <script>
@@ -23,7 +22,6 @@
     const db = firebase.firestore();
   </script>
 </head>
-
 <body>
   <div class="container">
     <div class="header-bar">
@@ -34,7 +32,6 @@
     </div>
 
     <div class="main-content">
-      <!-- Overview -->
       <div class="column">
         <div class="section-header">Overview</div>
         <div class="section">
@@ -47,17 +44,13 @@
         </div>
       </div>
 
-      <!-- Teams -->
       <div class="column">
         <div class="section-header">Teams</div>
         <div class="section">
-          <div class="card-container" id="teamContainer">
-            <div class="id-box plus" onclick="showForm(this, event)">+</div>
-          </div>
+          <div class="card-container" id="teamContainer"></div>
         </div>
       </div>
 
-      <!-- Flagged -->
       <div class="column">
         <div class="section-header">Flagged</div>
         <div class="section flagged">
@@ -67,219 +60,193 @@
     </div>
   </div>
 
-
   <script>
-async function loadGroupsFromFirebase() {
-  const teamContainer = document.getElementById("teamContainer");
-  const currentList = document.getElementById("current-list");
-  const approvalList = document.getElementById("approval-list");
+    async function loadGroupsFromFirebase() {
+      const teamContainer = document.getElementById("teamContainer");
+      const currentList = document.getElementById("current-list");
+      const approvalList = document.getElementById("approval-list");
 
-  // Clear previous content
-  currentList.innerHTML = "";
-  approvalList.innerHTML = "";
-  teamContainer.innerHTML = ""; // Clear team cards including the "+" box
+      teamContainer.innerHTML = "";
+      currentList.innerHTML = "";
+      approvalList.innerHTML = "";
 
-  // Load and display users by role
-  const usersSnap = await db.collection("users").get();
-  usersSnap.forEach(doc => {
-    const username = doc.id;
-    const role = doc.data().role;
+      // Load all users
+      const usersSnap = await db.collection("users").get();
+      usersSnap.forEach(doc => {
+        const username = doc.id;
+        const role = doc.data().role;
 
-    const li = document.createElement("li");
-    li.textContent = username;
+        const li = document.createElement("li");
+        li.textContent = username;
 
-    if (role === "Unconfirmed") {
-      li.innerHTML += `
-        <div style="display: flex; gap: 8px;">
-          <button class="approve-btn" onclick="approveUser('${username}')">approve</button>
-          <button class="reject-btn" onclick="rejectUser('${username}')">reject</button>
-        </div>`;
-      approvalList.appendChild(li);
-    } else {
-      li.innerHTML += ` <button class="remove-btn" onclick="removeUser('${username}')">remove</button>`;
-      currentList.appendChild(li);
+        if (role === "Unconfirmed") {
+          li.innerHTML += `
+            <div style="display: flex; gap: 8px;">
+              <button class="approve-btn" onclick="approveUser('${username}')">approve</button>
+              <button class="reject-btn" onclick="rejectUser('${username}')">reject</button>
+            </div>`;
+          approvalList.appendChild(li);
+        } else {
+          li.innerHTML += ` <button class="remove-btn" onclick="removeUser('${username}')">remove</button>`;
+          currentList.appendChild(li);
+        }
+      });
+
+      // Load groups and subcollection users
+      const snapshot = await db.collection("Groups").get();
+      for (const groupDoc of snapshot.docs) {
+        const groupName = groupDoc.id;
+        const usersRef = db.collection("Groups").doc(groupName).collection("Users");
+
+        try {
+          const usersSnap = await usersRef.get();
+          let membersHTML = "<ul>";
+          usersSnap.forEach(userDoc => {
+            const username = userDoc.id;
+            membersHTML += `<li>${username}</li>`;
+          });
+          membersHTML += "</ul>";
+
+          const box = document.createElement("div");
+          box.className = "id-box";
+          box.innerHTML = `
+            <strong>${groupName}</strong>
+            ${membersHTML}
+            <button class="remove-btn" onclick="removeTeam(this)">Remove</button>
+          `;
+          teamContainer.appendChild(box);
+        } catch (err) {
+          console.error(`Error loading users for group ${groupName}:`, err);
+        }
+      }
+
+      // Add "+" card
+      const plusCard = document.createElement("div");
+      plusCard.className = "id-box plus";
+      plusCard.textContent = "+";
+      plusCard.onclick = function (event) {
+        showForm(this, event);
+      };
+      teamContainer.appendChild(plusCard);
     }
-  });
-
-  // Load and display all teams from the Groups collection
-  const snapshot = await db.collection("Groups").get();
-  for (const groupDoc of snapshot.docs) {
-    const groupName = groupDoc.id;
-    const usersRef = db.collection("Groups").doc(groupName).collection("Users");
-    const usersSnap = await usersRef.get();
-
-    let membersHTML = "<ul>";
-    usersSnap.forEach(userDoc => {
-      const username = userDoc.id;
-      membersHTML += `<li>${username}</li>`;
-    });
-    membersHTML += "</ul>";
-
-    const box = document.createElement("div");
-    box.className = "id-box";
-    box.innerHTML = `
-      <strong>${groupName}</strong>
-      ${membersHTML}
-      <button class="remove-btn" onclick="removeTeam(this)">Remove</button>
-    `;
-
-    teamContainer.appendChild(box);
-  }
-
-  // Re-add the "+" card for new teams
-  const plusCard = document.createElement("div");
-  plusCard.className = "id-box plus";
-  plusCard.textContent = "+";
-  plusCard.onclick = function (event) {
-    showForm(this, event);
-  };
-  teamContainer.appendChild(plusCard);
-}
-
-
 
     function showForm(card, event) {
-  if (event) event.stopPropagation();
+      if (event) event.stopPropagation();
+      if (!card.classList.contains('plus')) return;
 
-  // Prevent showing multiple forms
-  if (!card.classList.contains('plus')) return;
+      card.classList.remove('plus');
+      card.innerHTML = `
+        <input type="text" placeholder="Team name" class="team-name" autofocus /><br/>
+        <input type="text" placeholder="Members (comma-separated)" class="team-members" /><br/>
+        <button class="add-btn" onclick="addTeam(this)">Add</button>
+      `;
 
-  card.classList.remove('plus');
-  card.innerHTML = `
-    <input type="text" placeholder="Team name" class="team-name" autofocus /><br/>
-    <input type="text" placeholder="Members (comma-separated)" class="team-members" /><br/>
-    <button class="add-btn" onclick="addTeam(this)">Add</button>
-  `;
-
-  // Focus manually in case autofocus doesn't trigger
-  setTimeout(() => {
-    card.querySelector('.team-name').focus();
-  }, 100);
-}
-
-
-   async function addTeam(button) {
-  const box = button.parentElement;
-  const teamName = box.querySelector('.team-name').value.trim() || 'Untitled Team';
-  const membersInput = box.querySelector('.team-members').value.trim();
-  const members = membersInput
-    ? membersInput.split(',').map(name => name.trim()).filter(Boolean)
-    : [];
-  try {
-    const groupRef = db.collection("Groups").doc(teamName);
-    const usersRef = groupRef.collection("Users");
-
-    for (const username of members) {
-      // Add user to the group subcollection
-      await usersRef.doc(username).set({ role: "Student" });
-
-      // Update the user document with their group
-      await db.collection("users").doc(username).update({
-        group: teamName,
-        role: "Student" // Optional: assign role here too
-      });
+      setTimeout(() => {
+        card.querySelector('.team-name').focus();
+      }, 100);
     }
-  } catch (error) {
-    console.error("Error adding team to Firestore:", error);
-    alert("Error adding team. Please check if users exist.");
-    return;
-  }
 
-  // Rebuild the card content
-  let membersHTML = '<ul>';
-  members.forEach(member => {
-    membersHTML += `<li>${member}</li>`;
-  });
-  membersHTML += '</ul>';
+    async function addTeam(button) {
+      const box = button.parentElement;
+      const teamName = box.querySelector('.team-name').value.trim() || 'Untitled Team';
+      const membersInput = box.querySelector('.team-members').value.trim();
+      const members = membersInput.split(',').map(name => name.trim()).filter(Boolean);
 
-  box.innerHTML = `
-    <strong>${teamName}</strong>
-    ${membersHTML}
-    <button class="remove-btn" onclick="removeTeam(this)">Remove</button>
-  `;
+      try {
+        const groupRef = db.collection("Groups").doc(teamName);
+        const usersRef = groupRef.collection("Users");
 
-  // Add a new "+" box if not already present
-  const container = document.getElementById("teamContainer");
-  const hasPlusBox = container.querySelector(".id-box.plus");
-  if (!hasPlusBox) {
-    const newCard = document.createElement("div");
-    newCard.className = "id-box plus";
-    newCard.textContent = "+";
-    newCard.onclick = function (event) {
-      showForm(this, event);
-    };
-    container.appendChild(newCard);
-  }
-}
+        for (const username of members) {
+          await usersRef.doc(username).set({ role: "Student" });
+          await db.collection("users").doc(username).update({
+            group: teamName,
+            role: "Student"
+          });
+        }
 
-async function approveUser(username) {
-  try {
-    await db.collection("users").doc(username).update({ role: "Student" });
-    alert(`${username} approved.`);
-    loadGroupsFromFirebase(); // Refresh the lists
-  } catch (error) {
-    console.error("Error approving user:", error);
-    alert("Could not approve user.");
-  }
-}
-    
-async function rejectUser(username) {
-  const confirmed = confirm(`Reject and delete user "${username}" from the system?`);
-  if (!confirmed) return;
+        let membersHTML = "<ul>";
+        members.forEach(member => {
+          membersHTML += `<li>${member}</li>`;
+        });
+        membersHTML += "</ul>";
 
-  try {
-    await db.collection("users").doc(username).delete();
-    alert(`${username} rejected and removed.`);
-    loadGroupsFromFirebase(); // Refresh the UI
-  } catch (error) {
-    console.error("Error rejecting user:", error);
-    alert("Failed to reject user.");
-  }
-}
-async function removeUser(username) {
-  const confirmed = confirm(`Are you sure you want to remove user "${username}"?`);
-  if (!confirmed) return;
+        box.innerHTML = `
+          <strong>${teamName}</strong>
+          ${membersHTML}
+          <button class="remove-btn" onclick="removeTeam(this)">Remove</button>
+        `;
 
-  try {
-    await db.collection("users").doc(username).delete();
-    alert(`User "${username}" has been removed.`);
-    loadGroupsFromFirebase(); // Refresh the list
-  } catch (error) {
-    console.error("Error removing user:", error);
-    alert("Failed to remove user. Please try again.");
-  }
-}
+        const container = document.getElementById("teamContainer");
+        const hasPlusBox = container.querySelector(".id-box.plus");
+        if (!hasPlusBox) {
+          const newCard = document.createElement("div");
+          newCard.className = "id-box plus";
+          newCard.textContent = "+";
+          newCard.onclick = function (event) {
+            showForm(this, event);
+          };
+          container.appendChild(newCard);
+        }
+      } catch (error) {
+        console.error("Error adding team to Firestore:", error);
+        alert("Error adding team. Please check if users exist.");
+      }
+    }
 
-async function removeTeam(button) {
-  const card = button.parentElement;
-  const groupName = card.querySelector("strong")?.innerText;
+    async function removeTeam(button) {
+      const card = button.parentElement;
+      const groupName = card.querySelector("strong")?.innerText;
+      if (!groupName) return;
 
-  if (!groupName) {
-    alert("Error: Group name not found.");
-    return;
-  }
+      const confirmed = confirm(`Are you sure you want to delete the group "${groupName}"?`);
+      if (!confirmed) return;
 
-  const confirmed = confirm(`Are you sure you want to delete the group "${groupName}"?`);
-  if (!confirmed) return;
+      try {
+        const groupRef = db.collection("Groups").doc(groupName);
+        const usersSnap = await groupRef.collection("Users").get();
+        const deletePromises = usersSnap.docs.map(doc => doc.ref.delete());
+        await Promise.all(deletePromises);
+        await groupRef.delete();
+        card.remove();
+        alert(`Group "${groupName}" has been deleted.`);
+      } catch (error) {
+        console.error("Error deleting group:", error);
+        alert("Failed to delete group.");
+      }
+    }
 
-  try {
-    const groupRef = db.collection("Groups").doc(groupName);
+    async function approveUser(username) {
+      try {
+        await db.collection("users").doc(username).update({ role: "Student" });
+        loadGroupsFromFirebase();
+      } catch (error) {
+        console.error("Error approving user:", error);
+      }
+    }
 
-    // Delete all users in the group subcollection
-    const usersSnap = await groupRef.collection("Users").get();
-    const deletePromises = usersSnap.docs.map(doc => doc.ref.delete());
-    await Promise.all(deletePromises);
+    async function rejectUser(username) {
+      const confirmed = confirm(`Reject and delete user "${username}"?`);
+      if (!confirmed) return;
 
-    // Delete the group doc
-    await groupRef.delete();
+      try {
+        await db.collection("users").doc(username).delete();
+        loadGroupsFromFirebase();
+      } catch (error) {
+        console.error("Error rejecting user:", error);
+      }
+    }
 
-    card.remove();
-    alert(`Group "${groupName}" has been deleted.`);
-  } catch (error) {
-    console.error("Error deleting group:", error);
-    alert("Failed to delete group. Please try again.");
-  }
-}
+    async function removeUser(username) {
+      const confirmed = confirm(`Remove user "${username}"?`);
+      if (!confirmed) return;
+
+      try {
+        await db.collection("users").doc(username).delete();
+        loadGroupsFromFirebase();
+      } catch (error) {
+        console.error("Error removing user:", error);
+      }
+    }
 
     window.onload = () => {
       loadGroupsFromFirebase();
