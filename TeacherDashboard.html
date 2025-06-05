@@ -102,26 +102,25 @@
   const db = getFirestore(app);
 
   const username = localStorage.getItem("username");
-  const group = localStorage.getItem("group");
 
-  if (!username || !group) {
-    alert("Missing login info.");
+if (!username) {
+  alert("Missing login info.");
+  window.location.href = "index.html";
+} else {
+  const userRef = doc(db, "users", username);  // ✅ NEW PATH
+  const userSnap = await getDoc(userRef);
+  if (!userSnap.exists()) {
+    alert("User not found.");
     window.location.href = "index.html";
   } else {
-    // ✅ Check role from Firestore
-    const userRef = doc(db, "Groups", group, "Users", username);
-    const userSnap = await getDoc(userRef);
-    if (!userSnap.exists()) {
-      alert("User not found.");
+    const role = (userSnap.data().role || "").toLowerCase();
+    if (role !== "teacher") {
+      alert("Access denied: Teacher role required.");
       window.location.href = "index.html";
-    } else {
-      const role = (userSnap.data().role || "").toLowerCase();
-      if (role != "Teacher") {
-        alert("Access denied: Teacher role required.");
-        window.location.href = "index.html";
-      }
     }
   }
+}
+
 
   document.getElementById("usernameHeader").textContent = `Welcome, ${username}`;
   document.title = `${username}'s Dashboard`;
