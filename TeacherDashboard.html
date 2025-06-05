@@ -39,10 +39,6 @@
         <p>Working: <span id="workingCount">0</span></p>
         <div class="actions">
           <button id="addSingleComponentBtn" class="add-btn">Add Single Component</button>
-          <!--<input type="text" id="inlineAddTeam" placeholder="Team (e.g., 0 for storage)" />Add commentMore actions
-          <label style="display: block; margin-top: 5px;">
-            <input type="checkbox" id="inlineAddWorking" checked /> Working
-          </label>-->
           <button id="removeComponentBtn" class="remove-btn">Remove Component</button>
         </div>
 
@@ -161,29 +157,36 @@
     }
 
     document.getElementById("addForm").addEventListener("submit", async function (e) {
-      e.preventDefault();
-      const type = document.getElementById("newType").value.trim();
-      const image = document.getElementById("newImage").value.trim() || "https://upload.wikimedia.org/wikipedia/commons/3/38/Arduino_Uno_-_R3.jpg";
-      const working = document.getElementById("newWorking").checked;
-      const team = document.getElementById("newGroup").value.trim();
-      if (!type || !team) return alert("Type and group are required.");
+  e.preventDefault();
 
-      try {
-        await setDoc(doc(db, "inventory", type), { image }, { merge: true });
-        const partsRef = collection(db, "inventory", type, "parts");
-        await addDoc(partsRef, { working, team });
+  const type = document.getElementById("newType").value.trim();
+  const image = document.getElementById("newImage").value.trim() || "https://upload.wikimedia.org/wikipedia/commons/3/38/Arduino_Uno_-_R3.jpg";
+  const working = document.getElementById("newWorking").checked;
+  const team = document.getElementById("newGroup").value.trim();
 
-        alert("Component type added.");
-        closeAddTypeModal();
-        document.getElementById("addForm").reset();
-        document.getElementById("component-grid").innerHTML = "";
-        countMap.clear(); workingMap.clear(); availableMap.clear();
-        loadComponents();
-      } catch (err) {
-        console.error("Add error:", err);
-        alert("Failed to add component.");
-      }
-    });
+  if (!type) return alert("Component type is required.");
+  if (team === "") return alert("Group is required.");
+  if (team !== "0" && !/^[a-zA-Z0-9_-]+$/.test(team)) {
+    return alert("Group name must be alphanumeric or '0' for storage.");
+  }
+
+  try {
+    await setDoc(doc(db, "inventory", type), { image }, { merge: true });
+    const partsRef = collection(db, "inventory", type, "parts");
+    await addDoc(partsRef, { working, team });
+
+    alert("Component type added.");
+    closeAddTypeModal();
+    document.getElementById("addForm").reset();
+    document.getElementById("component-grid").innerHTML = "";
+    countMap.clear(); workingMap.clear(); availableMap.clear();
+    loadComponents();
+  } catch (err) {
+    console.error("Add error:", err);
+    alert("Failed to add component.");
+  }
+});
+
 
     document.getElementById("inlineAddSubmitBtn").addEventListener("click", async () => {
       const team = "0";  // always storage
