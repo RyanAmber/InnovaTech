@@ -32,6 +32,7 @@
   <!-- Component Modal -->
   <div class="modal" id="modal">
     <div class="modal-content">
+      <span class="close-btn" onclick="closeModal()">&times;</span>
       <div class="modal-left">
         <h2 id="modalTitle">Component</h2>
         <p>Total: <span id="totalCount"></span></p>
@@ -80,7 +81,7 @@
     </div>
   </div>
 
-  <!-- FIREBASE + LOGIC -->
+  <!-- Firebase & Dashboard Logic -->
   <script type="module">
     import { initializeApp } from "https://www.gstatic.com/firebasejs/10.11.0/firebase-app.js";
     import {
@@ -131,100 +132,90 @@
         }
 
         document.getElementById("usernameHeader").textContent = `Welcome, ${username}`;
-document.title = `${username}'s Dashboard`;
-await loadComponents();
+        document.title = `${username}'s Dashboard`;
+        await loadComponents();
       } catch (err) {
         console.error("Role check error:", err);
         alert("Failed to validate user.");
         window.location.href = "index.html";
       }
     }
-
     verifyUserRole();
-    async function loadComponents() {
-  const loadingDiv = document.getElementById("loading");
-  const grid = document.getElementById("component-grid");
-  grid.innerHTML = "";
 
-  try {
-    const querySnapshot = await getDocs(collection(db, "inventory"));
-    if (querySnapshot.empty) {
-      loadingDiv.textContent = "No components found.";
-      return;
+    async function loadComponents() {
+      const loadingDiv = document.getElementById("loading");
+      const grid = document.getElementById("component-grid");
+      grid.innerHTML = "";
+
+      try {
+        const querySnapshot = await getDocs(collection(db, "inventory"));
+        if (querySnapshot.empty) {
+          loadingDiv.textContent = "No components found.";
+          return;
+        }
+
+        loadingDiv.style.display = "none";
+        grid.style.display = "grid";
+
+        for (const docSnap of querySnapshot.docs) {
+          const type = docSnap.id;
+          const image = docSnap.data().image || "";
+          imageMap.set(type, image);
+
+          const partsSnap = await getDocs(collection(db, "inventory", type, "parts"));
+          let total = 0, working = 0, available = 0;
+
+          partsSnap.forEach(part => {
+            const data = part.data();
+            total++;
+            if (data.working) working++;
+            if (data.team === "0") available++;
+          });
+
+          countMap.set(type, total);
+          workingMap.set(type, working);
+          availableMap.set(type, available);
+
+          const card = document.createElement("div");
+          card.className = "component-card";
+          card.innerHTML = `
+            <img src="${image}" alt="${type}" class="component-thumb" />
+            <h3>${type}</h3>
+            <p>Total: ${total}</p>
+            <p>Available: ${available}</p>
+            <p>Working: ${working}</p>
+          `;
+          card.addEventListener("click", () => openModal(type));
+          grid.appendChild(card);
+        }
+      } catch (err) {
+        console.error("Failed to load components:", err);
+        loadingDiv.textContent = "Error loading components.";
+      }
     }
 
-    loadingDiv.style.display = "none";
-    grid.style.display = "grid";
+    function openModal(type) {
+      currentComponentType = type;
+      const modal = document.getElementById("modal");
+      document.getElementById("modalTitle").textContent = type;
+      document.getElementById("modalImage").src = imageMap.get(type) || "";
+      document.getElementById("totalCount").textContent = countMap.get(type);
+      document.getElementById("availableCount").textContent = availableMap.get(type);
+      document.getElementById("workingCount").textContent = workingMap.get(type);
+      document.getElementById("partsList").innerHTML = "";
 
-    for (const docSnap of querySnapshot.docs) {
-      const type = docSnap.id;
-      const image = docSnap.data().image || "";
-      imageMap.set(type, image);
-
-      const partsSnap = await getDocs(collection(db, "inventory", type, "parts"));
-      let total = 0, working = 0, available = 0;
-
-      partsSnap.forEach(part => {
-        const data = part.data();
-        total++;
-        if (data.working) working++;
-        if (data.team === "0") available++;
+      getDocs(collection(db, "inventory", type, "parts")).then(snapshot => {
+        snapshot.forEach(doc => {
+          const partData = doc.data();
+          const entry = document.createElement("div");
+          entry.className = "part-entry";
+          entry.innerHTML = `<strong>${doc.id}</strong> — Team: ${partData.team} — ${partData.working ? "✅ Working" : "❌ Broken"}`;
+          document.getElementById("partsList").appendChild(entry);
+        });
       });
 
-      countMap.set(type, total);
-      workingMap.set(type, working);
-      availableMap.set(type, available);
-
-      const card = document.createElement("div");
-      card.className = "component-card";
-      card.innerHTML = `
-        <img src="${image}" alt="${type}" class="component-thumb" />
-        <h3>${type}</h3>
-        <p>Total: ${total}</p>
-        <p>Available: ${available}</p>
-        <p>Working: ${working}</p>
-      `;
-      card.addEventListener("click", () => openModal(type));
-      grid.appendChild(card);
+      modal.style.display = "block";
     }
-  } catch (err) {
-    console.error("Failed to load components:", err);
-    loadingDiv.textContent = "Error loading components.";
-  }
-}
-
-function openModal(type) {
-  currentComponentType = type;
-  const modal = document.getElementById("modal");
-  const modalTitle = document.getElementById("modalTitle");
-  const modalImage = document.getElementById("modalImage");
-  const totalCount = document.getElementById("totalCount");
-  const availableCount = document.getElementById("availableCount");
-  const workingCount = document.getElementById("workingCount");
-  const partsList = document.getElementById("partsList");
-
-  modalTitle.textContent = type;
-  modalImage.src = imageMap.get(type) || "";
-  totalCount.textContent = countMap.get(type);
-  availableCount.textContent = availableMap.get(type);
-  workingCount.textContent = workingMap.get(type);
-  partsList.innerHTML = "";
-
-  const partsRef = collection(db, "inventory", type, "parts");
-  getDocs(partsRef).then(snapshot => {
-    snapshot.forEach(doc => {
-      const partData = doc.data();
-      const entry = document.createElement("div");
-      entry.className = "part-entry";
-      entry.innerHTML = `
-        <strong>${doc.id}</strong> — Team: ${partData.team} — ${partData.working ? "✅ Working" : "❌ Broken"}
-      `;
-      partsList.appendChild(entry);
-    });
-  });
-
-  modal.style.display = "block";
-}
 
     function closeModal() {
       document.getElementById("modal").style.display = "none";
@@ -233,6 +224,18 @@ function openModal(type) {
     function closeAddTypeModal() {
       document.getElementById("addTypeModal").style.display = "none";
     }
+
+    window.addEventListener("click", e => {
+      if (e.target.id === "modal") closeModal();
+      if (e.target.id === "addTypeModal") closeAddTypeModal();
+    });
+
+    window.addEventListener("keydown", e => {
+      if (e.key === "Escape") {
+        closeModal();
+        closeAddTypeModal();
+      }
+    });
 
     function addNotification(message) {
       const bar = document.getElementById("notification-bar");
@@ -251,10 +254,9 @@ function openModal(type) {
       const team = document.getElementById("newGroup").value.trim();
       const customPartID = document.getElementById("newPartID").value.trim();
 
-      if (!type) return alert("Component type is required.");
-      if (!/^[a-zA-Z0-9_-]+$/.test(type)) return alert("Type ID must be alphanumeric (underscores and dashes allowed).");
+      if (!type || !/^[a-zA-Z0-9_-]+$/.test(type)) return alert("Invalid component type.");
       if (!team) return alert("Group is required.");
-      if (customPartID && !/^[a-zA-Z0-9_-]+$/.test(customPartID)) return alert("Custom Part ID must be alphanumeric (_ or -).");
+      if (customPartID && !/^[a-zA-Z0-9_-]+$/.test(customPartID)) return alert("Invalid part ID.");
 
       try {
         await setDoc(doc(db, "inventory", type), { image }, { merge: true });
@@ -262,14 +264,13 @@ function openModal(type) {
 
         if (customPartID) {
           const partRef = doc(partsRef, customPartID);
-          const exists = await getDoc(partRef);
-          if (exists.exists()) return alert("Part ID already exists.");
+          if ((await getDoc(partRef)).exists()) return alert("Part already exists.");
           await setDoc(partRef, { working, team });
         } else {
           await addDoc(partsRef, { working, team });
         }
 
-        alert("Component type added.");
+        alert("Component added.");
         closeAddTypeModal();
         document.getElementById("addForm").reset();
         document.getElementById("component-grid").innerHTML = "";
@@ -287,15 +288,13 @@ function openModal(type) {
       const customID = document.getElementById("inlineAddID").value.trim();
 
       if (!currentComponentType) return alert("Select a component type first.");
-      if (customID && !/^[a-zA-Z0-9_-]+$/.test(customID)) return alert("Custom ID must be alphanumeric (_ or -).");
+      if (customID && !/^[a-zA-Z0-9_-]+$/.test(customID)) return alert("Invalid custom ID.");
 
       try {
         const partsRef = collection(db, "inventory", currentComponentType, "parts");
-
         if (customID) {
           const partRef = doc(partsRef, customID);
-          const exists = await getDoc(partRef);
-          if (exists.exists()) return alert("Component with that ID already exists.");
+          if ((await getDoc(partRef)).exists()) return alert("Component already exists.");
           await setDoc(partRef, { working, team });
         } else {
           await addDoc(partsRef, { working, team });
@@ -306,14 +305,28 @@ function openModal(type) {
         document.getElementById("component-grid").innerHTML = "";
         countMap.clear(); workingMap.clear(); availableMap.clear();
         await loadComponents();
-      } catch (error) {
-        console.error("Error adding component:", error);
+      } catch (err) {
+        console.error("Add error:", err);
         alert("Failed to add component.");
       }
     });
 
-    // Remaining logic (openModal, removeComponentBtn, loadComponents...) stays unchanged
-    // It's already included in your full file and works with updated structure
+    document.getElementById("removeComponentBtn").addEventListener("click", async () => {
+      if (!currentComponentType) return;
+      if (!confirm("Delete this entire component type?")) return;
+
+      try {
+        await deleteDoc(doc(db, "inventory", currentComponentType));
+        alert("Component deleted.");
+        closeModal();
+        document.getElementById("component-grid").innerHTML = "";
+        countMap.clear(); workingMap.clear(); availableMap.clear();
+        loadComponents();
+      } catch (err) {
+        console.error("Delete error:", err);
+        alert("Failed to delete component.");
+      }
+    });
   </script>
 </body>
 </html>
