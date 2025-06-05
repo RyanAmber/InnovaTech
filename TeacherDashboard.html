@@ -34,12 +34,16 @@
     <div class="modal-content">
       <div class="modal-left">
         <h2 id="modalTitle">Component</h2>
-        <p>Total: <span id="totalCount">0</span></p>
+        <p>Total: <span id="totalCount"></span></p>
         <p>Available: <span id="availableCount">0</span></p>
         <p>Working: <span id="workingCount">0</span></p>
 
         <div class="actions">
           <button id="addSingleComponentBtn" class="add-btn">Add Single Component</button>
+          <input type="text" id="inlineAddTeam" placeholder="Team (e.g., 0 for storage)" />Add commentMore actions
+          <label style="display: block; margin-top: 5px;">
+            <input type="checkbox" id="inlineAddWorking" checked /> Working
+          </label>
           <button id="removeComponentBtn" class="remove-btn">Remove Component</button>
         </div>
 
