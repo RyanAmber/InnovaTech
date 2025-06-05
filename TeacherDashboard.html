@@ -191,7 +191,6 @@
       const working = document.getElementById("inlineAddWorking").checked;
       if (!currentComponentType) return alert("Select a component type first.");
 
-
       try {
         const partsRef = collection(db, "inventory", currentComponentType, "parts");
         await addDoc(partsRef, { working, team });
