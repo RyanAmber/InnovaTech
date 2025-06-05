@@ -1,9 +1,10 @@
+/* Global reset and base */
 * {
   box-sizing: border-box;
 }
 
 body {
-  font-family: 'Roboto Mono', 'Lato', sans-serif;
+  font-family: 'Roboto Mono', 'Lato', monospace;
   margin: 0;
   background: linear-gradient(0deg, #ffffff, #659deb);
   color: #333;
@@ -27,16 +28,16 @@ body {
   color: white;
   font-size: 36px;
   margin: 0;
+  font-family: 'Roboto Mono', monospace;
 }
 
-/* Base button styling */
 button,
 .remove-btn,
 .add-btn,
 .approve-btn,
 .confirm-btn,
 .reject-btn {
-  font-family: 'Roboto Mono', 'Lato', sans-serif;
+  font-family: 'Roboto Mono', monospace;
   text-transform: lowercase;
   border-radius: 999px;
   padding: 6px 14px;
@@ -47,7 +48,6 @@ button,
   outline: none;
 }
 
-/* Approve buttons (green) */
 .approve-btn,
 .confirm-btn {
   background-color: #0ad200;
@@ -61,7 +61,6 @@ button,
   box-shadow: 0 0 6px rgba(11, 207, 0, 0.4);
 }
 
-/* Reject buttons (red) */
 .reject-btn {
   background-color: #ff4d4d;
   border: 2px solid #b22222;
@@ -73,7 +72,6 @@ button,
   box-shadow: 0 0 6px rgba(255, 77, 77, 0.4);
 }
 
-/* Remove/delete buttons (red) */
 .remove-btn {
   background-color: #ff6b6b;
   border: 2px solid #8b0000;
@@ -85,7 +83,6 @@ button,
   box-shadow: 0 0 6px rgba(255, 77, 77, 0.4);
 }
 
-/* Add button */
 .add-btn {
   background-color: #0ad200;
   border: 2px solid #088f00;
@@ -105,6 +102,7 @@ button,
   border-radius: 8px;
   font-size: 14px;
   cursor: pointer;
+  font-family: 'Roboto Mono', monospace;
 }
 
 .main-content {
@@ -112,16 +110,18 @@ button,
   display: grid;
   grid-template-columns: 1fr 2fr 1fr;
   gap: 24px;
+  overflow: hidden;
 }
 
 .column {
   display: flex;
   flex-direction: column;
+  overflow: hidden;
 }
 
 .section-header {
   background: white;
-  color: #333;
+  color: #0055cc;
   padding: 10px 24px;
   border-radius: 25px;
   font-weight: bold;
@@ -130,6 +130,7 @@ button,
   width: fit-content;
   margin: 0 auto 14px auto;
   box-shadow: 0 2px 6px rgba(0, 0, 0, 0.08);
+  font-family: 'Roboto Mono', monospace;
 }
 
 .section {
@@ -137,8 +138,16 @@ button,
   border-radius: 20px;
   padding: 20px;
   flex: 1;
-  overflow-y: auto;
+  overflow: hidden;
   box-shadow: 0 4px 20px rgba(0, 0, 0, 0.08);
+  display: flex;
+  flex-direction: column;
+}
+
+.scrollable-list {
+  overflow-y: auto;
+  max-height: 300px;
+  padding-right: 10px;
 }
 
 .approval-list,
@@ -157,7 +166,6 @@ button,
   margin-bottom: 12px;
 }
 
-/* Cards */
 .card-container {
   display: flex;
   flex-wrap: wrap;
@@ -208,12 +216,9 @@ button,
   align-self: center;
   margin-top: auto;
   margin-bottom: 4px;
-  background-color: #ff6b6b;
-  border: 2px solid #8b0000;
   text-align: center;
 }
 
-/* Override to say delete */
 .id-box .remove-btn::before {
   content: 'delete';
   text-transform: lowercase;
@@ -223,4 +228,5 @@ button,
   font-style: italic;
   font-size: 17px;
   margin: 0;
+  font-family: 'Lato', sans-serif;
 }
