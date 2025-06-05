@@ -1,10 +1,11 @@
-<!DOCTYPE html>
+<<!DOCTYPE html>
 <html lang="en">
 <head>
   <meta charset="UTF-8" />
   <meta name="viewport" content="width=device-width, initial-scale=1" />
   <title>Manage Classroom</title>
   <link rel="stylesheet" href="ManageClass.css" />
+  <link href="https://fonts.googleapis.com/css2?family=Lato&family=Roboto+Mono&display=swap" rel="stylesheet" />
 
   <!-- Firebase SDK -->
   <script src="https://www.gstatic.com/firebasejs/10.11.0/firebase-app-compat.js"></script>
@@ -26,13 +27,12 @@
 
 <body>
   <div class="container">
-    <div class="dashboard-button-wrapper">
-      <button type="button" onclick="location.href='TeacherDashboard.html'">
-        Back to Dashboard
-      </button>
+    <div class="header-bar">
+      <h1>Manage Classroom</h1>
+      <div class="dashboard-button-wrapper">
+        <button type="button" onclick="location.href='TeacherDashboard.html'">Back to Dashboard</button>
+      </div>
     </div>
-
-    <h1>Manage Classroom</h1>
 
     <div class="main-content">
       <!-- Overview -->
@@ -41,7 +41,6 @@
         <div class="section">
           <h2>For approval</h2>
           <ul class="approval-list" id="approval-list"></ul>
-
           <h2>Current List</h2>
           <ul class="current-list" id="current-list"></ul>
         </div>
@@ -60,7 +59,7 @@
       <!-- Flagged -->
       <div class="column">
         <div class="section-header">Flagged</div>
-        <div class="section">
+        <div class="section flagged">
           <p>(Placeholder for flagged users)</p>
         </div>
       </div>
@@ -196,8 +195,6 @@
   }
 }
 
-
-
     async function removeTeam(button) {
   const card = button.parentElement;
   const groupName = card.querySelector("strong")?.innerText;
@@ -265,9 +262,6 @@ async function removeTeam(button) {
     alert("Failed to delete group. Please try again.");
   }
 }
-
-
-
 
     window.onload = () => {
       loadGroupsFromFirebase();
