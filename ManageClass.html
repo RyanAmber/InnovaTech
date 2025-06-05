@@ -70,16 +70,17 @@
   </div>
 
   <script>
-    async function loadGroupsFromFirebase() {
+async function loadGroupsFromFirebase() {
   const teamContainer = document.getElementById("teamContainer");
   const currentList = document.getElementById("current-list");
   const approvalList = document.getElementById("approval-list");
 
-  // Clears old content
+  // Clear previous content
   currentList.innerHTML = "";
   approvalList.innerHTML = "";
+  teamContainer.innerHTML = ""; // Clear team cards including the "+" box
 
-  // Loads and render users by role
+  // Load and display users by role
   const usersSnap = await db.collection("users").get();
   usersSnap.forEach(doc => {
     const username = doc.id;
@@ -88,7 +89,7 @@
     const li = document.createElement("li");
     li.textContent = username;
 
-    if (role == "Unconfirmed") {
+    if (role === "Unconfirmed") {
       li.innerHTML += `
         <div style="display: flex; gap: 8px;">
           <button class="approve-btn" onclick="approveUser('${username}')">approve</button>
@@ -101,9 +102,9 @@
     }
   });
 
-  // Loads groups into the Teams section
+  // Load and display all teams from the Groups collection
   const snapshot = await db.collection("Groups").get();
-  snapshot.forEach(async (groupDoc) => {
+  for (const groupDoc of snapshot.docs) {
     const groupName = groupDoc.id;
     const usersRef = db.collection("Groups").doc(groupName).collection("Users");
     const usersSnap = await usersRef.get();
@@ -122,9 +123,20 @@
       ${membersHTML}
       <button class="remove-btn" onclick="removeTeam(this)">Remove</button>
     `;
-    teamContainer.insertBefore(box, teamContainer.lastElementChild);
-  });
+
+    teamContainer.appendChild(box);
+  }
+
+  // Re-add the "+" card for new teams
+  const plusCard = document.createElement("div");
+  plusCard.className = "id-box plus";
+  plusCard.textContent = "+";
+  plusCard.onclick = function (event) {
+    showForm(this, event);
+  };
+  teamContainer.appendChild(plusCard);
 }
+
 
 
     function showForm(card, event) {
