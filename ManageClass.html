@@ -6,6 +6,7 @@
   <title>Manage Classroom</title>
   <link rel="stylesheet" href="ManageClass.css" />
   <link href="https://fonts.googleapis.com/css2?family=Lato&family=Roboto+Mono&display=swap" rel="stylesheet" />
+
   <script src="https://www.gstatic.com/firebasejs/10.11.0/firebase-app-compat.js"></script>
   <script src="https://www.gstatic.com/firebasejs/10.11.0/firebase-firestore-compat.js"></script>
   <script>
@@ -22,6 +23,7 @@
     const db = firebase.firestore();
   </script>
 </head>
+
 <body>
   <div class="container">
     <div class="header-bar">
@@ -32,6 +34,7 @@
     </div>
 
     <div class="main-content">
+      <!-- Overview -->
       <div class="column">
         <div class="section-header">Overview</div>
         <div class="section">
@@ -44,13 +47,17 @@
         </div>
       </div>
 
+      <!-- Teams -->
       <div class="column">
         <div class="section-header">Teams</div>
         <div class="section">
-          <div class="card-container" id="teamContainer"></div>
+          <div class="card-container" id="teamContainer">
+            <div class="id-box plus" onclick="showForm(this, event)">+</div>
+          </div>
         </div>
       </div>
 
+      <!-- Flagged -->
       <div class="column">
         <div class="section-header">Flagged</div>
         <div class="section flagged">
@@ -66,11 +73,10 @@
       const currentList = document.getElementById("current-list");
       const approvalList = document.getElementById("approval-list");
 
-      teamContainer.innerHTML = "";
       currentList.innerHTML = "";
       approvalList.innerHTML = "";
+      teamContainer.innerHTML = "";
 
-      // Load all users
       const usersSnap = await db.collection("users").get();
       usersSnap.forEach(doc => {
         const username = doc.id;
@@ -92,35 +98,28 @@
         }
       });
 
-      // Load groups and subcollection users
-      const snapshot = await db.collection("Groups").get();
-      for (const groupDoc of snapshot.docs) {
-        const groupName = groupDoc.id;
-        const usersRef = db.collection("Groups").doc(groupName).collection("Users");
+      const groupDocs = await db.collection("Groups").listDocuments();
+      for (const groupDocRef of groupDocs) {
+        const groupName = groupDocRef.id;
+        const usersSnap = await groupDocRef.collection("Users").get();
 
-        try {
-          const usersSnap = await usersRef.get();
-          let membersHTML = "<ul>";
-          usersSnap.forEach(userDoc => {
-            const username = userDoc.id;
-            membersHTML += `<li>${username}</li>`;
-          });
-          membersHTML += "</ul>";
+        let membersHTML = "<ul>";
+        usersSnap.forEach(userDoc => {
+          membersHTML += `<li>${userDoc.id}</li>`;
+        });
+        membersHTML += "</ul>";
 
-          const box = document.createElement("div");
-          box.className = "id-box";
-          box.innerHTML = `
-            <strong>${groupName}</strong>
-            ${membersHTML}
-            <button class="remove-btn" onclick="removeTeam(this)">Remove</button>
-          `;
-          teamContainer.appendChild(box);
-        } catch (err) {
-          console.error(`Error loading users for group ${groupName}:`, err);
-        }
+        const box = document.createElement("div");
+        box.className = "id-box";
+        box.innerHTML = `
+          <strong>${groupName}</strong>
+          ${membersHTML}
+          <button class="remove-btn" onclick="removeTeam(this)">Remove</button>
+        `;
+
+        teamContainer.appendChild(box);
       }
 
-      // Add "+" card
       const plusCard = document.createElement("div");
       plusCard.className = "id-box plus";
       plusCard.textContent = "+";
@@ -150,7 +149,9 @@
       const box = button.parentElement;
       const teamName = box.querySelector('.team-name').value.trim() || 'Untitled Team';
       const membersInput = box.querySelector('.team-members').value.trim();
-      const members = membersInput.split(',').map(name => name.trim()).filter(Boolean);
+      const members = membersInput
+        ? membersInput.split(',').map(name => name.trim()).filter(Boolean)
+        : [];
 
       try {
         const groupRef = db.collection("Groups").doc(teamName);
@@ -163,40 +164,83 @@
             role: "Student"
           });
         }
-
-        let membersHTML = "<ul>";
-        members.forEach(member => {
-          membersHTML += `<li>${member}</li>`;
-        });
-        membersHTML += "</ul>";
-
-        box.innerHTML = `
-          <strong>${teamName}</strong>
-          ${membersHTML}
-          <button class="remove-btn" onclick="removeTeam(this)">Remove</button>
-        `;
-
-        const container = document.getElementById("teamContainer");
-        const hasPlusBox = container.querySelector(".id-box.plus");
-        if (!hasPlusBox) {
-          const newCard = document.createElement("div");
-          newCard.className = "id-box plus";
-          newCard.textContent = "+";
-          newCard.onclick = function (event) {
-            showForm(this, event);
-          };
-          container.appendChild(newCard);
-        }
       } catch (error) {
         console.error("Error adding team to Firestore:", error);
         alert("Error adding team. Please check if users exist.");
+        return;
+      }
+
+      let membersHTML = '<ul>';
+      members.forEach(member => {
+        membersHTML += `<li>${member}</li>`;
+      });
+      membersHTML += '</ul>';
+
+      box.innerHTML = `
+        <strong>${teamName}</strong>
+        ${membersHTML}
+        <button class="remove-btn" onclick="removeTeam(this)">Remove</button>
+      `;
+
+      const container = document.getElementById("teamContainer");
+      const hasPlusBox = container.querySelector(".id-box.plus");
+      if (!hasPlusBox) {
+        const newCard = document.createElement("div");
+        newCard.className = "id-box plus";
+        newCard.textContent = "+";
+        newCard.onclick = function (event) {
+          showForm(this, event);
+        };
+        container.appendChild(newCard);
+      }
+    }
+
+    async function approveUser(username) {
+      try {
+        await db.collection("users").doc(username).update({ role: "Student" });
+        alert(`${username} approved.`);
+        loadGroupsFromFirebase();
+      } catch (error) {
+        console.error("Error approving user:", error);
+        alert("Could not approve user.");
+      }
+    }
+
+    async function rejectUser(username) {
+      const confirmed = confirm(`Reject and delete user "${username}" from the system?`);
+      if (!confirmed) return;
+
+      try {
+        await db.collection("users").doc(username).delete();
+        alert(`${username} rejected and removed.`);
+        loadGroupsFromFirebase();
+      } catch (error) {
+        console.error("Error rejecting user:", error);
+        alert("Failed to reject user.");
+      }
+    }
+
+    async function removeUser(username) {
+      const confirmed = confirm(`Are you sure you want to remove user "${username}"?`);
+      if (!confirmed) return;
+
+      try {
+        await db.collection("users").doc(username).delete();
+        alert(`User "${username}" has been removed.`);
+        loadGroupsFromFirebase();
+      } catch (error) {
+        console.error("Error removing user:", error);
+        alert("Failed to remove user. Please try again.");
       }
     }
 
     async function removeTeam(button) {
       const card = button.parentElement;
       const groupName = card.querySelector("strong")?.innerText;
-      if (!groupName) return;
+      if (!groupName) {
+        alert("Error: Group name not found.");
+        return;
+      }
 
       const confirmed = confirm(`Are you sure you want to delete the group "${groupName}"?`);
       if (!confirmed) return;
@@ -207,44 +251,12 @@
         const deletePromises = usersSnap.docs.map(doc => doc.ref.delete());
         await Promise.all(deletePromises);
         await groupRef.delete();
+
         card.remove();
         alert(`Group "${groupName}" has been deleted.`);
       } catch (error) {
         console.error("Error deleting group:", error);
-        alert("Failed to delete group.");
-      }
-    }
-
-    async function approveUser(username) {
-      try {
-        await db.collection("users").doc(username).update({ role: "Student" });
-        loadGroupsFromFirebase();
-      } catch (error) {
-        console.error("Error approving user:", error);
-      }
-    }
-
-    async function rejectUser(username) {
-      const confirmed = confirm(`Reject and delete user "${username}"?`);
-      if (!confirmed) return;
-
-      try {
-        await db.collection("users").doc(username).delete();
-        loadGroupsFromFirebase();
-      } catch (error) {
-        console.error("Error rejecting user:", error);
-      }
-    }
-
-    async function removeUser(username) {
-      const confirmed = confirm(`Remove user "${username}"?`);
-      if (!confirmed) return;
-
-      try {
-        await db.collection("users").doc(username).delete();
-        loadGroupsFromFirebase();
-      } catch (error) {
-        console.error("Error removing user:", error);
+        alert("Failed to delete group. Please try again.");
       }
     }
 
