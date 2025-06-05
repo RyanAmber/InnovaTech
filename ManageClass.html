@@ -237,6 +237,20 @@ async function approveUser(username) {
     alert("Could not approve user.");
   }
 }
+    
+async function rejectUser(username) {
+  const confirmed = confirm(`Reject and delete user "${username}" from the system?`);
+  if (!confirmed) return;
+
+  try {
+    await db.collection("Users").doc(username).delete();
+    alert(`${username} rejected and removed.`);
+    loadGroupsFromFirebase(); // Refresh the UI
+  } catch (error) {
+    console.error("Error rejecting user:", error);
+    alert("Failed to reject user.");
+  }
+}
 
 async function removeTeam(button) {
   const card = button.parentElement;
