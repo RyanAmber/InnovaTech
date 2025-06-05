@@ -242,7 +242,7 @@ async function removeTeam(button) {
     const groupRef = db.collection("Groups").doc(groupName);
 
     // Delete all users in the group subcollection
-    const usersSnap = await groupRef.collection("users").get();
+    const usersSnap = await groupRef.collection("Users").get();
     const deletePromises = usersSnap.docs.map(doc => doc.ref.delete());
     await Promise.all(deletePromises);
 
