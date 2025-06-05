@@ -111,10 +111,10 @@ if (!username) {
   const userSnap = await getDoc(userRef);
   if (!userSnap.exists()) {
     alert("User not found.");
-    window.location.href = "index.html";
+    //window.location.href = "index.html";
   } else {
     const role = (userSnap.data().role || "").toLowerCase();
-    if (role !== "teacher") {
+    if (role !== "Teacher") {
       alert("Access denied: Teacher role required.");
       window.location.href = "index.html";
     }
