@@ -36,28 +36,34 @@
     </div>
   </div>
 
+  <!-- Modal (replace only this section in your current file) -->
   <div class="modal" id="modal">
     <div class="modal-content">
-      <span class="close-btn" onclick="closeModal()">&times;</span>
       <div class="modal-left">
         <h2 id="modalTitle" class="component-name">Component_Name</h2>
+  
         <h3>Component Overview</h3>
         <div class="overview-box">
           <p>Number logged in: <span id="totalCount">X</span></p>
           <p>Number Available: <span id="AvailableCount">X</span></p>
           <p>Number Working: <span id="WorkingCount">X</span></p>
         </div>
+  
         <h3>Actions</h3>
         <div class="actions">
           <button class="action-btn" onclick="checkOutComponent()">Check out Component</button>
+          <button class="action-btn" onclick="returnComponent()">Return Component</button>
+          <button class="action-btn" onclick="markAsDamaged()">Mark as damaged or broken</button>
         </div>
       </div>
+  
       <div class="modal-right">
         <img id="modalImage" class="component-img" src="" alt="Component Image">
         <div class="status-bar"></div>
       </div>
     </div>
   </div>
+
 
   <script type="module">
     import { initializeApp } from "https://www.gstatic.com/firebasejs/10.11.0/firebase-app.js";
