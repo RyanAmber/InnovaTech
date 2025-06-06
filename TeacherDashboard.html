@@ -417,7 +417,7 @@
   <script type="module">
     import { initializeApp } from "https://www.gstatic.com/firebasejs/10.11.0/firebase-app.js";
     import {
-      getFirestore, collection, doc, setDoc, getDocs, getDoc, addDoc, deleteDoc
+      getFirestore, collection, doc, setDoc, getDocs, getDoc, addDoc, deleteDoc, updateDoc, query, where
     } from "https://www.gstatic.com/firebasejs/10.11.0/firebase-firestore.js";
 
     const firebaseConfig = {
@@ -438,6 +438,7 @@
     const availableMap = new Map();
     const countMap = new Map();
     const imageMap = new Map();
+    const partsMap = new Map(); // Store individual parts data
 
     // Make functions global so onclick handlers work
     window.closeModal = function() {
@@ -449,16 +450,18 @@
     }
 
     async function verifyUserRole() {
-      const username = "teacher"; // For demo - replace with localStorage.getItem("username");
+      const username = localStorage.getItem("username") || "teacher"; // Fallback for demo
       
       if (!username) {
-        alert("Missing login info.");
+        alert("Missing login info. Please log in again.");
+        window.location.href = "login.html";
         return;
       }
 
       document.getElementById("usernameHeader").textContent = `Welcome, ${username}`;
       document.title = `${username}'s Dashboard`;
       await loadComponents();
+      await loadNotifications();
     }
 
     async function loadComponents() {
@@ -467,29 +470,81 @@
       grid.innerHTML = "";
 
       try {
-        // Demo data - replace with Firebase calls
-        const demoComponents = [
-          { id: "Arduino_Uno", image: "https://upload.wikimedia.org/wikipedia/commons/3/38/Arduino_Uno_-_R3.jpg", total: 5, working: 4, available: 3 },
-          { id: "Breadboard", image: "https://upload.wikimedia.org/wikipedia/commons/7/73/400_points_breadboard.jpg", total: 8, working: 7, available: 5 },
-          { id: "LED", image: "https://upload.wikimedia.org/wikipedia/commons/f/f9/LED%2C_5mm%2C_green_%28en%29.jpg", total: 20, working: 18, available: 15 }
-        ];
+        // Load component types from Firebase
+        const componentTypesSnapshot = await getDocs(collection(db, "componentTypes"));
+        const componentTypes = new Map();
+        
+        componentTypesSnapshot.forEach(doc => {
+          const data = doc.data();
+          componentTypes.set(doc.id, {
+            id: doc.id,
+            image: data.image || "",
+            ...data
+          });
+        });
+
+        // Load individual components from Firebase
+        const componentsSnapshot = await getDocs(collection(db, "components"));
+        const componentStats = new Map();
+        const componentParts = new Map();
+
+        componentsSnapshot.forEach(doc => {
+          const data = doc.data();
+          const type = data.type;
+          
+          if (!componentStats.has(type)) {
+            componentStats.set(type, {
+              total: 0,
+              working: 0,
+              available: 0
+            });
+            componentParts.set(type, []);
+          }
+
+          const stats = componentStats.get(type);
+          const parts = componentParts.get(type);
+          
+          stats.total++;
+          if (data.working !== false) stats.working++;
+          if (data.group === "0" || data.group === 0) stats.available++;
+          
+          parts.push({
+            id: doc.id,
+            partID: data.partID || doc.id,
+            group: data.group || "0",
+            working: data.working !== false,
+            ...data
+          });
+        });
 
         loadingDiv.style.display = "none";
         grid.style.display = "grid";
 
-        for (const comp of demoComponents) {
-          imageMap.set(comp.id, comp.image);
-          countMap.set(comp.id, comp.total);
-          workingMap.set(comp.id, comp.working);
-          availableMap.set(comp.id, comp.available);
+        // Create cards for each component type
+        for (const [typeId, typeData] of componentTypes) {
+          const stats = componentStats.get(typeId) || { total: 0, working: 0, available: 0 };
+          const parts = componentParts.get(typeId) || [];
+          
+          // Store data in maps for modal usage
+          imageMap.set(typeId, typeData.image || "");
+          countMap.set(typeId, stats.total);
+          workingMap.set(typeId, stats.working);
+          availableMap.set(typeId, stats.available);
+          partsMap.set(typeId, parts);
 
           const card = document.createElement("div");
           card.className = "component-card";
+          
+          const imageHtml = typeData.image ? 
+            `<img src="${typeData.image}" alt="${typeId}" class="component-thumb" onerror="this.style.display='none'" />` :
+            `<div style="width: 100%; height: 120px; background: #f0f0f0; border-radius: 8px; display: flex; align-items: center; justify-content: center; color: #666;">No Image</div>`;
+          
           card.innerHTML = `
-            <img src="${comp.image}" alt="${comp.id}" class="component-thumb" />
-            <h3>${comp.id}</h3>
+            ${imageHtml}
+            <h3>${typeId}</h3>
+            <small>${stats.total} total, ${stats.available} available</small>
           `;
-          card.addEventListener("click", () => openModal(comp.id));
+          card.addEventListener("click", () => openModal(typeId));
           grid.appendChild(card);
         }
 
@@ -505,9 +560,40 @@
         });
         grid.appendChild(addCard);
 
+        console.log(`Loaded ${componentTypes.size} component types with ${componentsSnapshot.size} individual components`);
+
       } catch (err) {
         console.error("Failed to load components:", err);
-        loadingDiv.textContent = "Error loading components.";
+        loadingDiv.textContent = "Error loading components. Please refresh the page.";
+      }
+    }
+
+    async function loadNotifications() {
+      try {
+        const notificationBar = document.getElementById("notification-bar");
+        
+        // Load recent activity or notifications from Firebase
+        const notificationsSnapshot = await getDocs(collection(db, "notifications"));
+        
+        if (notificationsSnapshot.empty) {
+          notificationBar.innerHTML = "<div class='notif'>No new notifications</div>";
+        } else {
+          notificationBar.innerHTML = "";
+          notificationsSnapshot.forEach(doc => {
+            const data = doc.data();
+            const notif = document.createElement("div");
+            notif.className = "notif";
+            notif.innerHTML = `
+              <strong>${data.title || "Notification"}</strong><br>
+              ${data.message || "No message"}<br>
+              <small>${data.timestamp ? new Date(data.timestamp.seconds * 1000).toLocaleDateString() : "Unknown date"}</small>
+            `;
+            notificationBar.appendChild(notif);
+          });
+        }
+      } catch (err) {
+        console.error("Failed to load notifications:", err);
+        document.getElementById("notification-bar").innerHTML = "<div class='notif'>Error loading notifications</div>";
       }
     }
 
@@ -516,18 +602,65 @@
       const modal = document.getElementById("modal");
       document.getElementById("modalTitle").textContent = type;
       document.getElementById("modalImage").src = imageMap.get(type) || "";
-      document.getElementById("totalCount").textContent = countMap.get(type);
-      document.getElementById("availableCount").textContent = availableMap.get(type);
-      document.getElementById("workingCount").textContent = workingMap.get(type);
+      document.getElementById("totalCount").textContent = countMap.get(type) || 0;
+      document.getElementById("availableCount").textContent = availableMap.get(type) || 0;
+      document.getElementById("workingCount").textContent = workingMap.get(type) || 0;
       
-      // Demo parts list
+      // Load individual parts
       const partsList = document.getElementById("partsList");
       partsList.innerHTML = "";
-      for (let i = 1; i <= countMap.get(type); i++) {
-        const entry = document.createElement("div");
-        entry.className = "part-entry";
-        entry.innerHTML = `<strong>${type}_${i}</strong><br>Team: ${i <= availableMap.get(type) ? '0' : Math.floor(Math.random() * 5) + 1}<br>${i <= workingMap.get(type) ? 'Working' : 'Broken'}`;
-        partsList.appendChild(entry);
+      const parts = partsMap.get(type) || [];
+      
+      if (parts.length === 0) {
+        partsList.innerHTML = "<div class='part-entry'>No individual components found</div>";
+      } else {
+        parts.forEach(part => {
+          const entry = document.createElement("div");
+          entry.className = "part-entry";
+          entry.innerHTML = `
+            <strong>${part.partID}</strong><br>
+            Team: ${part.group}<br>
+            ${part.working ? 'Working' : 'Broken'}
+          `;
+          partsList.appendChild(entry);
+        });
+      }
+
+      // Update status bar
+      const statusBar = modal.querySelector(".status-bar");
+      const total = countMap.get(type) || 0;
+      const working = workingMap.get(type) || 0;
+      const available = availableMap.get(type) || 0;
+      
+      statusBar.innerHTML = "";
+      if (total > 0) {
+        const workingPercent = (working / total) * 100;
+        const availablePercent = (available / total) * 100;
+        const unavailablePercent = ((total - available) / total) * 100;
+        
+        if (available > 0) {
+          const availableDiv = document.createElement("div");
+          availableDiv.className = "status green";
+          availableDiv.style.width = `${availablePercent}%`;
+          availableDiv.textContent = `${available} Available`;
+          statusBar.appendChild(availableDiv);
+        }
+        
+        if (total - available > 0) {
+          const unavailableDiv = document.createElement("div");
+          unavailableDiv.className = "status yellow";
+          unavailableDiv.style.width = `${unavailablePercent}%`;
+          unavailableDiv.textContent = `${total - available} In Use`;
+          statusBar.appendChild(unavailableDiv);
+        }
+        
+        if (total - working > 0) {
+          const brokenDiv = document.createElement("div");
+          brokenDiv.className = "status red";
+          brokenDiv.style.width = `${((total - working) / total) * 100}%`;
+          brokenDiv.textContent = `${total - working} Broken`;
+          statusBar.appendChild(brokenDiv);
+        }
       }
 
       modal.style.display = "flex";
@@ -549,12 +682,43 @@
     document.getElementById("addForm").addEventListener("submit", async function (e) {
       e.preventDefault();
       const type = document.getElementById("newType").value.trim();
+      const image = document.getElementById("newImage").value.trim();
+      const group = document.getElementById("newGroup").value.trim();
+      const working = document.getElementById("newWorking").checked;
+      const partID = document.getElementById("newPartID").value.trim();
+      
       if (!type) return alert("Component type is required.");
       
-      alert("Component type added successfully!");
-      window.closeAddTypeModal();
-      document.getElementById("addForm").reset();
-      await loadComponents();
+      try {
+        // Add component type
+        await setDoc(doc(db, "componentTypes", type), {
+          image: image || "",
+          createdAt: new Date()
+        });
+        
+        // Add initial component instance
+        const componentData = {
+          type: type,
+          group: group || "0",
+          working: working,
+          createdAt: new Date()
+        };
+        
+        if (partID) {
+          componentData.partID = partID;
+          await setDoc(doc(db, "components", partID), componentData);
+        } else {
+          await addDoc(collection(db, "components"), componentData);
+        }
+        
+        alert("Component type added successfully!");
+        window.closeAddTypeModal();
+        document.getElementById("addForm").reset();
+        await loadComponents();
+      } catch (err) {
+        console.error("Error adding component type:", err);
+        alert("Error adding component type. Please try again.");
+      }
     });
 
     document.getElementById("addSingleComponentBtn").addEventListener("click", () => {
@@ -565,18 +729,67 @@
     document.getElementById("inlineAddSubmitBtn").addEventListener("click", async () => {
       if (!currentComponentType) return alert("Select a component type first.");
       
-      alert("Component added successfully!");
-      window.closeModal();
-      await loadComponents();
+      const partID = document.getElementById("inlineAddID").value.trim();
+      const working = document.getElementById("inlineAddWorking").checked;
+      
+      try {
+        const componentData = {
+          type: currentComponentType,
+          group: "0", // Add to storage
+          working: working,
+          createdAt: new Date()
+        };
+        
+        if (partID) {
+          // Check if partID already exists
+          const existingDoc = await getDoc(doc(db, "components", partID));
+          if (existingDoc.exists()) {
+            return alert("A component with this ID already exists.");
+          }
+          componentData.partID = partID;
+          await setDoc(doc(db, "components", partID), componentData);
+        } else {
+          await addDoc(collection(db, "components"), componentData);
+        }
+        
+        alert("Component added successfully!");
+        document.getElementById("inlineAddForm").style.display = "none";
+        document.getElementById("inlineAddID").value = "";
+        document.getElementById("inlineAddWorking").checked = true;
+        await loadComponents();
+        openModal(currentComponentType); // Refresh the modal
+      } catch (err) {
+        console.error("Error adding component:", err);
+        alert("Error adding component. Please try again.");
+      }
     });
 
     document.getElementById("removeComponentBtn").addEventListener("click", async () => {
       if (!currentComponentType) return;
-      if (!confirm("Delete this entire component type?")) return;
+      if (!confirm(`Delete the entire "${currentComponentType}" component type and all its instances?`)) return;
       
-      alert("Component type deleted successfully!");
-      window.closeModal();
-      await loadComponents();
+      try {
+        // Delete component type
+        await deleteDoc(doc(db, "componentTypes", currentComponentType));
+        
+        // Delete all components of this type
+        const componentsQuery = query(collection(db, "components"), where("type", "==", currentComponentType));
+        const componentsSnapshot = await getDocs(componentsQuery);
+        
+        const deletePromises = [];
+        componentsSnapshot.forEach(doc => {
+          deletePromises.push(deleteDoc(doc.ref));
+        });
+        
+        await Promise.all(deletePromises);
+        
+        alert("Component type deleted successfully!");
+        window.closeModal();
+        await loadComponents();
+      } catch (err) {
+        console.error("Error deleting component type:", err);
+        alert("Error deleting component type. Please try again.");
+      }
     });
 
     // Initialize
