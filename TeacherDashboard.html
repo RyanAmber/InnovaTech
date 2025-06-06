@@ -465,108 +465,86 @@
     }
 
     async function loadComponents() {
-      const loadingDiv = document.getElementById("loading");
-      const grid = document.getElementById("component-grid");
-      grid.innerHTML = "";
+  const loadingDiv = document.getElementById("loading");
+  const grid = document.getElementById("component-grid");
+  grid.innerHTML = "";
 
-      try {
-        // Load component types from Firebase
-        const componentTypesSnapshot = await getDocs(collection(db, "componentTypes"));
-        const componentTypes = new Map();
-        
-        componentTypesSnapshot.forEach(doc => {
-          const data = doc.data();
-          componentTypes.set(doc.id, {
-            id: doc.id,
-            image: data.image || "",
-            ...data
-          });
-        });
+  try {
+    const inventorySnapshot = await getDocs(collection(db, "inventory"));
+    loadingDiv.style.display = "none";
+    grid.style.display = "grid";
 
-        // Load individual components from Firebase
-        const componentsSnapshot = await getDocs(collection(db, "inventory"));
-        const componentStats = new Map();
-        const componentParts = new Map();
+    for (const doc of inventorySnapshot.docs) {
+      const typeId = doc.id;
+      const typeData = doc.data();
+      const image = typeData.image || "";
 
-        componentsSnapshot.forEach(doc => {
-          const data = doc.data();
-          const type = data.type;
-          
-          if (!componentStats.has(type)) {
-            componentStats.set(type, {
-              total: 0,
-              working: 0,
-              available: 0
-            });
-            componentParts.set(type, []);
-          }
+      const partsSnapshot = await getDocs(collection(db, "inventory", typeId, "parts"));
+      const parts = [];
+      let total = 0;
+      let working = 0;
+      let available = 0;
 
-          const stats = componentStats.get(type);
-          const parts = componentParts.get(type);
-          
-          stats.total++;
-          if (data.working !== false) stats.working++;
-          if (data.group === "0" || data.group === 0) stats.available++;
-          
-          parts.push({
-            id: doc.id,
-            partID: data.partID || doc.id,
-            group: data.group || "0",
-            working: data.working !== false,
-            ...data
-          });
-        });
+      partsSnapshot.forEach(partDoc => {
+        const data = partDoc.data();
+        const part = {
+          id: partDoc.id,
+          partID: data.partID || partDoc.id,
+          group: data.group || "0",
+          working: data.working !== false,
+          ...data
+        };
 
-        loadingDiv.style.display = "none";
-        grid.style.display = "grid";
+        total++;
+        if (part.working) working++;
+        if (part.group === "0" || part.group === 0) available++;
 
-        // Create cards for each component type
-        for (const [typeId, typeData] of componentTypes) {
-          const stats = componentStats.get(typeId) || { total: 0, working: 0, available: 0 };
-          const parts = componentParts.get(typeId) || [];
-          
-          // Store data in maps for modal usage
-          imageMap.set(typeId, typeData.image || "");
-          countMap.set(typeId, stats.total);
-          workingMap.set(typeId, stats.working);
-          availableMap.set(typeId, stats.available);
-          partsMap.set(typeId, parts);
+        parts.push(part);
+      });
 
-          const card = document.createElement("div");
-          card.className = "component-card";
-          
-          const imageHtml = typeData.image ? 
-            `<img src="${typeData.image}" alt="${typeId}" class="component-thumb" onerror="this.style.display='none'" />` :
-            `<div style="width: 100%; height: 120px; background: #f0f0f0; border-radius: 8px; display: flex; align-items: center; justify-content: center; color: #666;">No Image</div>`;
-          
-          card.innerHTML = `
-            ${imageHtml}
-            <h3>${typeId}</h3>
-            <small>${stats.total} total, ${stats.available} available</small>
-          `;
-          card.addEventListener("click", () => openModal(typeId));
-          grid.appendChild(card);
-        }
+      // Save to maps for modal behavior
+      imageMap.set(typeId, image);
+      countMap.set(typeId, total);
+      workingMap.set(typeId, working);
+      availableMap.set(typeId, available);
+      partsMap.set(typeId, parts);
 
-        // Add "Add Item Type" button
-        const addCard = document.createElement("div");
-        addCard.className = "component-card add-type-card";
-        addCard.innerHTML = `
-          <div class="add-icon">+</div>
-          <h3>Add Item Type</h3>
-        `;
-        addCard.addEventListener("click", () => {
-          document.getElementById("addTypeModal").style.display = "flex";
-        });
-        grid.appendChild(addCard);
+      // Create card
+      const card = document.createElement("div");
+      card.className = "component-card";
 
-        console.log(`Loaded ${componentTypes.size} component types with ${componentsSnapshot.size} individual components`);
+      const imageHtml = image
+        ? `<img src="${image}" alt="${typeId}" class="component-thumb" onerror="this.style.display='none'" />`
+        : `<div style="width: 100%; height: 120px; background: #f0f0f0; border-radius: 8px; display: flex; align-items: center; justify-content: center; color: #666;">No Image</div>`;
 
-      } catch (err) {
-        console.error("Failed to load components:", err);
-        loadingDiv.textContent = "Error loading components. Please refresh the page.";
-      }
+      card.innerHTML = `
+        ${imageHtml}
+        <h3>${typeId}</h3>
+        <small>${total} total, ${available} available</small>
+      `;
+      card.addEventListener("click", () => openModal(typeId));
+      grid.appendChild(card);
     }
+
+    // Add "Add Item Type" button
+    const addCard = document.createElement("div");
+    addCard.className = "component-card add-type-card";
+    addCard.innerHTML = `
+      <div class="add-icon">+</div>
+      <h3>Add Item Type</h3>
+    `;
+    addCard.addEventListener("click", () => {
+      document.getElementById("addTypeModal").style.display = "flex";
+    });
+    grid.appendChild(addCard);
+
+    console.log(`Loaded ${inventorySnapshot.size} component types`);
+
+  } catch (err) {
+    console.error("Failed to load components:", err);
+    loadingDiv.textContent = "Error loading components. Please refresh the page.";
+  }
+}
 
     async function loadNotifications() {
       try {
