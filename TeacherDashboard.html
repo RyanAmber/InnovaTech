@@ -484,7 +484,7 @@
         });
 
         // Load individual components from Firebase
-        const componentsSnapshot = await getDocs(collection(db, "inventory"));
+        const componentsSnapshot = await getDocs(collection(db, "components"));
         const componentStats = new Map();
         const componentParts = new Map();
 
