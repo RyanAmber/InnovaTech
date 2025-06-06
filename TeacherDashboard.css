@@ -1,142 +1,299 @@
-body {
-  margin: 0;
-  font-family: 'Roboto Mono', monospace;
-  background: linear-gradient(to bottom right, #ffffff, #659deb);
+/* Base & Layout */
+* {
+  box-sizing: border-box;
 }
 
-.header {
-  background-color: #333;
+body {
+  margin: 0;
+  font-family: 'Courier New', Courier, monospace;
+  background: linear-gradient(0deg, #ffffff, #659deb);
+  color: #222;
+}
+
+header {
+  padding: 20px;
+  font-size: 2rem;
+  font-weight: bold;
   color: white;
-  padding: 16px;
+  background-color: transparent;
+  font-family: 'Lato', sans-serif;
+}
+
+.container {
+  display: flex;
+  flex-direction: row;
+  height: calc(100vh - 80px);
+  padding: 20px;
+  gap: 20px;
+}
+
+.left {
+  flex: 2;
+  display: flex;
+  flex-direction: column;
+  overflow: hidden;
+  min-height: calc(100vh - 120px);
+}
+
+.right {
+  flex: 1;
+  display: flex;
+  flex-direction: column;
+  gap: 20px;
+}
+
+/* Bubble Headings */
+.bubble-heading {
+  font-size: 1.5rem;
+  font-weight: 600;
+  background-color: white;
+  padding: 10px 20px;
+  border-radius: 30px;
+  margin-bottom: 20px;
+  color: #235dd4;
+  box-shadow: 0 2px 6px rgba(0,0,0,0.1);
+}
+
+/* Component Grid */
+.grid {
+  display: grid;
+  grid-template-columns: repeat(auto-fill, minmax(180px, 1fr));
+  gap: 20px;
+  overflow-y: auto;
+  flex-grow: 1;
+}
+
+.card {
+  background: white;
+  border-radius: 16px;
+  padding: 12px;
+  width: 100%;
+  max-height: 120px;
+  box-shadow: 0 4px 12px rgba(0, 0, 0, 0.15);
+  cursor: pointer;
+  transition: transform 0.2s ease;
   text-align: center;
 }
 
-h1 {
-  margin: 0;
-  font-family: 'Roboto Mono', monospace;
+.card:hover {
+  transform: scale(1.05);
 }
 
-.main {
-  padding: 24px;
+.card img {
+  width: 100%;
+  aspect-ratio: 3 / 2;
+  object-fit: contain;
+  border-radius: 8px;
 }
 
-.section {
-  background: white;
-  border-radius: 16px;
-  padding: 24px;
-  box-shadow: 0 4px 16px rgba(0, 0, 0, 0.1);
-}
-
-h2 {
-  font-family: 'Roboto Mono', monospace;
-  color: #0055cc;
-}
-
-.component-grid {
-  display: grid;
-  grid-template-columns: repeat(auto-fill, minmax(160px, 1fr));
-  gap: 16px;
-  margin-top: 16px;
+.card p {
+  font-weight: 500;
+  margin-top: 10px;
 }
 
 .component-card {
-  background-color: #f4f4f4;
+  background: white;
   border-radius: 16px;
   padding: 12px;
-  box-shadow: 0 2px 8px rgba(0,0,0,0.06);
-  display: flex;
-  flex-direction: column;
-  align-items: center;
-  justify-content: center;
-  min-height: 160px;
-  font-size: 14px;
-  text-align: center;
+  width: 100%;
+  max-height: 200px;
+  box-shadow: 0 4px 12px rgba(0, 0, 0, 0.15);
+  cursor: pointer;
   transition: transform 0.2s ease;
+  text-align: center;
 }
 
 .component-card:hover {
-  transform: scale(1.03);
+  transform: scale(1.05);
 }
 
-.component-card img {
-  width: 80px;
-  height: 80px;
-  object-fit: contain;
-  margin-bottom: 8px;
+.component-card p,
+.component-card h3 {
+  font-size: 0.95rem;
+  margin-top: 6px;
+  word-wrap: break-word;
+  font-family: 'Roboto Mono', monospace;
+  padding: 0 6px;
+  line-height: 1.3;
 }
 
-.component-card.add-new {
-  font-size: 36px;
-  font-weight: bold;
-  color: #888;
-  cursor: pointer;
+.component-thumb {
+  width: 100%;
+  max-width: 150px;
+  height: 120px;
+  object-fit: cover;
+  border-radius: 8px;
+  margin-bottom: 10px;
+}
+
+/* Add New Card Styling */
+#add-new-btn {
+  display: flex;
   justify-content: center;
+  align-items: center;
+  font-size: 3rem;
+  font-weight: bold;
+  color: #1a237e;
+  background: white;
+  border-radius: 16px;
+  box-shadow: 0 4px 12px rgba(0, 0, 0, 0.15);
+  cursor: pointer;
+  transition: transform 0.2s ease;
+  height: 200px;
+}
+
+#add-new-btn:hover {
+  transform: scale(1.05);
+}
+
+.notifications-wrapper {
+  flex-grow: 1;
+  display: flex;
+  flex-direction: column;
+}
+
+.notifications {
+  background: white;
+  border-radius: 20px;
+  padding: 20px;
+  height: 100%;
+  overflow-y: auto;
+  box-shadow: 0 6px 12px rgba(0, 0, 0, 0.2);
+  font-family: 'Segoe UI', sans-serif;
+}
+
+.notif {
+  padding: 12px;
+  background-color: #f0f0f0;
+  border-radius: 12px;
+  margin-bottom: 10px;
+}
+
+.admin-nav button {
+  font-family: 'Courier New', Courier, monospace;
+  text-transform: lowercase;
+  font-size: 13px;
+  font-weight: 500;
+  padding: 10px 18px;
+  border-radius: 999px;
+  border: 2px solid #1a237e;
+  background-color: #1e88e5;
+  color: white;
+  cursor: pointer;
+  transition: all 0.2s ease;
+}
+
+.admin-nav button:hover {
+  background-color: #1565c0;
+  box-shadow: 0 0 8px rgba(30, 136, 229, 0.6);
 }
 
 .modal {
   position: fixed;
   top: 0; left: 0;
-  width: 100%; height: 100%;
-  background: rgba(0,0,0,0.5);
+  width: 100%;
+  height: 100%;
   display: none;
-  align-items: center;
+  background: rgba(0, 0, 0, 0.5);
   justify-content: center;
-  z-index: 1000;
+  align-items: center;
+  z-index: 999;
 }
 
 .modal-content {
   background: white;
-  border-radius: 16px;
-  padding: 24px;
-  width: 300px;
-  text-align: center;
-  box-shadow: 0 8px 24px rgba(0,0,0,0.2);
+  display: flex;
+  flex-direction: column;
+  padding: 20px;
+  border-radius: 12px;
+  width: 90%;
+  max-width: 400px;
+  gap: 15px;
+  font-family: 'Lato', sans-serif;
 }
 
 .modal-content input {
-  display: block;
-  width: 100%;
-  padding: 8px 12px;
-  margin: 10px 0;
-  font-size: 14px;
-  border-radius: 8px;
+  padding: 10px;
+  font-size: 1rem;
   border: 1px solid #ccc;
+  border-radius: 8px;
+  width: 100%;
+  margin-bottom: 10px;
 }
 
-button {
-  font-family: 'Roboto Mono', monospace;
+.add-btn,
+.remove-btn {
+  font-family: 'Courier New', Courier, monospace;
   text-transform: lowercase;
-  border-radius: 999px;
-  padding: 6px 14px;
   font-size: 13px;
   font-weight: 500;
+  padding: 10px 18px;
+  border-radius: 999px;
+  border: 2px solid #1a237e;
+  background-color: #1e88e5;
+  color: white;
   cursor: pointer;
   transition: all 0.2s ease;
-  outline: none;
-  border: none;
 }
 
-/* Confirm (green) */
-.confirm-btn {
-  background-color: #0ad200;
-  border: 2px solid #088f00;
-  color: white;
-  margin-right: 8px;
+.add-btn:hover,
+.remove-btn:hover {
+  background-color: #1565c0;
+  box-shadow: 0 0 8px rgba(30, 136, 229, 0.6);
 }
 
-.confirm-btn:hover {
-  background-color: #0bcf00e0;
-  box-shadow: 0 0 6px rgba(11, 207, 0, 0.4);
+.inline-add-form {
+  margin-top: 10px;
+  padding: 10px;
+  border: 1px solid #ccc;
+  background-color: #f4f4f4;
+  border-radius: 8px;
 }
 
-/* Reject/Cancel (red) */
-.reject-btn {
-  background-color: #ff4d4d;
-  border: 2px solid #b22222;
-  color: white;
+.inline-add-form input {
+  padding: 6px;
+  margin-bottom: 6px;
+  border-radius: 4px;
+  border: 1px solid #ccc;
+  width: 100%;
 }
 
-.reject-btn:hover {
-  background-color: #e93b3b;
-  box-shadow: 0 0 6px rgba(255, 77, 77, 0.4);
+.parts-list {
+  display: grid;
+  grid-template-columns: repeat(auto-fill, minmax(160px, 1fr));
+  gap: 12px;
+  overflow-y: auto;
+  padding: 10px 0;
 }
+
+.part-entry {
+  background-color: #eeeeee;
+  border-radius: 12px;
+  padding: 10px;
+  display: flex;
+  flex-direction: column;
+  gap: 6px;
+  box-shadow: 0 2px 6px rgba(0,0,0,0.1);
+}
+
+.status-bar {
+  display: flex;
+  width: 100%;
+  height: 30px;
+  border-radius: 6px;
+  overflow: hidden;
+  text-align: center;
+  font-weight: bold;
+}
+
+.status {
+  display: flex;
+  justify-content: center;
+  align-items: center;
+  height: 100%;
+  color: black;
+}
+
+.green { background-color: #a5d6a7; }
+.red { background-color: #ef9a9a; }
+.yellow { background-color: #fff59d; }
