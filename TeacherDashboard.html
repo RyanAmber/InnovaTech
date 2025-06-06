@@ -740,32 +740,29 @@
 
 
     document.getElementById("removeComponentBtn").addEventListener("click", async () => {
-      if (!currentComponentType) return;
-      if (!confirm(`Delete the entire "${currentComponentType}" component type and all its instances?`)) return;
-      
-      try {
-        // Delete component type
-        await deleteDoc(doc(db, "componentTypes", currentComponentType));
-        
-        // Delete all components of this type
-        const componentsQuery = query(collection(db, "components"), where("type", "==", currentComponentType));
-        const componentsSnapshot = await getDocs(componentsQuery);
-        
-        const deletePromises = [];
-        componentsSnapshot.forEach(doc => {
-          deletePromises.push(deleteDoc(doc.ref));
-        });
-        
-        await Promise.all(deletePromises);
-        
-        alert("Component type deleted successfully!");
-        window.closeModal();
-        await loadComponents();
-      } catch (err) {
-        console.error("Error deleting component type:", err);
-        alert("Error deleting component type. Please try again.");
-      }
-    });
+  if (!currentComponentType) return;
+  if (!confirm(`Delete the entire "${currentComponentType}" component type and all its parts?`)) return;
+
+  try {
+    // Delete the component type document from "inventory"
+    await deleteDoc(doc(db, "inventory", currentComponentType));
+
+    // Get all parts docs in the subcollection "parts"
+    const partsSnapshot = await getDocs(collection(db, "inventory", currentComponentType, "parts"));
+
+    // Delete all part docs in parallel
+    const deletePromises = partsSnapshot.docs.map(partDoc => deleteDoc(partDoc.ref));
+    await Promise.all(deletePromises);
+
+    alert("Component type and all parts deleted successfully!");
+    window.closeModal();
+    await loadComponents();
+  } catch (err) {
+    console.error("Error deleting component type:", err);
+    alert("Error deleting component type. Please try again.");
+  }
+});
+
 
     // Initialize
     verifyUserRole();
