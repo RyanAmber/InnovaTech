@@ -657,89 +657,83 @@
     });
 
     document.getElementById("addForm").addEventListener("submit", async function (e) {
-      e.preventDefault();
-      const type = document.getElementById("newType").value.trim();
-      const image = document.getElementById("newImage").value.trim();
-      const group = document.getElementById("newGroup").value.trim();
-      const working = document.getElementById("newWorking").checked;
-      const partID = document.getElementById("newPartID").value.trim();
-      
-      if (!type) return alert("Component type is required.");
-      
-      try {
-        // Add component type
-        await setDoc(doc(db, "componentTypes", type), {
-          image: image || "",
-          createdAt: new Date()
-        });
-        
-        // Add initial component instance
-        const componentData = {
-          type: type,
-          group: group || "0",
-          working: working,
-          createdAt: new Date()
-        };
-        
-        if (partID) {
-          componentData.partID = partID;
-          await setDoc(doc(db, "components", partID), componentData);
-        } else {
-          await addDoc(collection(db, "components"), componentData);
-        }
-        
-        alert("Component type added successfully!");
-        window.closeAddTypeModal();
-        document.getElementById("addForm").reset();
-        await loadComponents();
-      } catch (err) {
-        console.error("Error adding component type:", err);
-        alert("Error adding component type. Please try again.");
-      }
+  e.preventDefault();
+  const type = document.getElementById("newType").value.trim();
+  const image = document.getElementById("newImage").value.trim();
+  const group = document.getElementById("newGroup").value.trim();
+  const working = document.getElementById("newWorking").checked;
+  const partID = document.getElementById("newPartID").value.trim();
+
+  if (!type) return alert("Component type is required.");
+  if (!partID) return alert("Part ID is required."); // Require partID
+
+  try {
+    // Add or update component type
+    await setDoc(doc(db, "componentTypes", type), {
+      image: image || "",
+      createdAt: new Date()
     });
 
-    document.getElementById("addSingleComponentBtn").addEventListener("click", () => {
-      const form = document.getElementById("inlineAddForm");
-      form.style.display = form.style.display === "none" ? "block" : "none";
-    });
+    // Check if part ID already exists
+    const existing = await getDoc(doc(db, "components", partID));
+    if (existing.exists()) return alert("This Part ID already exists.");
+
+    const componentData = {
+      type: type,
+      group: group || "0",
+      working: working,
+      partID: partID,
+      createdAt: new Date()
+    };
+
+    await setDoc(doc(db, "components", partID), componentData);
+
+    alert("Component type and part added successfully!");
+    window.closeAddTypeModal();
+    document.getElementById("addForm").reset();
+    await loadComponents();
+  } catch (err) {
+    console.error("Error adding component type:", err);
+    alert("Error adding component type. Please try again.");
+  }
+});
+
 
     document.getElementById("inlineAddSubmitBtn").addEventListener("click", async () => {
-      if (!currentComponentType) return alert("Select a component type first.");
-      
-      const partID = document.getElementById("inlineAddID").value.trim();
-      const working = document.getElementById("inlineAddWorking").checked;
-      
-      try {
-        const componentData = {
-          type: currentComponentType,
-          group: "0", // Add to storage
-          working: working,
-          createdAt: new Date()
-        };
-        
-        if (partID) {
-          // Check if partID already exists
-          const existingDoc = await getDoc(doc(db, "components", partID));
-          if (existingDoc.exists()) {
-            return alert("A component with this ID already exists.");
-          }
-          componentData.partID = partID;
-          await setDoc(doc(db, "components", partID), componentData);
-        } else {
-          await addDoc(collection(db, "components"), componentData);
-        }
-        
-        alert("Component added successfully!");
-        document.getElementById("inlineAddForm").style.display = "none";
-        document.getElementById("inlineAddID").value = "";
-        document.getElementById("inlineAddWorking").checked = true;
-        await loadComponents();
-        openModal(currentComponentType); // Refresh the modal
-      } catch (err) {
-        console.error("Error adding component:", err);
-        alert("Error adding component. Please try again.");
-      }
-    });
+  if (!currentComponentType) return alert("Select a component type first.");
+
+  const partID = document.getElementById("inlineAddID").value.trim();
+  const working = document.getElementById("inlineAddWorking").checked;
+
+  if (!partID) return alert("Part ID is required."); // Force manual input
+
+  try {
+    // Check for duplicate part ID
+    const existing = await getDoc(doc(db, "components", partID));
+    if (existing.exists()) return alert("A component with this ID already exists.");
+
+    const componentData = {
+      type: currentComponentType,
+      group: "0",
+      working: working,
+      partID: partID,
+      createdAt: new Date()
+    };
+
+    await setDoc(doc(db, "components", partID), componentData);
+
+    alert("Component added successfully!");
+    document.getElementById("inlineAddForm").style.display = "none";
+    document.getElementById("inlineAddID").value = "";
+    document.getElementById("inlineAddWorking").checked = true;
+    await loadComponents();
+    openModal(currentComponentType);
+  } catch (err) {
+    console.error("Error adding component:", err);
+    alert("Error adding component. Please try again.");
+  }
+});
+
 
     document.getElementById("removeComponentBtn").addEventListener("click", async () => {
       if (!currentComponentType) return;
