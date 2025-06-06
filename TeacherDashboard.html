@@ -5,10 +5,9 @@
   <meta name="viewport" content="width=device-width, initial-scale=1.0">
   <title>Teacher Dashboard</title>
   <link rel="stylesheet" href="TeacherDashboard.css" />
-  <link href="https://fonts.googleapis.com/css2?family=Lato&family=Roboto+Mono&display=swap" rel="stylesheet" />
 </head>
 <body>
-  <header id="usernameHeader" style="font-family: 'Lato', sans-serif; color: white;">Welcome, </header>
+  <header id="usernameHeader">Welcome, </header>
 
   <div class="container">
     <div class="left">
@@ -25,9 +24,7 @@
 
       <div class="notifications-wrapper">
         <div class="bubble-heading">Notifications</div>
-        <div class="notifications" id="notification-bar">
-          <div class="notif">No new notifications</div>
-        </div>
+        <div class="notifications" id="notification-bar"></div>
       </div>
     </div>
   </div>
@@ -76,22 +73,13 @@
           <input type="text" id="newType" placeholder="Component type (ID)" required />
           <input type="text" id="newImage" placeholder="Image URL (optional)" />
           <input type="text" id="newGroup" placeholder="Group (0 = storage)" required />
+          <label><input type="checkbox" id="newWorking" checked /> Working</label>
+          <input type="text" id="newPartID" placeholder="Optional Part ID (alphanumeric, _ or -)">
           <button type="submit">Submit</button>
         </form>
       </div>
     </div>
   </div>
-
-  <!-- Add New Button Card -->
-  <div class="component-card" id="add-new-btn">
-    <p style="font-size: 3rem; color: #1a237e;">+</p>
-  </div>
-
-  <script>
-    document.getElementById('add-new-btn').addEventListener('click', () => {
-      document.getElementById('addTypeModal').style.display = 'flex';
-    });
-  </script>
 
   <!-- Firebase & Dashboard Logic -->
   <script type="module">
