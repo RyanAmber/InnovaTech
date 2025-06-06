@@ -189,6 +189,18 @@
         console.error("Failed to load components:", err);
         loadingDiv.textContent = "Error loading components.";
       }
+      // Add "Add Item Type" button
+const addCard = document.createElement("div");
+addCard.className = "component-card add-type-card";
+addCard.innerHTML = `
+  <div class="add-icon">+</div>
+  <h3>Add Item Type</h3>
+`;
+addCard.addEventListener("click", () => {
+  document.getElementById("addTypeModal").style.display = "block";
+});
+grid.appendChild(addCard);
+
     }
 
     function openModal(type) {
