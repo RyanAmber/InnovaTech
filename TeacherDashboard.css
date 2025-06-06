@@ -126,6 +126,26 @@ header {
   margin-bottom: 10px;
 }
 
+/* Add New Card Styling */
+#add-new-btn {
+  display: flex;
+  justify-content: center;
+  align-items: center;
+  font-size: 3rem;
+  font-weight: bold;
+  color: #1a237e;
+  background: white;
+  border-radius: 16px;
+  box-shadow: 0 4px 12px rgba(0, 0, 0, 0.15);
+  cursor: pointer;
+  transition: transform 0.2s ease;
+  height: 200px;
+}
+
+#add-new-btn:hover {
+  transform: scale(1.05);
+}
+
 .notifications-wrapper {
   flex-grow: 1;
   display: flex;
@@ -276,4 +296,4 @@ header {
 
 .green { background-color: #a5d6a7; }
 .red { background-color: #ef9a9a; }
-yellow { background-color: #fff59d; }
+.yellow { background-color: #fff59d; }
