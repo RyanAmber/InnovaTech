@@ -665,17 +665,17 @@
   const partID = document.getElementById("newPartID").value.trim();
 
   if (!type) return alert("Component type is required.");
-  if (!partID) return alert("Part ID is required."); // Require partID
+  if (!partID) return alert("Part ID is required.");
 
   try {
-    // Add or update component type
-    await setDoc(doc(db, "componentTypes", type), {
+    // Add or update component type doc in inventory collection
+    await setDoc(doc(db, "inventory", type), {
       image: image || "",
       createdAt: new Date()
     });
 
-    // Check if part ID already exists
-    const existing = await getDoc(doc(db, "components", partID));
+    // Check if part with same ID already exists in subcollection "parts"
+    const existing = await getDoc(doc(db, "inventory", type, "parts", partID));
     if (existing.exists()) return alert("This Part ID already exists.");
 
     const componentData = {
@@ -686,7 +686,8 @@
       createdAt: new Date()
     };
 
-    await setDoc(doc(db, "components", partID), componentData);
+    // Add part document inside inventory/type/parts subcollection
+    await setDoc(doc(db, "inventory", type, "parts", partID), componentData);
 
     alert("Component type and part added successfully!");
     window.closeAddTypeModal();
@@ -699,17 +700,18 @@
 });
 
 
+
     document.getElementById("inlineAddSubmitBtn").addEventListener("click", async () => {
   if (!currentComponentType) return alert("Select a component type first.");
 
   const partID = document.getElementById("inlineAddID").value.trim();
   const working = document.getElementById("inlineAddWorking").checked;
 
-  if (!partID) return alert("Part ID is required."); // Force manual input
+  if (!partID) return alert("Part ID is required.");
 
   try {
-    // Check for duplicate part ID
-    const existing = await getDoc(doc(db, "components", partID));
+    // Check if part ID already exists under current component type
+    const existing = await getDoc(doc(db, "inventory", currentComponentType, "parts", partID));
     if (existing.exists()) return alert("A component with this ID already exists.");
 
     const componentData = {
@@ -720,7 +722,8 @@
       createdAt: new Date()
     };
 
-    await setDoc(doc(db, "components", partID), componentData);
+    // Add part doc inside inventory/currentComponentType/parts
+    await setDoc(doc(db, "inventory", currentComponentType, "parts", partID), componentData);
 
     alert("Component added successfully!");
     document.getElementById("inlineAddForm").style.display = "none";
@@ -733,6 +736,7 @@
     alert("Error adding component. Please try again.");
   }
 });
+
 
 
     document.getElementById("removeComponentBtn").addEventListener("click", async () => {
