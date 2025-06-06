@@ -29,33 +29,35 @@
   </div>
 
   <!-- Component Modal -->
-  <div class="modal" id="modal" style="display: none;">
-    <div class="modal-content modal-flex">
+  <div class="modal" id="modal">
+    <div class="modal-content">
       <span class="close-btn" onclick="closeModal()">&times;</span>
-  
       <div class="modal-left">
         <h2 id="modalTitle">Component</h2>
-        <p>Total: <span id="totalCount">0</span></p>
+        <p>Total: <span id="totalCount"></span></p>
         <p>Available: <span id="availableCount">0</span></p>
-  
+        <p>Working: <span id="workingCount">0</span></p>
         <div class="actions">
           <button id="addSingleComponentBtn" class="add-btn">Add Single Component</button>
           <button id="removeComponentBtn" class="remove-btn">Remove Component</button>
         </div>
-  
+
         <div id="inlineAddForm" class="inline-add-form" style="display: none;">
-          <h4>Add Single Component</h4>
+          <h4>Add Single Component (to Storage)</h4>
           <input type="text" id="inlineAddID" placeholder="Optional ID (alphanumeric, _ or -)">
+          <label style="display: block; margin-top: 5px;">
+            <input type="checkbox" id="inlineAddWorking" checked /> Working
+          </label>
           <button id="inlineAddSubmitBtn" class="add-btn" style="margin-top: 8px;">Add Component</button>
         </div>
-  
+
         <h3>Individual Parts</h3>
         <div id="partsList" class="parts-list scrollable-parts"></div>
       </div>
-  
+
       <div class="modal-right">
         <img id="modalImage" class="component-img" src="" alt="Component Image">
-        <div class="status-bar" id="statusBar"></div>
+        <div class="status-bar"></div>
       </div>
     </div>
   </div>
