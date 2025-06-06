@@ -205,15 +205,17 @@ header {
 
 .modal-content {
   background: white;
-  padding: 30px;
-  border-radius: 24px;
-  width: 90%;
-  max-width: 800px;
+  border-radius: 16px;
+  padding: 24px;
+  width: 100%;
+  max-width: 400px;
+  text-align: center;
+  box-shadow: 0 8px 24px rgba(0, 0, 0, 0.2);
   display: flex;
-  flex-direction: row;
-  gap: 30px;
-  position: relative;
+  flex-direction: column;
+  align-items: center;
 }
+
 .modal-content input {
   padding: 10px;
   font-size: 1rem;
