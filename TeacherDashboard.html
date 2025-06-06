@@ -218,7 +218,7 @@ grid.appendChild(addCard);
           const partData = doc.data();
           const entry = document.createElement("div");
           entry.className = "part-entry";
-          entry.innerHTML = `<strong>${doc.id}</strong> — Team: ${partData.team} — ${partData.working ? "✅ Working" : "❌ Broken"}`;
+          entry.innerHTML = `<strong>${doc.id}</strong> — Team: ${partData.team} — ${partData.working ? "Working" : "Broken"}`;
           document.getElementById("partsList").appendChild(entry);
         });
       });
