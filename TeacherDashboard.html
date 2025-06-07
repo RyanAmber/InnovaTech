@@ -604,42 +604,18 @@
       }
 
       // Update status bar
-      const statusBar = modal.querySelector(".status-bar");
-      const total = countMap.get(type) || 0;
-      const working = workingMap.get(type) || 0;
-      const available = availableMap.get(type) || 0;
-      
-      statusBar.innerHTML = "";
-      if (total > 0) {
-        const workingPercent = (working / total) * 100;
-        const availablePercent = (available / total) * 100;
-        const unavailablePercent = ((total - available) / total) * 100;
-        
-        if (available > 0) {
-          const availableDiv = document.createElement("div");
-          availableDiv.className = "status green";
-          availableDiv.style.width = `${availablePercent}%`;
-          availableDiv.textContent = `${available} Available`;
-          statusBar.appendChild(availableDiv);
-        }
-        
-        if (total - available > 0) {
-          const unavailableDiv = document.createElement("div");
-          unavailableDiv.className = "status yellow";
-          unavailableDiv.style.width = `${unavailablePercent}%`;
-          unavailableDiv.textContent = `${total - available} In Use`;
-          statusBar.appendChild(unavailableDiv);
-        }
-        
-        if (total - working > 0) {
-          const brokenDiv = document.createElement("div");
-          brokenDiv.className = "status red";
-          brokenDiv.style.width = `${((total - working) / total) * 100}%`;
-          brokenDiv.textContent = `${total - working} Broken`;
-          statusBar.appendChild(brokenDiv);
-        }
-      }
+      const greenPercent = total > 0 ? Math.round((working / total) * 100) : 0;
+      const redPercent = 100 - greenPercent;
+      const statusBar = document.querySelector('.statusbar');
 
+      if (total === 0) {
+        statusBar.innerHTML = `<div class="status yellow" style="width: 100%">100%</div>`;
+      } else {
+        statusBar.innerHTML = `
+    <div class="status green" style="width: ${greenPercent}%">${greenPercent}%</div>
+    <div class="status red" style="width: ${redPercent}%">${redPercent > 0 ? redPercent + '%' : ''}</div>
+  `;
+      }
       modal.style.display = "flex";
     }
 
