@@ -699,6 +699,10 @@
   }
 });
 
+  document.getElementById("addSingleComponentBtn").addEventListener("click", () => {
+  const form = document.getElementById("inlineAddForm");
+  form.style.display = form.style.display === "none" ? "block" : "none";
+});
 
 
     document.getElementById("inlineAddSubmitBtn").addEventListener("click", async () => {
@@ -710,32 +714,35 @@
   if (!partID) return alert("Part ID is required.");
 
   try {
-    // Check if part ID already exists under current component type
-    const existing = await getDoc(doc(db, "inventory", currentComponentType, "parts", partID));
-    if (existing.exists()) return alert("A component with this ID already exists.");
+    const partRef = doc(db, "inventory", currentComponentType, "parts", partID);
+    const existingDoc = await getDoc(partRef);
+
+    if (existingDoc.exists()) {
+      return alert("A component with this ID already exists.");
+    }
 
     const componentData = {
-      type: currentComponentType,
-      group: "0",
-      working: working,
       partID: partID,
+      group: "0", // default group
+      working: working,
       createdAt: new Date()
     };
 
-    // Add part doc inside inventory/currentComponentType/parts
-    await setDoc(doc(db, "inventory", currentComponentType, "parts", partID), componentData);
+    await setDoc(partRef, componentData);
 
     alert("Component added successfully!");
     document.getElementById("inlineAddForm").style.display = "none";
     document.getElementById("inlineAddID").value = "";
     document.getElementById("inlineAddWorking").checked = true;
+
     await loadComponents();
-    openModal(currentComponentType);
+    openModal(currentComponentType); // Refresh modal
   } catch (err) {
     console.error("Error adding component:", err);
     alert("Error adding component. Please try again.");
   }
 });
+
 
 
 
