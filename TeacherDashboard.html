@@ -464,86 +464,59 @@
       await loadNotifications();
     }
 
-    async function loadComponents() {
-  const loadingDiv = document.getElementById("loading");
-  const grid = document.getElementById("component-grid");
-  grid.innerHTML = "";
+async function loadComponents() {
+      const grid = document.getElementById("component-grid");
+      const loading = document.getElementById("loading");
 
-  try {
-    const inventorySnapshot = await getDocs(collection(db, "inventory"));
-    loadingDiv.style.display = "none";
-    grid.style.display = "grid";
+      try {
+        const inventorySnapshot = await getDocs(collection(db, "inventory"));
 
-    for (const doc of inventorySnapshot.docs) {
-      const typeId = doc.id;
-      const typeData = doc.data();
-      const image = typeData.image || "";
+        for (const typeDoc of inventorySnapshot.docs) {
+          const type = typeDoc.id;
+          const image = typeDoc.data().image || "https://upload.wikimedia.org/wikipedia/commons/3/38/Arduino_Uno_-_R3.jpg";
+          imageMap.set(type, image);
 
-      const partsSnapshot = await getDocs(collection(db, "inventory", typeId, "parts"));
-      const parts = [];
-      let total = 0;
-      let working = 0;
-      let available = 0;
+          const partsRef = collection(db, "inventory", type, "parts");
+          const partsSnapshot = await getDocs(partsRef);
 
-      partsSnapshot.forEach(partDoc => {
-        const data = partDoc.data();
-        const part = {
-          id: partDoc.id,
-          partID: data.partID || partDoc.id,
-          group: data.group || "0",
-          working: data.working !== false,
-          ...data
-        };
+          partsSnapshot.forEach(partDoc => {
+            const { working, team } = partDoc.data();
+            countMap.set(type, (countMap.get(type) || 0) + 1);
+            if (working) {
+              workingMap.set(type, (workingMap.get(type) || 0) + 1);
+              if (team == "0") {
+                availableMap.set(type, (availableMap.get(type) || 0) + 1);
+              }
+            }
+          });
+        }
 
-        total++;
-        if (part.working) working++;
-        if (part.group === "0" || part.group === 0) available++;
+        for (const [type, image] of imageMap) {
+          const card = document.createElement("div");
+          card.className = "card";
+          card.onclick = () => openModal(type, image);
+          card.innerHTML = `<img src="${image}" alt="${type}"><p>${type}</p>`;
+          grid.appendChild(card);
+        }
 
-        parts.push(part);
-      });
+        for (const [type, total] of countMap) {
+          const working = workingMap.get(type) || 0;
+          const available = availableMap.get(type) || 0;
+          if (type !== "" && total > 0 && (working / total) < 0.1) {
+            addNotification("Quantity Alert: " + type + " has less than 10% working components");
+          }
+          if (type !== "" && available == 0) {
+            addNotification("Quantity Alert: " + type + " has no available items to be borrowed");
+          }
+        }
 
-      // Save to maps for modal behavior
-      imageMap.set(typeId, image);
-      countMap.set(typeId, total);
-      workingMap.set(typeId, working);
-      availableMap.set(typeId, available);
-      partsMap.set(typeId, parts);
-
-      // Create card
-      const card = document.createElement("div");
-      card.className = "component-card";
-
-      const imageHtml = image
-        ? `<img src="${image}" alt="${typeId}" class="component-thumb" onerror="this.style.display='none'" />`
-        : `<div style="width: 100%; height: 120px; background: #f0f0f0; border-radius: 8px; display: flex; align-items: center; justify-content: center; color: #666;">No Image</div>`;
-
-      card.innerHTML = `
-        ${imageHtml}
-        <h3>${typeId}</h3>
-      `;
-      card.addEventListener("click", () => openModal(typeId));
-      grid.appendChild(card);
+        loading.style.display = "none";
+        grid.style.display = "grid";
+      } catch (error) {
+        loading.textContent = "Error loading components.";
+        console.error("Error loading data:", error);
+      }
     }
-
-    // Add "Add Item Type" button
-    const addCard = document.createElement("div");
-    addCard.className = "component-card add-type-card";
-    addCard.innerHTML = `
-      <div class="add-icon">+</div>
-      <h3>Add Item Type</h3>
-    `;
-    addCard.addEventListener("click", () => {
-      document.getElementById("addTypeModal").style.display = "flex";
-    });
-    grid.appendChild(addCard);
-
-    console.log(`Loaded ${inventorySnapshot.size} component types`);
-
-  } catch (err) {
-    console.error("Failed to load components:", err);
-    loadingDiv.textContent = "Error loading components. Please refresh the page.";
-  }
-}
 
     async function loadNotifications() {
       try {
@@ -574,15 +547,18 @@
       }
     }
 
-    function openModal(type) {
-      currentComponentType = type;
-      const modal = document.getElementById("modal");
-      document.getElementById("modalTitle").textContent = type;
-      document.getElementById("modalImage").src = imageMap.get(type) || "";
-      document.getElementById("totalCount").textContent = countMap.get(type) || 0;
-      document.getElementById("availableCount").textContent = availableMap.get(type) || 0;
-      document.getElementById("workingCount").textContent = workingMap.get(type) || 0;
-      
+    function openModal(name, imageUrl) {
+      const total = countMap.get(name) || 0;
+      const working = workingMap.get(name) || 0;
+      const available = availableMap.get(name) || 0;
+
+      document.getElementById('modal').style.display = 'flex';
+      document.getElementById('modalTitle').textContent = name;
+      document.getElementById('modalImage').src = imageUrl;
+      document.getElementById('totalCount').textContent = total;
+      document.getElementById('AvailableCount').textContent = available;
+      document.getElementById('WorkingCount').textContent = working;
+
       // Load individual parts
       const partsList = document.getElementById("partsList");
       partsList.innerHTML = "";
@@ -606,7 +582,7 @@
       // Update status bar
       const greenPercent = total > 0 ? Math.round((working / total) * 100) : 0;
       const redPercent = 100 - greenPercent;
-      const statusBar = document.querySelector('.statusbar');
+      const statusBar = document.querySelector('.status-bar');
 
       if (total === 0) {
         statusBar.innerHTML = `<div class="status yellow" style="width: 100%">100%</div>`;
@@ -616,8 +592,7 @@
     <div class="status red" style="width: ${redPercent}%">${redPercent > 0 ? redPercent + '%' : ''}</div>
   `;
       }
-      modal.style.display = "flex";
-    }
+}
 
     // Event listeners
     window.addEventListener("click", e => {
