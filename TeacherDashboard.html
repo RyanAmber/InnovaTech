@@ -575,49 +575,57 @@
     }
 
     function openModal(type) {
-      currentComponentType = type;
-      const modal = document.getElementById("modal");
-      document.getElementById("modalTitle").textContent = type;
-      document.getElementById("modalImage").src = imageMap.get(type) || "";
-      document.getElementById("totalCount").textContent = countMap.get(type) || 0;
-      document.getElementById("availableCount").textContent = availableMap.get(type) || 0;
-      document.getElementById("workingCount").textContent = workingMap.get(type) || 0;
-      
-      // Load individual parts
-      const partsList = document.getElementById("partsList");
-      partsList.innerHTML = "";
-      const parts = partsMap.get(type) || [];
-      
-      if (parts.length === 0) {
-        partsList.innerHTML = "<div class='part-entry'>No individual components found</div>";
-      } else {
-        parts.forEach(part => {
-          const entry = document.createElement("div");
-          entry.className = "part-entry";
-          entry.innerHTML = `
-            <strong>${part.partID}</strong><br>
-            Team: ${part.group}<br>
-            ${part.working ? 'Working' : 'Broken'}
-          `;
-          partsList.appendChild(entry);
-        });
-      }
+  currentComponentType = type;
+  const modal = document.getElementById("modal");
+  document.getElementById("modalTitle").textContent = type;
+  document.getElementById("modalImage").src = imageMap.get(type) || "";
+  document.getElementById("totalCount").textContent = countMap.get(type) || 0;
+  document.getElementById("availableCount").textContent = availableMap.get(type) || 0;
+  document.getElementById("workingCount").textContent = workingMap.get(type) || 0;
 
-      // Update status bar
-      const greenPercent = total > 0 ? Math.round((working / total) * 100) : 0;
-      const redPercent = 100 - greenPercent;
-      const statusBar = document.querySelector('.statusbar');
+  // Load individual parts
+  const partsList = document.getElementById("partsList");
+  partsList.innerHTML = "";
+  const parts = partsMap.get(type) || [];
 
-      if (total === 0) {
-        statusBar.innerHTML = `<div class="status yellow" style="width: 100%">100%</div>`;
-      } else {
-        statusBar.innerHTML = `
-    <div class="status green" style="width: ${greenPercent}%">${greenPercent}%</div>
-    <div class="status red" style="width: ${redPercent}%">${redPercent > 0 ? redPercent + '%' : ''}</div>
-  `;
-      }
-      modal.style.display = "flex";
-    }
+  if (parts.length === 0) {
+    partsList.innerHTML = "<div class='part-entry'>No individual components found</div>";
+  } else {
+    parts.forEach(part => {
+      const entry = document.createElement("div");
+      entry.className = "part-entry";
+      entry.innerHTML = `
+        <strong>${part.partID}</strong><br>
+        Team: ${part.group}<br>
+        ${part.working ? 'Working' : 'Broken'}
+      `;
+      partsList.appendChild(entry);
+    });
+  }
+
+  // Fix: Declare total and working
+  const total = countMap.get(type) || 0;
+  const working = workingMap.get(type) || 0;
+
+  const greenPercent = total > 0 ? Math.round((working / total) * 100) : 0;
+  const redPercent = 100 - greenPercent;
+
+  // Fix: Correct class name for status bar
+  const statusBar = modal.querySelector('.status-bar');
+  statusBar.innerHTML = ""; // Clear previous contents
+
+  if (total === 0) {
+    statusBar.innerHTML = `<div class="status yellow" style="width: 100%">100%</div>`;
+  } else {
+    statusBar.innerHTML = `
+      <div class="status green" style="width: ${greenPercent}%">${greenPercent}%</div>
+      <div class="status red" style="width: ${redPercent}%">${redPercent > 0 ? redPercent + '%' : ''}</div>
+    `;
+  }
+
+  modal.style.display = "flex";
+}
+
 
     // Event listeners
     window.addEventListener("click", e => {
