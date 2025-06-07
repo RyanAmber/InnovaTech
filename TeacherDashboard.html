@@ -458,8 +458,8 @@
 
     async function verifyUserRole() {
       const username = localStorage.getItem("username") || "teacher"; // Fallback for demo
-      
-      if (!username) {
+      const role = localStorage.getItem("role") || "User";  
+      if (!username||role=="User") {
         alert("Missing login info. Please log in again.");
         window.location.href = "login.html";
         return;
