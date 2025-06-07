@@ -278,13 +278,13 @@
     return;
   }
 
-  const confirmed = confirm(`Are you sure you want to delete the group "${groupName}"? All components borrowed by this group will be returned.`);
+  const confirmed = confirm(`Are you sure you want to delete the group "${groupName}"? This will return all components borrowed by them and move their users to "No Group".`);
   if (!confirmed) return;
 
   try {
     const groupRef = db.collection("Groups").doc(groupName);
 
-    // Step 1: Return borrowed components
+    // Step 1: Return all borrowed components
     const componentsSnap = await db.collection("inventory").get();
     const batch = db.batch();
 
@@ -292,32 +292,41 @@
       const data = compDoc.data();
       const borrowedBy = data.borrowedBy;
 
-      if (borrowedBy == groupName) {
-        const currentQty = data.quantity || 0;
-        const available = data.available || 0;
+      if (borrowedBy === groupName) {
+        const quantity = data.quantity || 0;
 
-        // Return all items
         batch.update(compDoc.ref, {
           borrowedBy: null,
-          available: currentQty  // assume full return
+          available: quantity
         });
       }
     });
 
+    // Step 2: Handle users in the group
+    const usersSnap = await groupRef.collection("Users").get();
+    usersSnap.forEach(userDoc => {
+      const username = userDoc.id;
+      const userRef = db.collection("users").doc(username);
 
-    // Step 3: Delete group document
+      batch.update(userRef, { group: "No Group" });
+      batch.delete(userDoc.ref); // Optional: remove from group's subcollection
+    });
+
+    // Step 3: Delete the group document
     batch.delete(groupRef);
 
+    // Step 4: Commit all changes
     await batch.commit();
 
     card.remove();
-    alert(`Group "${groupName}" deleted and components returned.`);
-    console.log(`Group "${groupName}" deleted and inventory updated.`);
+    alert(`Group "${groupName}" deleted, components returned, and users moved to "No Group".`);
+    console.log(`Group "${groupName}" cleaned up successfully.`);
   } catch (error) {
-    console.error("Error deleting group:", error);
-    alert("Failed to delete group. Please try again.");
+    console.error("Error during group deletion:", error);
+    alert("Something went wrong while deleting the group. Check console for details.");
   }
 }
+
 
 
     window.onload = () => {
