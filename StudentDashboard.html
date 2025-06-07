@@ -27,11 +27,9 @@
       <div class="grid" id="group-inventory"></div>
     </div>
     <div class="right">
-      
       <div class="notifications-wrapper">
         <div class="bubble-heading">Notifications</div>
         <div class="notifications" id="notification-bar"></div>
-
         <form id="addForm" class="add-form" style="display: none;">
           <input type="text" id="newType" placeholder="Component type" required />
           <input type="text" id="newImage" placeholder="Image URL (optional)" />
@@ -43,32 +41,27 @@
     </div>
   </div>
 
-  <!-- Modal (replace only this section in your current file) -->
   <div class="modal" id="modal">
     <div class="modal-content">
       <div class="modal-left">
         <h2 id="modalTitle" class="component-name">Component_Name</h2>
-  
         <h3>Component Overview</h3>
         <div class="overview-box">
           <p>Number logged in: <span id="totalCount">X</span></p>
           <p>Number Available: <span id="AvailableCount">X</span></p>
           <p>Number Working: <span id="WorkingCount">X</span></p>
         </div>
-  
         <h3>Actions</h3>
         <div class="actions">
           <button class="action-btn" onclick="checkOutComponent()">Check out Component</button>
         </div>
       </div>
-  
       <div class="modal-right">
         <img id="modalImage" class="component-img" src="" alt="Component Image">
         <div class="status-bar"></div>
       </div>
     </div>
   </div>
-
 
   <script type="module">
     import { initializeApp } from "https://www.gstatic.com/firebasejs/10.11.0/firebase-app.js";
@@ -96,6 +89,7 @@
     const db = getFirestore(app);
 
     const username = localStorage.getItem("username") || "Student";
+    const group = localStorage.getItem("group") || "Group 0";
     if (username === "Student") {
       window.location.href = 'index.html';
     }
@@ -123,15 +117,11 @@
       const redPercent = 100 - greenPercent;
       const statusBar = document.querySelector('.status-bar');
 
-      if (total === 0) {
-        statusBar.innerHTML = `<div class="status yellow" style="width: 100%">100%</div>`;
-      } else {
-        statusBar.innerHTML = `
-    <div class="status green" style="width: ${greenPercent}%">${greenPercent}%</div>
-    <div class="status red" style="width: ${redPercent}%">${redPercent > 0 ? redPercent + '%' : ''}</div>
-  `;
-      }
-}
+      statusBar.innerHTML = total === 0
+        ? `<div class="status yellow" style="width: 100%">100%</div>`
+        : `<div class="status green" style="width: ${greenPercent}%">${greenPercent}%</div>
+           <div class="status red" style="width: ${redPercent}%">${redPercent > 0 ? redPercent + '%' : ''}</div>`;
+    }
 
     function closeModal() {
       document.getElementById('modal').style.display = 'none';
@@ -145,13 +135,13 @@
       bar.appendChild(note);
       bar.style.display = 'block';
     }
-        async function loadComponents() {
+
+    async function loadComponents() {
       const grid = document.getElementById("component-grid");
       const loading = document.getElementById("loading");
 
       try {
         const inventorySnapshot = await getDocs(collection(db, "inventory"));
-
         for (const typeDoc of inventorySnapshot.docs) {
           const type = typeDoc.id;
           const image = typeDoc.data().image || "https://upload.wikimedia.org/wikipedia/commons/3/38/Arduino_Uno_-_R3.jpg";
@@ -200,175 +190,119 @@
     }
 
     async function checkOutComponent() {
-  const name = document.getElementById('modalTitle').textContent;
+      const name = document.getElementById('modalTitle').textContent;
+      try {
+        const partsRef = collection(db, "inventory", name, "parts");
+        const partsSnapshot = await getDocs(partsRef);
 
-  try {
-    const partsRef = collection(db, "inventory", name, "parts");
-    const partsSnapshot = await getDocs(partsRef);
+        const availablePart = partsSnapshot.docs.find(doc => {
+          const data = doc.data();
+          return data.working === true && data.team === "0";
+        });
 
-    const availablePart = partsSnapshot.docs.find(doc => {
-      const data = doc.data();
-      return data.working === true && data.team === "0";
-    });
+        if (!availablePart) return alert("No available components to check out.");
+        const partId = availablePart.id;
 
-    if (!availablePart) {
-      alert("No available components to check out.");
-      return;
+        await setDoc(doc(db, "inventory", name, "parts", partId), { team: group }, { merge: true });
+        await setDoc(doc(db, "Groups", group, "Items", partId), {
+          type: name,
+          checkedOutAt: new Date().toISOString(),
+          working: true,
+          pending: true
+        });
+
+        alert(`Checked out one ${name} to ${group}.`);
+        closeModal();
+        location.reload();
+      } catch (err) {
+        console.error("Checkout failed:", err);
+        closeModal();
+        alert("Error checking out component.");
+      }
     }
 
-    const userGroup = localStorage.getItem("group") || "Group 0";
-    const partId = availablePart.id;
+    window.confirmReceipt = async function(type, partId) {
+      try {
+        await setDoc(doc(db, "Groups", group, "Items", partId), { pending: false }, { merge: true });
+        alert(`${type} (${partId}) marked as received.`);
+        location.reload();
+      } catch (err) {
+        console.error("Error confirming receipt:", err);
+        alert("Failed to confirm receipt.");
+      }
+    };
 
-    // Step 1: Update inventory to assign to this group
-    const partDocRef = doc(db, "inventory", name, "parts", partId);
-    await setDoc(partDocRef, { team: userGroup }, { merge: true });
+    window.returnSpecificComponent = async function(type, partId) {
+      try {
+        await setDoc(doc(db, "inventory", type, "parts", partId), { team: "0" }, { merge: true });
+        await deleteDoc(doc(db, "Groups", group, "Items", partId));
+        alert(`Returned ${type} (${partId}) to storage.`);
+        location.reload();
+      } catch (err) {
+        console.error("Specific return failed:", err);
+        alert("Error returning this item.");
+      }
+    };
 
-    // Step 2: Add to group's Items list
-    const groupItemRef = doc(db, "Groups", userGroup, "Items", partId);
-    await setDoc(groupItemRef, {
-      type: name,
-      checkedOutAt: new Date().toISOString(),
-      working: true
-    });
+    window.markAsDamaged = async function(type, partId) {
+      try {
+        await setDoc(doc(db, "inventory", type, "parts", partId), { working: false }, { merge: true });
+        alert(`Marked ${type} (${partId}) as damaged.`);
+        location.reload();
+      } catch (err) {
+        console.error("Error marking item as damaged:", err);
+        alert("Failed to mark as damaged.");
+      }
+    };
 
-    alert(`Checked out one ${name} to ${userGroup}.`);
-    closeModal();
-  } catch (err) {
-    console.error("Checkout failed:", err);
-    closeModal();
-    alert("Error checking out component.");
-  }
-}
+    async function loadGroupInventory() {
+      const container = document.getElementById("group-inventory");
+      container.innerHTML = "";
 
-window.returnComponent = async function returnComponent() {
-  const name = document.getElementById('modalTitle').textContent;
-  const userGroup = localStorage.getItem("group") || "Group 0";
+      try {
+        const itemsSnapshot = await getDocs(collection(db, "Groups", group, "Items"));
 
-  try {
-    // Find the part currently checked out by this group
-    const partsRef = collection(db, "inventory", name, "parts");
-    const partsSnapshot = await getDocs(partsRef);
+        if (itemsSnapshot.empty) {
+          container.innerHTML = "<p>No items checked out.</p>";
+          return;
+        }
 
-    const checkedOutPart = partsSnapshot.docs.find(doc => {
-      const data = doc.data();
-      return data.working === true && data.team === userGroup;
-    });
+        itemsSnapshot.forEach(docSnap => {
+          const data = docSnap.data();
+          const type = data.type;
+          const image = imageMap.get(type) || "https://via.placeholder.com/100";
 
-    if (!checkedOutPart) {
-      alert("You have no checked out components of this type.");
-      return;
+          const card = document.createElement("div");
+          card.className = "group-card";
+          card.innerHTML = `
+            <img src="${image}" alt="${type}">
+            <div class="group-info">
+              <strong>${type}</strong>
+              <p>Checked out: <em>5/XX/2025</em></p>
+              <p>Borrower: <em>${group}</em></p>
+              ${data.pending ? `<p style="color:orange;"><strong>Pending Confirmation</strong></p>` : ``}
+            </div>
+            <div class="group-buttons">
+              <button class="damage-btn" onclick="markAsDamaged('${type}','${docSnap.id}')">mark as damaged</button>
+              <button class="return-btn" onclick="returnSpecificComponent('${type}','${docSnap.id}')">return</button>
+              ${data.pending ? `<button class="confirm-btn" onclick="confirmReceipt('${type}','${docSnap.id}')">Confirm Receipt</button>` : ``}
+            </div>
+          `;
+          container.appendChild(card);
+        });
+      } catch (error) {
+        console.error("Error loading group inventory:", error);
+        container.innerHTML = "<p>Error loading group items.</p>";
+      }
     }
 
-    // 1. Set team back to "0" (in storage)
-    const partDocRef = doc(db, "inventory", name, "parts", checkedOutPart.id);
-    await setDoc(partDocRef, { team: "0" }, { merge: true });
-
-    // 2. Remove from group's Items list
-    const groupResRef = doc(db, "Groups", userGroup, "Items", checkedOutPart.id);
-    await deleteDoc(groupResRef);
-
-    alert(`Returned one ${name} from group ${userGroup}.`);
-    closeModal();
-    location.reload();
-  } catch (err) {
-    console.error("Return failed:", err);
-    closeModal();
-    alert("Error returning component.");
-  }
-};
-window.returnSpecificComponent = async function(type, partId) {
-const group = localStorage.getItem("group") || "Group 0";
-
-try {
-// 1. Set part back to "0"
-const partRef = doc(db, "inventory", type, "parts", partId);
-await setDoc(partRef, { team: "0" }, { merge: true });
-
-// 2. Remove from group Items
-const groupRef = doc(db, "Groups", group, "Items", partId);
-await deleteDoc(groupRef);
-
-alert(`Returned ${type} (${partId}) to storage.`);
-document.getElementById("component-grid").innerHTML = "";
-countMap.clear();
-workingMap.clear();
-availableMap.clear();
-location.reload();
-} catch (err) {
-console.error("Specific return failed:", err);
-alert("Error returning this item.");
-}
-};
-window.markAsDamaged = async function(type, partId) {
-const group = localStorage.getItem("group") || "Group 0";
-
-try {
-const partRef = doc(db, "inventory", type, "parts", partId);
-await setDoc(partRef, { working: false }, { merge: true });
-
-alert(`Marked ${type} (${partId}) as damaged.`);
-
-document.getElementById("component-grid").innerHTML = "";
-countMap.clear();
-workingMap.clear();
-availableMap.clear();
-location.reload();
-} catch (err) {
-console.error("Error marking item as damaged:", err);
-alert("Failed to mark as damaged.");
-}
-};
-async function loadGroupInventory() {
-  const group = localStorage.getItem("group") || "Group 0";
-  const container = document.getElementById("group-inventory");
-  container.innerHTML = "";
-
-  try {
-    const itemsSnapshot = await getDocs(collection(db, "Groups", group, "Items"));
-
-    if (itemsSnapshot.empty) {
-      container.innerHTML = "<p>No items checked out.</p>";
-      return;
-    }
-
-    itemsSnapshot.forEach(doc => {
-      const data = doc.data();
-      const type = data.type;
-      const image = imageMap.get(type) || "https://via.placeholder.com/100";
-
-      const card = document.createElement("div");
-      card.className = "group-card";
-
-      card.innerHTML = `
-        <img src="${image}" alt="${type}">
-        <div class="group-info">
-          <strong>${type}</strong>
-          <p>Checked out: <em>5/XX/2025</em></p>
-          <p>Borrower: <em>${group}</em></p>
-        </div>
-        <div class="group-buttons">
-          <button class="damage-btn" onclick="markAsDamaged('${type}','${doc.id}')">mark as damaged</button>
-          <button class="return-btn" onclick="returnSpecificComponent('${type}','${doc.id}')">return</button>
-        </div>
-      `;
-
-      container.appendChild(card);
-    });
-  } catch (error) {
-    console.error("Error loading group inventory:", error);
-    container.innerHTML = "<p>Error loading group items.</p>";
-  }
-}
-    
     window.checkOutComponent = checkOutComponent;
-  loadComponents().then(() => {
-    loadGroupInventory();
-    });
+    loadComponents().then(() => loadGroupInventory());
+
     window.onclick = function(e) {
       const modal = document.getElementById('modal');
       if (e.target === modal) closeModal();
     };
-    
   </script>
 </body>
 </html>
