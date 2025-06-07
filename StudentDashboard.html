@@ -190,36 +190,45 @@
     }
 
     async function checkOutComponent() {
-      const name = document.getElementById('modalTitle').textContent;
-      try {
-        const partsRef = collection(db, "inventory", name, "parts");
-        const partsSnapshot = await getDocs(partsRef);
+  const name = document.getElementById('modalTitle').textContent;
 
-        const availablePart = partsSnapshot.docs.find(doc => {
-          const data = doc.data();
-          return data.working === true && data.team === "0";
-        });
+  // 🚫 Prevent checkout if the student has no group
+  if (group === "No Group") {
+    alert("You must be in a group to check out components.");
+    closeModal();
+    return;
+  }
 
-        if (!availablePart) return alert("No available components to check out.");
-        const partId = availablePart.id;
+  try {
+    const partsRef = collection(db, "inventory", name, "parts");
+    const partsSnapshot = await getDocs(partsRef);
 
-        await setDoc(doc(db, "inventory", name, "parts", partId), { team: group }, { merge: true });
-        await setDoc(doc(db, "Groups", group, "Items", partId), {
-          type: name,
-          checkedOutAt: new Date().toISOString(),
-          working: true,
-          pending: true
-        });
+    const availablePart = partsSnapshot.docs.find(doc => {
+      const data = doc.data();
+      return data.working === true && data.team === "0";
+    });
 
-        alert(`Checked out one ${name} to ${group}.`);
-        closeModal();
-        location.reload();
-      } catch (err) {
-        console.error("Checkout failed:", err);
-        closeModal();
-        alert("Error checking out component.");
-      }
-    }
+    if (!availablePart) return alert("No available components to check out.");
+    const partId = availablePart.id;
+
+    await setDoc(doc(db, "inventory", name, "parts", partId), { team: group }, { merge: true });
+    await setDoc(doc(db, "Groups", group, "Items", partId), {
+      type: name,
+      checkedOutAt: new Date().toISOString(),
+      working: true,
+      pending: true
+    });
+
+    alert(`Checked out one ${name} to group ${group}.`);
+    closeModal();
+    location.reload();
+  } catch (err) {
+    console.error("Checkout failed:", err);
+    closeModal();
+    alert("Error checking out component.");
+  }
+}
+
 
     window.confirmReceipt = async function(type, partId) {
       try {
