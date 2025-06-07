@@ -504,7 +504,7 @@
 
         total++;
         if (part.working) working++;
-        if (part.group == "0" && part.working) available++;
+        if ((part.group == "0"||part.group==0) && part.working) available++;
 
         parts.push(part);
       });
