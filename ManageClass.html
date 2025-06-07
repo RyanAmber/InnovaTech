@@ -90,7 +90,7 @@
           const li = document.createElement("li");
           li.textContent = username;
 
-          if (role === "Unconfirmed") {
+          if (role == "Unconfirmed") {
             li.innerHTML += `
               <div style="display: flex; gap: 8px;">
                 <button class="approve-btn" onclick="approveUser('${username}')">approve</button>
@@ -292,7 +292,7 @@
       const data = compDoc.data();
       const borrowedBy = data.borrowedBy;
 
-      if (borrowedBy === groupName) {
+      if (borrowedBy == groupName) {
         const currentQty = data.quantity || 0;
         const available = data.available || 0;
 
