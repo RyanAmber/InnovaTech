@@ -271,31 +271,54 @@
     }
 
     async function removeTeam(button) {
-      const card = button.parentElement;
-      const groupName = card.querySelector("strong")?.innerText;
-      if (!groupName) {
-        alert("Error: Group name not found.");
-        return;
+  const card = button.parentElement;
+  const groupName = card.querySelector("strong")?.innerText;
+  if (!groupName) {
+    alert("Error: Group name not found.");
+    return;
+  }
+
+  const confirmed = confirm(`Are you sure you want to delete the group "${groupName}"? All components borrowed by this group will be returned.`);
+  if (!confirmed) return;
+
+  try {
+    const groupRef = db.collection("Groups").doc(groupName);
+
+    // Step 1: Return borrowed components
+    const componentsSnap = await db.collection("inventory").get();
+    const batch = db.batch();
+
+    componentsSnap.forEach(compDoc => {
+      const data = compDoc.data();
+      const borrowedBy = data.borrowedBy;
+
+      if (borrowedBy === groupName) {
+        const currentQty = data.quantity || 0;
+        const available = data.available || 0;
+
+        // Return all items
+        batch.update(compDoc.ref, {
+          borrowedBy: null,
+          available: currentQty  // assume full return
+        });
       }
+    });
 
-      const confirmed = confirm(`Are you sure you want to delete the group "${groupName}"?`);
-      if (!confirmed) return;
 
-      try {
-        const groupRef = db.collection("Groups").doc(groupName);
-        const usersSnap = await groupRef.collection("Users").get();
-        const deletePromises = usersSnap.docs.map(doc => doc.ref.delete());
-        await Promise.all(deletePromises);
-        await groupRef.delete();
+    // Step 3: Delete group document
+    batch.delete(groupRef);
 
-        card.remove();
-        alert(`Group "${groupName}" has been deleted.`);
-        console.log(`Group "${groupName}" deleted successfully`); // Debug log
-      } catch (error) {
-        console.error("Error deleting group:", error);
-        alert("Failed to delete group. Please try again.");
-      }
-    }
+    await batch.commit();
+
+    card.remove();
+    alert(`Group "${groupName}" deleted and components returned.`);
+    console.log(`Group "${groupName}" deleted and inventory updated.`);
+  } catch (error) {
+    console.error("Error deleting group:", error);
+    alert("Failed to delete group. Please try again.");
+  }
+}
+
 
     window.onload = () => {
       loadGroupsFromFirebase();
