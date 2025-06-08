@@ -4,382 +4,11 @@
   <meta charset="UTF-8" />
   <meta name="viewport" content="width=device-width, initial-scale=1.0">
   <title>Teacher Dashboard</title>
-  <style>
-    /* Base & Layout */
-    * {
-      box-sizing: border-box;
-    }
-
-    body {
-      margin: 0;
-      font-family: 'Courier New', Courier, monospace;
-      background: linear-gradient(0deg, #ffffff, #659deb);
-      color: #222;
-    }
-
-    header {
-      padding: 20px;
-      font-size: 2rem;
-      font-weight: bold;
-      color: white;
-      background-color: transparent;
-      font-family: 'Lato', sans-serif;
-    }
-
-    .container {
-      display: flex;
-      flex-direction: row;
-      height: calc(100vh - 80px);
-      padding: 20px;
-      gap: 20px;
-    }
-
-    .left {
-      flex: 2;
-      display: flex;
-      flex-direction: column;
-      overflow: hidden;
-      min-height: calc(100vh - 120px);
-    }
-
-    .right {
-      flex: 1;
-      display: flex;
-      flex-direction: column;
-      gap: 20px;
-    }
-
-    /* Bubble Headings */
-    .bubble-heading {
-      font-size: 1.5rem;
-      font-weight: 600;
-      background-color: white;
-      padding: 10px 20px;
-      border-radius: 30px;
-      margin-bottom: 20px;
-      color: #235dd4;
-      box-shadow: 0 2px 6px rgba(0,0,0,0.1);
-    }
-
-    /* Component Grid */
-    .grid {
-      display: grid;
-      grid-template-columns: repeat(auto-fill, minmax(180px, 1fr));
-      gap: 20px;
-      overflow-y: auto;
-      flex-grow: 1;
-    }
-
-    .card, .component-card {
-      background-color: white;
-      border-radius: 16px;
-      padding: 12px;
-      box-shadow: 0 4px 10px rgba(0, 0, 0, 0.1);
-      transition: transform 0.2s ease;
-      cursor: pointer;
-      display: flex;
-      flex-direction: column;
-      align-items: center;
-      min-height: 180px;
-    }
-
-    .card:hover, .component-card:hover {
-      transform: scale(1.05);
-    }
-
-    .card img, .component-thumb {
-      width: 100%;
-      max-width: 180px;
-      aspect-ratio: 3 / 2;
-      object-fit: contain;
-      border-radius: 8px;
-    }
-
-    .card p, .component-card h3 {
-      margin-top: 10px;
-      font-weight: 500;
-      text-align: center;
-      font-size: 0.95rem;
-      word-wrap: break-word;
-      font-family: 'Roboto Mono', monospace;
-      padding: 0 6px;
-      line-height: 1.3;
-    }
-
-    /* Add Type Card */
-    .add-type-card {
-      display: flex;
-      flex-direction: column;
-      align-items: center;
-      justify-content: center;
-      border: 2px dashed #aaa;
-      cursor: pointer;
-      transition: background 0.2s ease;
-    }
-
-    .add-type-card:hover {
-      background-color: #f0f0f0;
-    }
-
-    .add-icon {
-      font-size: 48px;
-      color: #555;
-      margin-bottom: 10px;
-    }
-
-    .notifications-wrapper {
-      flex-grow: 1;
-      display: flex;
-      flex-direction: column;
-    }
-
-    .notifications {
-      background: white;
-      border-radius: 20px;
-      padding: 20px;
-      height: 100%;
-      overflow-y: auto;
-      box-shadow: 0 6px 12px rgba(0, 0, 0, 0.2);
-      font-family: 'Segoe UI', sans-serif;
-    }
-
-    .notif {
-      padding: 12px;
-      background-color: #f0f0f0;
-      border-radius: 12px;
-      margin-bottom: 10px;
-    }
-
-    .admin-nav button {
-      font-family: 'Courier New', Courier, monospace;
-      text-transform: lowercase;
-      font-size: 13px;
-      font-weight: 500;
-      padding: 10px 18px;
-      border-radius: 999px;
-      border: 2px solid #1a237e;
-      background-color: #1e88e5;
-      color: white;
-      cursor: pointer;
-      transition: all 0.2s ease;
-      text-decoration: none;
-    }
-
-    .admin-nav button:hover {
-      background-color: #1565c0;
-      box-shadow: 0 0 8px rgba(30, 136, 229, 0.6);
-    }
-
-    /* Modal styles */
-    .modal {
-      position: fixed;
-      top: 0;
-      left: 0;
-      width: 100vw;
-      height: 100vh;
-      display: none;
-      justify-content: center;
-      align-items: center;
-      background: rgba(0, 0, 0, 0.5);
-      z-index: 1000;
-    }
-
-    .modal-content {
-      background: white;
-      border-radius: 16px;
-      padding: 24px;
-      width: 90%;
-      max-width: 600px;
-      max-height: 80vh;
-      box-shadow: 0 8px 24px rgba(0, 0, 0, 0.2);
-      position: relative;
-      overflow-y: auto;
-      display: flex;
-      flex-direction: row;
-      gap: 20px;
-    }
-
-    .modal-left {
-      flex: 1;
-      padding-right: 20px;
-      text-align: left;
-    }
-
-    .modal-right {
-      flex: 1;
-      display: flex;
-      flex-direction: column;
-      align-items: center;
-      text-align: center;
-    }
-
-    .close-btn {
-      position: absolute;
-      top: 15px;
-      right: 20px;
-      font-size: 24px;
-      font-weight: bold;
-      cursor: pointer;
-      color: #666;
-      z-index: 1001;
-    }
-
-    .close-btn:hover {
-      color: #000;
-    }
-
-    .component-img {
-      max-width: 100%;
-      max-height: 200px;
-      object-fit: contain;
-      border-radius: 8px;
-      margin-bottom: 15px;
-    }
-
-    .modal-content input {
-      padding: 10px;
-      font-size: 1rem;
-      border: 1px solid #ccc;
-      border-radius: 8px;
-      width: 100%;
-      margin-bottom: 10px;
-      box-sizing: border-box;
-    }
-
-    .add-btn, .remove-btn {
-      font-family: 'Courier New', Courier, monospace;
-      text-transform: lowercase;
-      font-size: 13px;
-      font-weight: 500;
-      padding: 10px 18px;
-      border-radius: 999px;
-      border: 2px solid #1a237e;
-      background-color: #1e88e5;
-      color: white;
-      cursor: pointer;
-      transition: all 0.2s ease;
-      margin: 5px;
-    }
-
-    .add-btn:hover, .remove-btn:hover {
-      background-color: #1565c0;
-      box-shadow: 0 0 8px rgba(30, 136, 229, 0.6);
-    }
-
-    .inline-add-form {
-      margin-top: 10px;
-      padding: 10px;
-      border: 1px solid #ccc;
-      background-color: #f4f4f4;
-      border-radius: 8px;
-    }
-
-    .inline-add-form input {
-      padding: 6px;
-      margin-bottom: 6px;
-      border-radius: 4px;
-      border: 1px solid #ccc;
-      width: 100%;
-    }
-
-    .parts-list {
-      display: grid;
-      grid-template-columns: repeat(auto-fill, minmax(160px, 1fr));
-      gap: 12px;
-      overflow-y: auto;
-      padding: 10px 0;
-      max-height: 200px;
-    }
-
-    .part-entry {
-      background-color: #eeeeee;
-      border-radius: 12px;
-      padding: 10px;
-      display: flex;
-      flex-direction: column;
-      gap: 6px;
-      box-shadow: 0 2px 6px rgba(0,0,0,0.1);
-    }
-
-    .status-bar {
-      display: flex;
-      width: 100%;
-      height: 30px;
-      border-radius: 6px;
-      overflow: hidden;
-      text-align: center;
-      font-weight: bold;
-    }
-
-    .status {
-      display: flex;
-      justify-content: center;
-      align-items: center;
-      height: 100%;
-      color: black;
-    }
-
-    .green { background-color: #a5d6a7; }
-    .red { background-color: #ef9a9a; }
-    .yellow { background-color: #fff59d; }
-
-    /* Responsive design */
-    @media (max-width: 768px) {
-      .modal-content {
-        width: 95%;
-        max-width: none;
-        margin: 10px;
-        flex-direction: column;
-      }
-      
-      .modal-left {
-        padding-right: 0;
-        margin-bottom: 20px;
-      }
-    }
-    .container {
-      display: flex;
-      gap: 16px;
-      margin: 20px;
-    }
-    .left, .right, .center {
-      padding: 10px;
-      border-radius: 8px;
-    }
-    .left {
-      flex: 2;
-    }
-    .center {
-      flex: 1.5;
-      background-color: #f9f9f9;
-      border: 1px solid #ddd;
-      overflow-y: auto;
-      max-height: 80vh;
-    }
-    .right {
-      flex: 1;
-    }
-    .pending-heading {
-      font-weight: bold;
-      font-size: 18px;
-      margin-bottom: 8px;
-    }
-    .pending-item {
-      background: #fff;
-      margin-bottom: 8px;
-      padding: 10px;
-      border-left: 4px solid orange;
-      box-shadow: 0 1px 2px rgba(0,0,0,0.1);
-      font-size: 14px;
-    }
-  </style>
+  <link rel="stylesheet" href="TeacherDashboard.css">
 </head>
 <body>
   <div style="position: absolute; top: 20px; right: 20px;">
-    <button id="logout-Btn" 
-            style="font-family: 'Courier New', monospace; font-size: 13px; font-weight: 500; padding: 10px 18px; border-radius: 999px; border: 2px solid #1a237e; background-color: #e53935; color: white; cursor: pointer; transition: all 0.2s ease;">
-      Logout
-    </button>
+    <button id="logout-Btn" class="logout-button">Logout</button>
   </div>
 
   <header id="usernameHeader">Welcome, </header>
@@ -391,11 +20,9 @@
       <div class="grid" id="component-grid" style="display: none;"></div>
     </div>
     <div class="middle">
-  <div class="bubble-heading">Pending Items</div>
-  <ul id="pending-list" class="pending-list"></ul>
-</div>
-
-
+      <div class="bubble-heading">Pending Items</div>
+      <ul id="pending-list" class="pending-list"></ul>
+    </div>
     <div class="right">
       <div class="admin-nav">
         <div class="bubble-heading">Navigation</div>
@@ -424,11 +51,9 @@
 
         <div id="inlineAddForm" class="inline-add-form" style="display: none;">
           <h4>Add Single Component (to Storage)</h4>
-          <input type="text" id="inlineAddID" placeholder="Optional ID (alphanumeric, _ or -)">
-          <label style="display: block; margin-top: 5px;">
-            <input type="checkbox" id="inlineAddWorking" checked /> Working
-          </label>
-          <button id="inlineAddSubmitBtn" class="add-btn" style="margin-top: 8px;">Add Component</button>
+          <input type="text" id="inlineAddID" placeholder="Optional ID">
+          <label><input type="checkbox" id="inlineAddWorking" checked /> Working</label>
+          <button id="inlineAddSubmitBtn" class="add-btn">Add Component</button>
         </div>
 
         <h3>Individual Parts</h3>
@@ -442,408 +67,121 @@
     </div>
   </div>
 
-  <!-- Add Type Modal -->
-  <div class="modal" id="addTypeModal">
-    <div class="modal-content">
-      <span class="close-btn" onclick="closeAddTypeModal()">&times;</span>
-      <div class="modal-left">
-        <h2>Add New Component Type</h2>
-        <form id="addForm" class="add-form">
-          <input type="text" id="newType" placeholder="Component type (ID)" required />
-          <input type="text" id="newImage" placeholder="Image URL (optional)" />
-          <input type="text" id="newGroup" placeholder="Group (0 = storage)" required />
-          <label><input type="checkbox" id="newWorking" checked /> Working</label>
-          <input type="text" id="newPartID" placeholder="Optional Part ID (alphanumeric, _ or -)">
-          <button type="submit" class="add-btn">Submit</button>
-        </form>
-      </div>
-    </div>
-  </div>
-
-  <!-- Firebase & Dashboard Logic -->
   <script type="module">
     import { initializeApp } from "https://www.gstatic.com/firebasejs/10.11.0/firebase-app.js";
     import {
-      getFirestore, collection, doc, setDoc, getDocs, getDoc, addDoc, deleteDoc, updateDoc, query, where
+      getFirestore, collection, doc, setDoc, getDocs, getDoc, deleteDoc
     } from "https://www.gstatic.com/firebasejs/10.11.0/firebase-firestore.js";
 
-    const firebaseConfig = {
-      apiKey: "AIzaSyDq7FI-N984HO2M7Q0l25WEoiTBqZvZfHs",
-      authDomain: "innovatech-86917.firebaseapp.com",
-      projectId: "innovatech-86917",
-      storageBucket: "innovatech-86917.appspot.com",
-      messagingSenderId: "222788972248",
-      appId: "1:222788972248:web:d0d5b8968f24b9c00671ad",
-      measurementId: "G-GTX1QPXJ2R"
-    };
-
+    const firebaseConfig = { /* your config here */ };
     const app = initializeApp(firebaseConfig);
     const db = getFirestore(app);
 
     let currentComponentType = null;
+    const countMap = new Map();
     const workingMap = new Map();
     const availableMap = new Map();
-    const countMap = new Map();
     const imageMap = new Map();
-    const partsMap = new Map(); // Store individual parts data
+    const partsMap = new Map();
 
-    // Make functions global so onclick handlers work
-    window.closeModal = function() {
+    function closeModal() {
       document.getElementById("modal").style.display = "none";
     }
 
-    window.closeAddTypeModal = function() {
-      document.getElementById("addTypeModal").style.display = "none";
-    }
-
-    async function verifyUserRole() {
-      const username = localStorage.getItem("username") || "teacher"; // Fallback for demo
-      const role = localStorage.getItem("role") || "User";  
-      if (!username||role=="User") {
-        alert("Missing login info. Please log in again.");
-        window.location.href = "login.html";
-        return;
-      }
-
-      document.getElementById("usernameHeader").textContent = `Welcome, ${username}`;
-      document.title = `${username}'s Dashboard`;
-      await loadComponents();
-      await loadNotifications();
-    }
-
     async function loadComponents() {
-  const loadingDiv = document.getElementById("loading");
-  const grid = document.getElementById("component-grid");
-  grid.innerHTML = "";
-  const pendingList = document.getElementById("pending-list");
-pendingList.innerHTML = "";
+      const loading = document.getElementById("loading");
+      const grid = document.getElementById("component-grid");
+      const pendingList = document.getElementById("pending-list");
+      grid.innerHTML = "";
+      pendingList.innerHTML = "";
 
+      const snapshot = await getDocs(collection(db, "inventory"));
+      for (const docSnap of snapshot.docs) {
+        const type = docSnap.id;
+        const image = docSnap.data().image || "";
 
-  try {
-    const inventorySnapshot = await getDocs(collection(db, "inventory"));
-    loadingDiv.style.display = "none";
-    grid.style.display = "grid";
+        const partsSnapshot = await getDocs(collection(db, "inventory", type, "parts"));
+        const parts = [];
+        let total = 0, working = 0, available = 0;
 
-    for (const doc of inventorySnapshot.docs) {
-      const typeId = doc.id;
-      const typeData = doc.data();
-      const image = typeData.image || "";
+        partsSnapshot.forEach(partDoc => {
+          const data = partDoc.data();
+          const part = { ...data, partID: data.partID || partDoc.id, group: data.group || "0" };
+          parts.push(part);
+          total++;
+          if (part.working) working++;
+          if ((part.group === "0" || part.group === 0) && part.working) available++;
+          if (part.pending) {
+            const li = document.createElement("li");
+            li.textContent = `Type: ${type}, ID: ${part.partID}`;
+            pendingList.appendChild(li);
+          }
+        });
 
-      const partsSnapshot = await getDocs(collection(db, "inventory", typeId, "parts"));
-      const parts = [];
-      let total = 0;
-      let working = 0;
-      let available = 0;
+        countMap.set(type, total);
+        workingMap.set(type, working);
+        availableMap.set(type, available);
+        imageMap.set(type, image);
+        partsMap.set(type, parts);
 
-      partsSnapshot.forEach(partDoc => {
-        const data = partDoc.data();
-        const part = {
-          id: partDoc.id,
-          partID: data.partID || partDoc.id,
-          group: data.group || "0",
-          working: data.working !== false,
-          ...data
-        };
-
-        total++;
-        if (part.working) working++;
-        if ((part.group == "0"||part.group==0) && part.working) available++;
-
-        parts.push(part);
-        if (part.pending) {
-    const li = document.createElement("li");
-    li.textContent = `Type: ${typeId}, ID: ${part.partID}, Working: ${part.working ? "Yes" : "No"}`;
-    pendingList.appendChild(li);
-  }
-      });
-
-      // Save to maps for modal behavior
-      imageMap.set(typeId, image);
-      countMap.set(typeId, total);
-      workingMap.set(typeId, working);
-      availableMap.set(typeId, available);
-      partsMap.set(typeId, parts);
-
-      // Create card
-      const card = document.createElement("div");
-      card.className = "component-card";
-
-      const imageHtml = image
-        ? `<img src="${image}" alt="${typeId}" class="component-thumb" onerror="this.style.display='none'" />`
-        : `<div style="width: 100%; height: 120px; background: #f0f0f0; border-radius: 8px; display: flex; align-items: center; justify-content: center; color: #666;">No Image</div>`;
-
-      card.innerHTML = `
-        ${imageHtml}
-        <h3>${typeId}</h3>
-      `;
-      card.addEventListener("click", () => openModal(typeId));
-      grid.appendChild(card);
-    }
-
-    // Add "Add Item Type" button
-    const addCard = document.createElement("div");
-    addCard.className = "component-card add-type-card";
-    addCard.innerHTML = `
-      <div class="add-icon">+</div>
-      <h3>Add Item Type</h3>
-    `;
-    addCard.addEventListener("click", () => {
-      document.getElementById("addTypeModal").style.display = "flex";
-    });
-    grid.appendChild(addCard);
-
-    console.log(`Loaded ${inventorySnapshot.size} component types`);
-
-  } catch (err) {
-    console.error("Failed to load components:", err);
-    loadingDiv.textContent = "Error loading components. Please refresh the page.";
-  }
-}
-
-    async function loadNotifications() {
-      try {
-        const notificationBar = document.getElementById("notification-bar");
-        
-        // Load recent activity or notifications from Firebase
-        const notificationsSnapshot = await getDocs(collection(db, "notifications"));
-        
-        if (notificationsSnapshot.empty) {
-          notificationBar.innerHTML = "<div class='notif'>No new notifications</div>";
-        } else {
-          notificationBar.innerHTML = "";
-          notificationsSnapshot.forEach(doc => {
-            const data = doc.data();
-            const notif = document.createElement("div");
-            notif.className = "notif";
-            notif.innerHTML = `
-              <strong>${data.title || "Notification"}</strong><br>
-              ${data.message || "No message"}<br>
-              <small>${data.timestamp ? new Date(data.timestamp.seconds * 1000).toLocaleDateString() : "Unknown date"}</small>
-            `;
-            notificationBar.appendChild(notif);
-          });
-        }
-      } catch (err) {
-        console.error("Failed to load notifications:", err);
-        document.getElementById("notification-bar").innerHTML = "<div class='notif'>Error loading notifications</div>";
+        const card = document.createElement("div");
+        card.className = "component-card";
+        card.innerHTML = `<img src="${image}" alt="${type}"><h3>${type}</h3>`;
+        card.onclick = () => openModal(type);
+        grid.appendChild(card);
       }
+
+      loading.style.display = "none";
+      grid.style.display = "grid";
     }
 
     function openModal(type) {
-  currentComponentType = type;
-  const modal = document.getElementById("modal");
-  document.getElementById("modalTitle").textContent = type;
-  document.getElementById("modalImage").src = imageMap.get(type) || "";
-  document.getElementById("totalCount").textContent = countMap.get(type) || 0;
-  document.getElementById("availableCount").textContent = availableMap.get(type) || 0;
-  document.getElementById("workingCount").textContent = workingMap.get(type) || 0;
+      currentComponentType = type;
+      const modal = document.getElementById("modal");
+      document.getElementById("modalTitle").textContent = type;
+      document.getElementById("modalImage").src = imageMap.get(type) || "";
+      document.getElementById("totalCount").textContent = countMap.get(type) || 0;
+      document.getElementById("availableCount").textContent = availableMap.get(type) || 0;
+      document.getElementById("workingCount").textContent = workingMap.get(type) || 0;
 
-  // Load individual parts
-  const partsList = document.getElementById("partsList");
-  partsList.innerHTML = "";
-  const parts = partsMap.get(type) || [];
+      const parts = partsMap.get(type) || [];
+      const partsList = document.getElementById("partsList");
+      partsList.innerHTML = "";
 
-  if (parts.length === 0) {
-    partsList.innerHTML = "<div class='part-entry'>No individual components found</div>";
-  } else {
-    parts.forEach(part => {
-  const entry = document.createElement("div");
-  entry.className = "part-entry";
-  entry.innerHTML = `
-    <div>
-      <strong>${part.partID}</strong><br>
-      Team: ${part.group}<br>
-      ${part.working ? 'Working' : 'Broken'}
-    </div>
-    <button class="delete-part-btn" data-part-id="${part.partID}">Delete</button>
-  `;
+      for (const part of parts) {
+        const entry = document.createElement("div");
+        entry.className = "part-entry";
+        entry.innerHTML = `
+          <div>
+            <strong>${part.partID}</strong><br>
+            ${part.group && part.group !== "0" && part.group !== 0 ? `Possessed by: <strong>${part.group}</strong><br>` : 'In storage<br>'}
+            ${part.pending ? '<em style="color: orange;">Pending Confirmation</em><br>' : ''}
+            ${part.working ? 'Working' : 'Broken'}
+          </div>
+          <button class="delete-part-btn" data-part-id="${part.partID}">Delete</button>
+        `;
 
-  // Attach delete logic
-  const deleteBtn = entry.querySelector('.delete-part-btn');
-  deleteBtn.addEventListener("click", async () => {
-    if (!confirm(`Delete part "${part.partID}"?`)) return;
+        entry.querySelector(".delete-part-btn").addEventListener("click", async () => {
+          if (!confirm(`Delete part "${part.partID}"?`)) return;
+          await deleteDoc(doc(db, "inventory", currentComponentType, "parts", part.partID));
+          alert(`Deleted part: ${part.partID}`);
+          await loadComponents();
+          openModal(currentComponentType);
+        });
 
-    try {
-      await deleteDoc(doc(db, "inventory", currentComponentType, "parts", part.partID));
-      alert(`Deleted part: ${part.partID}`);
-      await loadComponents();         // Refresh cards
-      openModal(currentComponentType); // Refresh modal
-    } catch (err) {
-      console.error("Error deleting part:", err);
-      alert("Failed to delete part. Try again.");
-    }
-  });
-
-  partsList.appendChild(entry);
-});
-
-  }
-
-  // Fix: Declare total and working
-  const total = countMap.get(type) || 0;
-  const working = workingMap.get(type) || 0;
-
-  const greenPercent = total > 0 ? Math.round((working / total) * 100) : 0;
-  const redPercent = 100 - greenPercent;
-
-  // Fix: Correct class name for status bar
-  const statusBar = modal.querySelector('.status-bar');
-  statusBar.innerHTML = ""; // Clear previous contents
-
-  if (total === 0) {
-    statusBar.innerHTML = `<div class="status yellow" style="width: 100%">100%</div>`;
-  } else {
-    statusBar.innerHTML = `
-      <div class="status green" style="width: ${greenPercent}%">${greenPercent}%</div>
-      <div class="status red" style="width: ${redPercent}%">${redPercent > 0 ? redPercent + '%' : ''}</div>
-    `;
-  }
-
-  modal.style.display = "flex";
-}
-
-
-    // Event listeners
-    window.addEventListener("click", e => {
-      if (e.target.id === "modal") window.closeModal();
-      if (e.target.id === "addTypeModal") window.closeAddTypeModal();
-    });
-
-    window.addEventListener("keydown", e => {
-      if (e.key === "Escape") {
-        window.closeModal();
-        window.closeAddTypeModal();
+        partsList.appendChild(entry);
       }
-    });
 
-    document.getElementById("addForm").addEventListener("submit", async function (e) {
-  e.preventDefault();
-  const type = document.getElementById("newType").value.trim();
-  const image = document.getElementById("newImage").value.trim();
-  const group = document.getElementById("newGroup").value.trim();
-  const working = document.getElementById("newWorking").checked;
-  const partID = document.getElementById("newPartID").value.trim();
-
-  if (!type) return alert("Component type is required.");
-  if (!partID) return alert("Part ID is required.");
-
-  try {
-    // Add or update component type doc in inventory collection
-    await setDoc(doc(db, "inventory", type), {
-      image: image || "",
-      createdAt: new Date()
-    });
-
-    // Check if part with same ID already exists in subcollection "parts"
-    const existing = await getDoc(doc(db, "inventory", type, "parts", partID));
-    if (existing.exists()) return alert("This Part ID already exists.");
-
-    const componentData = {
-      type: type,
-      group: group || "0",
-      working: working,
-      partID: partID,
-      createdAt: new Date()
-    };
-
-    // Add part document inside inventory/type/parts subcollection
-    await setDoc(doc(db, "inventory", type, "parts", partID), componentData);
-
-    alert("Component type and part added successfully!");
-    window.closeAddTypeModal();
-    document.getElementById("addForm").reset();
-    await loadComponents();
-  } catch (err) {
-    console.error("Error adding component type:", err);
-    alert("Error adding component type. Please try again.");
-  }
-});
-
-  document.getElementById("addSingleComponentBtn").addEventListener("click", () => {
-  const form = document.getElementById("inlineAddForm");
-  form.style.display = form.style.display === "none" ? "block" : "none";
-});
-  document.getElementById("logout-Btn").addEventListener("click", function () {
-  // Clear any session/local storage
-  localStorage.clear();
-  sessionStorage.clear();
-
-  // Optionally display a message or confirmation
-  alert("You have been logged out.");
-
-  // Redirect to login page (change filename if needed)
-  window.location.href = "index.html";
-});
-
-
-    document.getElementById("inlineAddSubmitBtn").addEventListener("click", async () => {
-  if (!currentComponentType) return alert("Select a component type first.");
-
-  const partID = document.getElementById("inlineAddID").value.trim();
-  const working = document.getElementById("inlineAddWorking").checked;
-
-  if (!partID) return alert("Part ID is required.");
-
-  try {
-    const partRef = doc(db, "inventory", currentComponentType, "parts", partID);
-    const existingDoc = await getDoc(partRef);
-
-    if (existingDoc.exists()) {
-      return alert("A component with this ID already exists.");
+      modal.style.display = "flex";
     }
 
-    const componentData = {
-      partID: partID,
-      group: "0", // default group
-      working: working,
-      createdAt: new Date()
-    };
+    document.getElementById("logout-Btn").addEventListener("click", () => {
+      localStorage.clear();
+      window.location.href = "index.html";
+    });
 
-    await setDoc(partRef, componentData);
-
-    alert("Component added successfully!");
-    document.getElementById("inlineAddForm").style.display = "none";
-    document.getElementById("inlineAddID").value = "";
-    document.getElementById("inlineAddWorking").checked = true;
-
-    await loadComponents();
-    openModal(currentComponentType); // Refresh modal
-  } catch (err) {
-    console.error("Error adding component:", err);
-    alert("Error adding component. Please try again.");
-  }
-});
-
-
-
-
-    document.getElementById("removeComponentBtn").addEventListener("click", async () => {
-  if (!currentComponentType) return;
-  if (!confirm(`Delete the entire "${currentComponentType}" component type and all its parts?`)) return;
-
-  try {
-    // Delete the component type document from "inventory"
-    await deleteDoc(doc(db, "inventory", currentComponentType));
-
-    // Get all parts docs in the subcollection "parts"
-    const partsSnapshot = await getDocs(collection(db, "inventory", currentComponentType, "parts"));
-
-    // Delete all part docs in parallel
-    const deletePromises = partsSnapshot.docs.map(partDoc => deleteDoc(partDoc.ref));
-    await Promise.all(deletePromises);
-
-    alert("Component type and all parts deleted successfully!");
-    window.closeModal();
-    await loadComponents();
-  } catch (err) {
-    console.error("Error deleting component type:", err);
-    alert("Error deleting component type. Please try again.");
-  }
-});
-
-
-    // Initialize
-    verifyUserRole();
+    window.closeModal = closeModal;
+    loadComponents();
   </script>
 </body>
 </html>
