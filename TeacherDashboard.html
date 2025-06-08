@@ -629,7 +629,7 @@ pendingList.innerHTML = "";
       }
     }
 
-    function openModal(type) {
+function openModal(type) {
   currentComponentType = type;
   const modal = document.getElementById("modal");
   document.getElementById("modalTitle").textContent = type;
@@ -638,7 +638,6 @@ pendingList.innerHTML = "";
   document.getElementById("availableCount").textContent = availableMap.get(type) || 0;
   document.getElementById("workingCount").textContent = workingMap.get(type) || 0;
 
-  // Load individual parts
   const partsList = document.getElementById("partsList");
   partsList.innerHTML = "";
   const parts = partsMap.get(type) || [];
@@ -647,37 +646,41 @@ pendingList.innerHTML = "";
     partsList.innerHTML = "<div class='part-entry'>No individual components found</div>";
   } else {
     parts.forEach(part => {
-  const entry = document.createElement("div");
-  entry.className = "part-entry";
-  entry.innerHTML = `
-    <div>
-      <strong>${part.partID}</strong><br>
-      Team: ${part.group}<br>
-      ${part.working ? 'Working' : 'Broken'}
-    </div>
-    <button class="delete-part-btn" data-part-id="${part.partID}">Delete</button>
-  `;
+      const entry = document.createElement("div");
+      entry.className = "part-entry";
+      const displayGroup = part.group && part.group !== "0" ? part.group : "Storage";
 
-  // Attach delete logic
-  const deleteBtn = entry.querySelector('.delete-part-btn');
-  deleteBtn.addEventListener("click", async () => {
-    if (!confirm(`Delete part "${part.partID}"?`)) return;
+      entry.innerHTML = `
+        <div>
+          <strong>${part.partID}</strong><br>
+          Team: ${displayGroup}<br>
+          ${part.working ? 'Working' : 'Broken'}
+        </div>
+        <button class="delete-part-btn" data-part-id="${part.partID}">Delete</button>
+      `;
 
-    try {
-      await deleteDoc(doc(db, "inventory", currentComponentType, "parts", part.partID));
-      alert(`Deleted part: ${part.partID}`);
-      await loadComponents();         // Refresh cards
-      openModal(currentComponentType); // Refresh modal
-    } catch (err) {
-      console.error("Error deleting part:", err);
-      alert("Failed to delete part. Try again.");
-    }
-  });
+      const deleteBtn = entry.querySelector('.delete-part-btn');
+      deleteBtn.addEventListener("click", async () => {
+        if (!confirm(\`Delete part "${part.partID}"?\`)) return;
 
-  partsList.appendChild(entry);
-});
+        try {
+          await deleteDoc(doc(db, "inventory", currentComponentType, "parts", part.partID));
+          alert(\`Deleted part: ${part.partID}\`);
+          await loadComponents();
+          openModal(currentComponentType);
+        } catch (err) {
+          console.error("Error deleting part:", err);
+          alert("Failed to delete part. Try again.");
+        }
+      });
 
+      partsList.appendChild(entry);
+    });
   }
+
+  modal.style.display = "flex";
+}
+
 
   // Fix: Declare total and working
   const total = countMap.get(type) || 0;
