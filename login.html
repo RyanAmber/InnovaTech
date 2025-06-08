@@ -46,9 +46,11 @@
   <script>
     document.getElementById("signin-form").addEventListener("submit", function (e) {
       e.preventDefault();
+
       const username = e.target.username.value.trim();
       const password = e.target.password.value.trim();
       const message = document.getElementById("message");
+
       const userRef = db.collection("users").doc(username);
 
       userRef.get().then((doc) => {
@@ -57,12 +59,21 @@
           message.style.color = "red";
         } else {
           const data = doc.data();
-          if (data.password == password) {
+
+          if (data.password === password) {
+            if (data.role === "Unconfirmed") {
+              message.textContent = "❌ Not approved yet.";
+              message.style.color = "red";
+              return;
+            }
+
             message.textContent = `✅ Welcome ${username}!`;
             message.style.color = "green";
+
             localStorage.setItem("username", username);
             localStorage.setItem("role", data.role);
             localStorage.setItem("group", data.group);
+
             if (data.role === "Student") {
               location.href = "StudentDashboard.html";
             } else if (data.role === "Teacher") {
