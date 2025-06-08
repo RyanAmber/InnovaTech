@@ -550,7 +550,7 @@ pendingList.innerHTML = "";
         if ((part.group == "0"||part.group==0) && part.working) available++;
 
         parts.push(part);
-        if (String(part.group).toLowerCase() === "pending") {
+        if (part.pending) {
     const li = document.createElement("li");
     li.textContent = `Type: ${typeId}, ID: ${part.partID}, Working: ${part.working ? "Yes" : "No"}`;
     pendingList.appendChild(li);
