@@ -155,7 +155,7 @@
             countMap.set(type, (countMap.get(type) || 0) + 1);
             if (working) {
               workingMap.set(type, (workingMap.get(type) || 0) + 1);
-              if (team == "0") {
+              if (team == "0"||team==0) {
                 availableMap.set(type, (availableMap.get(type) || 0) + 1);
               }
             }
