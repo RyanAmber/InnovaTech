@@ -192,7 +192,6 @@
     async function checkOutComponent() {
   const name = document.getElementById('modalTitle').textContent;
 
-  // 🚫 Prevent checkout if the student has no group
   if (group === "No Group") {
     alert("You must be in a group to check out components.");
     closeModal();
@@ -211,7 +210,12 @@
     if (!availablePart) return alert("No available components to check out.");
     const partId = availablePart.id;
 
-    await setDoc(doc(db, "inventory", name, "parts", partId), { team: group }, { merge: true });
+    // ✅ Add pending: true to both inventory and group items
+    await setDoc(doc(db, "inventory", name, "parts", partId), {
+      team: group,
+      pending: true
+    }, { merge: true });
+
     await setDoc(doc(db, "Groups", group, "Items", partId), {
       type: name,
       checkedOutAt: new Date().toISOString(),
@@ -228,6 +232,7 @@
     alert("Error checking out component.");
   }
 }
+
 
 
     window.confirmReceipt = async function(type, partId) {
