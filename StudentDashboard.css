@@ -96,20 +96,24 @@ header {
   display: flex;
   background-color: #f1f1f1;
   border-radius: 16px;
-  padding: 20px 24px; /* Increased padding */
-  gap: 16px;           /* More spacing between items */
+  padding: 10px 12px;
+  gap: 10px;
   align-items: center;
-  margin-bottom: 16px;
-  box-shadow: 0 4px 10px rgba(0, 0, 0, 0.08); /* Slightly stronger shadow */
+  margin-bottom: 10px;
+  box-shadow: 0 2px 4px rgba(0, 0, 0, 0.06);
   font-family: 'Segoe UI', sans-serif;
-  max-height: none; /* Removed max-height restriction */
+  max-height: 90px;
   transition: transform 0.2s ease;
 }
 
+.group-card:hover {
+  transform: scale(1.03);
+}
+
 .group-card img {
-  width: 70px;   /* Increased from 50px */
-  height: 70px;
-  border-radius: 12px;
+  width: 50px;
+  height: 50px;
+  border-radius: 10px;
   object-fit: cover;
 }
 
@@ -117,18 +121,27 @@ header {
   flex-grow: 1;
   display: flex;
   flex-direction: column;
-  font-size: 15px; /* Slightly larger font */
+  font-size: 13px;
 }
 
 .group-info p {
-  margin: 4px 0;
-  font-size: 15px;
+  margin: 2px 0;
+  font-size: 13px;
+}
+
+.group-buttons {
+  display: flex;
+  flex-direction: column;
+  gap: 4px;
 }
 
 .group-buttons button {
-  padding: 6px 12px;
-  border-radius: 10px;
-  font-size: 12px;
+  padding: 4px 10px;
+  border-radius: 8px;
+  font-size: 11px;
+  cursor: pointer;
+  border: none;
+  white-space: nowrap;
 }
 
 /* Glowy action buttons */
