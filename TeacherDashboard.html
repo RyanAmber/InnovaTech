@@ -599,15 +599,36 @@
     partsList.innerHTML = "<div class='part-entry'>No individual components found</div>";
   } else {
     parts.forEach(part => {
-      const entry = document.createElement("div");
-      entry.className = "part-entry";
-      entry.innerHTML = `
-        <strong>${part.partID}</strong><br>
-        Team: ${part.group}<br>
-        ${part.working ? 'Working' : 'Broken'}
-      `;
-      partsList.appendChild(entry);
-    });
+  const entry = document.createElement("div");
+  entry.className = "part-entry";
+  entry.innerHTML = `
+    <div>
+      <strong>${part.partID}</strong><br>
+      Team: ${part.group}<br>
+      ${part.working ? 'Working' : 'Broken'}
+    </div>
+    <button class="delete-part-btn" data-part-id="${part.partID}">Delete</button>
+  `;
+
+  // Attach delete logic
+  const deleteBtn = entry.querySelector('.delete-part-btn');
+  deleteBtn.addEventListener("click", async () => {
+    if (!confirm(`Delete part "${part.partID}"?`)) return;
+
+    try {
+      await deleteDoc(doc(db, "inventory", currentComponentType, "parts", part.partID));
+      alert(`Deleted part: ${part.partID}`);
+      await loadComponents();         // Refresh cards
+      openModal(currentComponentType); // Refresh modal
+    } catch (err) {
+      console.error("Error deleting part:", err);
+      alert("Failed to delete part. Try again.");
+    }
+  });
+
+  partsList.appendChild(entry);
+});
+
   }
 
   // Fix: Declare total and working
