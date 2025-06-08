@@ -292,7 +292,7 @@
             <img src="${image}" alt="${type}">
             <div class="group-info">
               <strong>${type}</strong>
-              <p>Checked out: <em>5/XX/2025</em></p>
+              <p>Checked out: <em>new Date().toLocaleDateString()</em></p>
               <p>Borrower: <em>${group}</em></p>
               ${data.pending ? `<p style="color:orange;"><strong>Pending Confirmation</strong></p>` : ``}
             </div>
