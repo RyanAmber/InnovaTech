@@ -575,7 +575,7 @@ pendingList.innerHTML = "";
         if ((part.group == "0"||part.group==0) && part.working) available++;
 
         parts.push(part);
-        if (part.pending) {
+        if (part.pending&&part.group!="0"&&part.group!=0) {
   const pendingItem = document.createElement("div");
   pendingItem.className = "pending-item";
 
