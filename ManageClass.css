@@ -220,7 +220,7 @@ button,
 }
 
 .id-box .remove-btn::before {
-  content: 'delete';
+  content: '';
   text-transform: lowercase;
 }
 
