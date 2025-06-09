@@ -237,6 +237,7 @@
 
     window.confirmReceipt = async function(type, partId) {
       try {
+        await setDoc(doc(db, "inventory", name, "parts", partId), { pending: false }, { merge: true });
         await setDoc(doc(db, "Groups", group, "Items", partId), { pending: false }, { merge: true });
         alert(`${type} (${partId}) marked as received.`);
         location.reload();
