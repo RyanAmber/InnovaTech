@@ -97,7 +97,7 @@
                 <button class="reject-btn" onclick="rejectUser('${username}')">reject</button>
               </div>`;
             approvalList.appendChild(li);
-          } else {
+          } else if (role=="Student"){
             li.innerHTML += ` <button class="remove-btn" onclick="removeUser('${username}')">remove</button>`;
             currentList.appendChild(li);
           }
