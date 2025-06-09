@@ -480,8 +480,6 @@
         <form id="addForm" class="add-form">
           <input type="text" id="newType" placeholder="Component type (ID)" required />
           <input type="text" id="newImage" placeholder="Image URL (optional)" />
-          <input type="text" id="newGroup" placeholder="Group (0 = storage)" required />
-          <label><input type="checkbox" id="newWorking" checked /> Working</label>
           <input type="text" id="newPartID" placeholder="Optional Part ID (alphanumeric, _ or -)">
           <button type="submit" class="add-btn">Submit</button>
         </form>
@@ -757,8 +755,8 @@ pendingList.innerHTML = "";
   e.preventDefault();
   const type = document.getElementById("newType").value.trim();
   const image = document.getElementById("newImage").value.trim();
-  const group = document.getElementById("newGroup").value.trim();
-  const working = document.getElementById("newWorking").checked;
+  const group = "0";
+  const working = true;
   const partID = document.getElementById("newPartID").value.trim();
 
   if (!type) return alert("Component type is required.");
