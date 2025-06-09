@@ -540,7 +540,7 @@ pendingList.innerHTML = "";
         const part = {
           id: partDoc.id,
           partID: data.partID || partDoc.id,
-          group: data.group || "0",
+          group: data.group,
           working: data.working !== false,
           ...data
         };
