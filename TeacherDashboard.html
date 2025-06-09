@@ -580,10 +580,10 @@ pendingList.innerHTML = "";
   pendingItem.className = "pending-item";
 
   pendingItem.innerHTML = `
-    <strong>Type:</strong> ${typeId}<br>
-    <strong>ID:</strong> ${part.partID}<br>
-    <strong>Working:</strong> ${part.working ? "Yes" : "No"}
-  `;
+  <strong>Type:</strong> ${typeId}<br>
+  <strong>ID:</strong> ${part.partID}<br>
+  <strong>Checked out by:</strong> Team ${part.group}
+`;
 
   pendingList.appendChild(pendingItem);
 }
